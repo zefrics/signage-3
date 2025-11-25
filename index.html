@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
+      <link rel="stylesheet" href="css/reset.css">
+      <link rel="stylesheet" href="css/basic.css">
+      <link rel="stylesheet" href="css/pretendard-subset.css">
+      <title>Digital Signage</title>
+  </head>
+  <body>
+    <header>
+      <div id="view-header" class="header-container">
+        <div class="logo-container">
+          <img src="img/logo.svg" class="logo" alt="PHC Valeo">
+          <div class="date"></div>
+        </div>
+        <div class="btn-group">
+          <button type="button" id="btn-change-view" class="btn-3">
+            <div class="text">Change View</div>
+          </button>
+          <button id="btn-settings" class="btn-2">
+            <img src="img/settings.svg" alt="Settings">
+            <div class="text">Settings</div>
+          </button>
+        </div>
+      </div>
+
+      <div id="settings-header" class="header-container">
+        <div class="main-title">
+          Settings
+        </div>
+        <div class="btn-group">
+          <button type="button" id="btn-back-to-view" class="btn-1">
+            <img src="img/back.svg" alt="back">
+            <div class="text">
+              Home (<span class="countdown"></span>)
+            </div>
+          </button>
+          <button id="btn-order" class="btn-2">
+            <img src="img/list.svg" alt="order">
+            <div class="text">Edit Order</div>
+          </button>
+          <button id="btn-create" class="btn-2">
+            <img src="img/edit.svg" alt="create">
+            <div class="text">Create</div>
+          </button>
+          
+        </div>
+      </div>
+
+      <div id="order-edit-header" class="header-container">
+        <div class="main-title">
+          Edit Order
+        </div>
+        <div class="btn-group">
+          <button type="button" id="btn-back-from-create" class="btn-1">
+            <img src="img/back.svg" alt="back">
+            <div class="text">
+              Back (<span class="countdown"></span>)
+            </div>
+          </button>
+          <button type="button" id="btn-order-up" class="btn-3">
+            <img src="img/up.svg" alt="up">
+            <div class="text">Up</div>
+          </button>
+          <button type="button" id="btn-order-down" class="btn-3">
+            <img src="img/down.svg" alt="down">
+            <div class="text">Down</div>
+          </button>
+          <button type="submit" id="btn-apply-order" class="btn-2">
+            <img src="img/check.svg" alt="apply">
+            <div class="text">Apply</div>
+          </button>
+        </div>
+      </div>
+      
+      <div id="slide-edit-header" class="header-container">
+        <div id="slide-edit-title" class="main-title">
+          
+        </div>
+        <div class="btn-group">
+          <button type="button" id="btn-back-from-slide" class="btn-1">
+            <img src="img/back.svg" alt="back">
+            <div class="text">
+              Back (<span class="countdown"></span>)
+            </div>
+          </button>
+          <button type="submit" id="btn-apply-slide" class="btn-2">
+            <img src="img/check.svg" alt="apply">
+            <div class="text">Apply</div>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <div id="slide-view" class="section">
+        <div class="slide">
+          <div class="slide-content">
+            <h2 class="label">Test Machine</h2>
+            <p class="content test-machine-content">
+            </p>
+          </div>
+          <div class="slide-content">
+            <h2 class="label">Model</h2>
+            <p class="content model-content">
+            </p>
+          </div>
+          <div class="slide-content">
+            <h2 class="label">Purpose</h2>
+            <p class="content purpose-content">
+            </p>
+          </div>
+          <div class="slide-content">
+            <h2 class="label">Schedule</h2>
+            <p class="content schedule-content">
+            </p>
+          </div>
+        </div>
+        <div class="slider-controls">
+          <button id="btn-slide-prev">
+            <img src="img/prev.svg" alt="prev">
+          </button>
+          <span id="slide-counter"></span>
+          <button id="btn-slide-next">
+            <img src="img/next.svg" alt="next">
+          </button>
+        </div>
+      </div>
+
+      <div id="list-view" class="section">
+        <ul class="table-header">
+          <li>Test Machine</li>
+          <li>Model</li>
+          <li>Purpose</li>
+          <li>Schedule</li>
+        </ul>
+        <div id="list-view-container">
+        </div>
+      </div>
+
+      <div id="settings" class="section settings-table">
+        <ul class="table-header">
+          <li>Order</li>
+          <li>Test Machine</li>
+          <li>Model</li>
+          <li>Purpose</li>
+          <li>Schedule</li>
+          <li></li>
+        </ul>
+        <div id="settings-container" class="table-container">
+          
+        </div>
+      </div>
+
+      <div id="order-edit" class="section settings-table">
+        <ul class="table-header">
+          <li></li>
+          <li>New Order</li>
+          <li>Test Machine</li>
+          <li>Model</li>
+          <li>Purpose</li>
+          <li>Schedule</li>
+        </ul>
+        <div id="order-edit-container" class="table-container">
+          
+        </div>
+      </div>
+      
+      <form id="slide-edit" class="section">
+        <div class="input-group">
+          <div class="input-container">
+            <h2 class="label">Test Machine</h2>
+            <input type="text" autocomplete="off" id="input-test-machine" placeholder="" maxlength="60" required>
+          </div>
+          <div class="input-container">
+            <h2 class="label">Model</h2>
+            <input type="text" autocomplete="off" id="input-model" placeholder="" maxlength="60" required>
+          </div>
+          <div class="input-container">
+            <h2 class="label">Purpose</h2>
+            <input type="text" autocomplete="off" id="input-purpose" placeholder="" maxlength="60" required>
+          </div>
+          <div class="input-container">
+            <h2 class="label">Start Date</h2>
+            <input type="date" autocomplete="off" id="input-start-date" required>
+          </div>
+          <div class="input-container">
+            <h2 class="label">End Date</h2>
+            <input type="date" autocomplete="off" id="input-end-date" required>
+          </div>
+        </div>
+      </form>
+    </main>
+  </body>
+
+  <script src="js/clock.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/slider.js"></script>
+  <script src="js/toggleView.js"></script>
+</html>

@@ -1,0 +1,402 @@
+$fs-main-title: 48px; // Main Title 폰트 사이즈
+$fw-main-title: 800; // Main Title 폰트 웨이트
+
+$fs-slide-label: 24px; // Slide View Label 폰트 사이즈
+$fw-slide-label: 400; // Slide View Label 폰트 웨이트
+
+$fs-slide-content: 54px; // Slide View Content 폰트 사이즈
+$fw-slide-content: 600; // Slide View Content 폰트 웨이트
+$lh-slide-content: 63.5px; // Slide View Line Height
+
+$fs-list-title: 18px; // List View Title 폰트 사이즈
+$fw-list-title: 500; // List View Title 폰트 웨이트
+
+$fs-list-content: 24px; // List View Content 폰트 사이즈
+$fw-list-content: 600; // List View Content 폰트 웨이트
+
+$fs-settings-title: 18px; // Settings View Title 폰트 사이즈
+$fw-settings-title: 500; // Settings View Title 폰트 웨이트
+
+$fs-settings-content: 16.5px; // Settings View Content 폰트 사이즈
+$fw-settings-content: 500; // Settings View Content 폰트 웨이트
+
+$fs-edit-label: 18px; // Input Label 폰트 사이즈
+$fw-edit-label: 500; // Input Label 폰트 웨이트
+
+$fs-edit-input: 21px; // Input 폰트 사이즈
+$fw-edit-input: 400; // Input 폰트 웨이트
+
+$fs-date: 18px; // Date 폰트 사이즈
+$fw-date: 400; // Date 폰트 웨이트
+$lh-date: 24px; // Date Line Height
+
+
+$main-height: calc(100svh - 190px);
+
+
+$color-k1: rgba(0, 0, 0, 1);
+$color-k2: rgba(0, 0, 0, 0.9);
+$color-k3: rgba(0, 0, 0, 0.75);
+$color-k4: rgba(0, 0, 0, 0.6);
+$color-k5: rgba(0, 0, 0, 0.45);
+$color-k6: rgba(0, 0, 0, 0.3);
+$color-k7: rgba(0, 0, 0, 0.15);
+$color-k8: rgba(0, 0, 0, 0.1);
+$color-k9: rgba(0, 0, 0, 0.05);
+
+$color-w1: rgba(255, 255, 255, 1);
+$color-w2: rgba(255, 255, 255, 0.9);
+$color-w3: rgba(255, 255, 255, 0.75);
+$color-w4: rgba(255, 255, 255, 0.6);
+$color-w5: rgba(255, 255, 255, 0.45);
+$color-w6: rgba(255, 255, 255, 0.3);
+$color-w7: rgba(255, 255, 255, 0.15);
+$color-w8: rgba(255, 255, 255, 0.1);
+$color-w9: rgba(255, 255, 255, 0.05);
+
+$color-r1: rgba(240, 78, 35, 1);
+$color-r2: rgba(240, 78, 35, 0.9);
+$color-r3: rgba(240, 78, 35, 0.75);
+$color-r4: rgba(240, 78, 35, 0.6);
+$color-r5: rgba(240, 78, 35, 0.45);
+$color-r6: rgba(240, 78, 35, 0.3);
+$color-r7: rgba(240, 78, 35, 0.15);
+$color-r8: rgba(240, 78, 35, 0.1);
+$color-r9: rgba(240, 78, 35, 0.05);
+
+$color-g1: rgba(153, 202, 59, 1);
+$color-g2: rgba(153, 202, 59, 0.9);
+$color-g3: rgba(153, 202, 59, 0.75);
+$color-g4: rgba(153, 202, 59, 0.6);
+$color-g5: rgba(153, 202, 59, 0.45);
+$color-g6: rgba(153, 202, 59, 0.3);
+$color-g7: rgba(153, 202, 59, 0.15);
+$color-g8: rgba(153, 202, 59, 0.1);
+$color-g9: rgba(153, 202, 59, 0.05);
+
+body {
+  font-family: 'Pretendard', sans-serif;
+  padding: 54px 30px;
+  user-select: none;
+}
+
+.header-container {
+  display: flex; align-items: center; justify-content: space-between;
+  height: 60px;
+  margin-bottom: 21px;
+
+  .logo-container {
+    display: flex; align-items: center; gap: 45px;
+    .logo {
+      margin-left: 6px;
+      height: 45px; width: auto;
+    }
+    .date {
+      font-size: $fs-date;
+      font-weight: $fw-date;
+      line-height: $lh-date;
+      color: $color-k5;
+    }
+  }
+  .main-title {
+    font-size: $fs-main-title;
+    font-weight: $fw-main-title;
+
+  }
+}
+
+.section {
+  height: $main-height;
+  box-sizing: border-box;
+  border-radius: 15px;
+}
+
+#slide-view {
+  position: relative;
+  display: flex;
+  padding: 45px 45px 39px 45px;
+  border: 3px solid $color-r6;
+  .slide {
+    display: flex; flex-direction: column; justify-content: space-between;
+    width: 100%; // 말줄임표 구현을 위해 필요
+    .slide-content {
+      .label {
+        margin-bottom: 7.5px;
+        font-size: $fs-slide-label;
+        font-weight: $fw-slide-label;
+        color: $color-r3;
+      }
+      .content {
+        font-size: $fs-slide-content;
+        font-weight: $fw-slide-content;
+        line-height: $lh-slide-content;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+      }
+    }
+  }
+  .slider-controls {
+    position: absolute; bottom: 45px; right: 45px;
+    display: flex; align-items: center; gap: 12px;
+    opacity: 0.6;
+    button {
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      height: 45px; width: 45px;
+      border: 2px solid $color-r1;
+      border-radius: 9px;
+      background-color: $color-w1;
+      font-size: 30px;
+      color: $color-r1;
+      img {
+        width: 24px; height: 24px;
+      }
+    }
+    #slide-counter {
+      width: 66px;
+      font-size: 21px;
+      text-align: center;
+      color: $color-r1;
+    }
+  }
+}
+
+#list-view {
+  display: flex; flex-direction: column;
+  border: 3px solid $color-r6;
+  .table-header {
+    display: grid; grid-template-columns: 1fr 1fr 1fr 285px;
+    border-bottom: 2px solid $color-r7;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    font-size: $fs-list-title; font-weight: $fw-list-title;
+    background-color: $color-r7;
+    li {
+      padding: 15px;
+      display: flex; align-items: center; justify-content: center;
+      border-right: 1px solid $color-k8;
+      &:last-child {
+        border-right: none;
+      }
+    }
+  }
+
+  #list-view-container {
+    display: flex; flex-direction: column;
+    height: 100%;
+    .table-content {
+      display: grid; grid-template-columns: 1fr 1fr 1fr 285px;
+      height: 100%;
+      border-bottom: 1px solid $color-k8;
+      font-size: $fs-list-content; font-weight: $fw-list-content;
+      &:last-child {
+        border-bottom: none;
+      }
+      li {
+        display: flex; align-items: center; justify-content: center;
+        border-right: 1px solid $color-k8;
+        min-width: 0; // flex 아이템이 콘텐츠 크기보다 작아질 수 있도록 허용.  이렇게 해야 말줄임표 적용 가능
+        padding: 0 15px;
+        span {
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        &:first-child {
+          background-color: $color-r9;
+        }
+        &:last-child {
+          border-right: none;
+        }
+      }
+    }
+  }
+}
+
+.settings-table {
+  display: flex; flex-direction: column;
+  border: 3px solid $color-g5;
+  .table-header {
+    border-bottom: 2px solid $color-g7;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    font-size: $fs-settings-title; font-weight: $fw-settings-title;
+    background-color: $color-g7;
+    li {
+      padding: 15px;
+      display: flex; align-items: center; justify-content: center;
+      border-right: 1px solid $color-k8;
+      &:last-child {
+        border-right: none;
+      }
+    }
+  }
+  .table-container {
+    height: 100%;
+    display: grid; grid-template-rows: repeat(10, 1fr);
+    .table-content {
+      height: 100%;
+      border-bottom: 1px solid $color-k8;
+      font-size: $fs-settings-content; font-weight: $fw-settings-content;
+      li {
+        display: flex; align-items: center; justify-content: center;
+        border-right: 1px solid $color-k8;
+        min-width: 0; // flex 아이템이 콘텐츠 크기보다 작아질 수 있도록 허용.  이렇게 해야 말줄임표 적용 가능
+        padding: 0 15px;
+        span {
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        &:last-child {
+          border-right: none;
+        }
+      }
+    }
+  }
+  &#settings {
+    .table-header {
+      display: grid; grid-template-columns: 75px 1fr 1fr 1fr 195px 225px;
+    }
+    #settings-container {
+      .table-content {
+        display: grid; grid-template-columns: 75px 1fr 1fr 1fr 195px 225px;
+        li {
+          &:last-child {
+            gap: 21px;
+            .btn-modify, .btn-delete {
+              cursor: pointer;
+              height: 30px; width: 81px;
+              border: 0; border-radius: 6px;
+              font-size: 18px; font-weight: 500;
+              color: $color-w1;
+            }
+            .btn-modify { background-color: $color-g1; }
+            .btn-delete { background-color: $color-r1; }
+          }
+        }
+      }
+    }
+  }
+  &#order-edit {
+    .table-header {
+      display: grid; grid-template-columns: 60px 120px 1fr 1fr 1fr 195px;
+    }
+    #order-edit-container {
+      .table-content {
+        display: grid; grid-template-columns: 60px 120px 1fr 1fr 1fr 195px;
+        &.selected {
+          outline: 5px solid $color-g1;
+          outline-offset: -3px;
+        }
+        li {
+          &:first-child {
+            background-color: $color-g9;
+            input {
+              cursor: pointer;
+              height: 30px; width: 30px;
+              margin: 0; padding: 0;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+#slide-edit {
+  padding: 45px;
+  border: 3px solid $color-g5;
+  .input-group {
+    display: grid;
+    column-gap: 75px;
+    row-gap: 45px;
+    grid-template-columns: repeat(4, 1fr);
+    width: 100%; height: fit-content;
+    .input-container {
+      .label {
+        margin-bottom: 9px;
+        font-size: $fs-edit-label;
+        font-weight: $fw-edit-label;
+        color: $color-k1;
+      }
+      input {
+        box-sizing: border-box;
+        font-family: 'Pretendard', sans-serif;
+        height: 57px; width: 100%;
+        padding: 15px; margin: 0;
+        border: 1px solid $color-k6;
+        border-radius: 6px;
+        font-size: $fs-edit-input;
+        font-weight: $fw-edit-input;
+        background-color: $color-w1;
+        &::placeholder {
+          color: $color-k6;
+        }
+      }
+      &:nth-child(1) {
+        grid-column: 1 / 3 ;
+        grid-row: 1 / 2 ;
+      }
+      &:nth-child(2) {
+        grid-column: 3 / 5 ;
+        grid-row: 1 / 2 ;
+      }
+      &:nth-child(3) {
+        grid-column: 1 / 3 ;
+        grid-row: 2 / 3 ;
+      }
+      &:nth-child(4) {
+        grid-column: 3 / 4 ;
+        grid-row: 2 / 3 ;
+        margin-right: -24px;
+      }
+      &:nth-child(5) {
+        grid-column: 4 / 5 ;
+        grid-row: 2 / 3 ;
+        margin-left: -24px;
+      }
+    }
+  }
+}
+
+.btn-group {
+  display: flex; gap: 30px;
+  .btn-1, .btn-2, .btn-3 {
+    display: flex; justify-content: center; align-items: center; gap: 12px;
+    cursor: pointer;
+    height: 60px;
+    width: 165px;
+    padding: 0;
+    border-radius: 15px;
+    font-size: 21px; font-weight: 500;
+    img {
+      height: 21px; width: 21px;
+    }
+    &:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+  }
+  .btn-1 {
+    border: 0;
+    background-color: $color-r1;
+    color: $color-w1;
+  }
+  .btn-2 {
+    border: 0;
+    background-color: $color-g1;
+    color: $color-w1;
+  }
+  .btn-3 {
+    border: 3px solid $color-g1;
+    background-color: $color-w1;
+    color: $color-g1;
+  }
+}
+
+.hide {
+  display: none;
+}
