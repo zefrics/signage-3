@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
+      <link rel="stylesheet" href="css/reset.css">
+      <link rel="stylesheet" href="css/basic.css">
+      <link rel="stylesheet" href="css/pretendard-subset.css">
+      <title>Digital Signage</title>
+  </head>
+  <body>
+    <header>
+      <div id="slide-edit-title" class="main-title">
+        
+      </div>
+      <div class="btn-group">
+        <a href="edit-slider.html" id="btn-back-from-slide" class="btn-1">
+          <img src="img/back.svg" alt="back">
+          <div class="text">
+            Back (<span class="countdown"></span>)
+          </div>
+        </a>
+        <button type="submit" id="btn-apply-slide" class="btn-2">
+          <img src="img/check.svg" alt="apply">
+          <div class="text">Apply</div>
+        </button>
+      </div>
+    </header>
+
+    <main>
+      <form id="slide-edit" class="section">
+        <div class="input-group">
+          <div class="input-container">
+            <h2 class="label">Test Machine</h2>
+            <input type="text" autocomplete="off" id="input-test-machine" placeholder="" maxlength="30" required>
+          </div>
+          <div class="input-container">
+            <h2 class="label">Model</h2>
+            <input type="text" autocomplete="off" id="input-model" placeholder="" maxlength="30" required>
+          </div>
+          <div class="input-container">
+            <h2 class="label">Purpose</h2>
+            <input type="text" autocomplete="off" id="input-purpose" placeholder="" maxlength="30" required>
+          </div>
+          <div class="input-container">
+            <h2 class="label">Image</h2>
+            <input type="file" autocomplete="off" id="input-slide-image">
+          </div>
+          <div class="input-container">
+            <h2 class="label">Start Date</h2>
+            <input type="date" autocomplete="off" id="input-start-date" required>
+          </div>
+          <div class="input-container">
+            <h2 class="label">End Date</h2>
+            <input type="date" autocomplete="off" id="input-end-date" required>
+          </div>
+        </div>
+      </form>
+    </main>
+  </body>
+
+  <script src="js/clock.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/timer.js"></script>
+  <script src="js/slider.js"></script>
+  <script src="js/edit-slide.js"></script>
+</html>

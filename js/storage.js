@@ -1,16 +1,17 @@
 // 로컬 스토리지를 관리하는 객체
 const storageManager = {
   // 저장 시 사용할 키(key) 정의
-  KEY: 'signageData',
+  KEY_SLIDES: 'slideData',
+  KEY_COVER: 'coverData',
 
   // 데이터를 로컬 스토리지에 저장하는 함수
   save(dataArray) {
-    localStorage.setItem(this.KEY, JSON.stringify(dataArray));
+    localStorage.setItem(this.KEY_SLIDES, JSON.stringify(dataArray));
   },
 
   // 로컬 스토리지에서 데이터를 불러오는 함수
   load() {
-    const data = localStorage.getItem(this.KEY);
+    const data = localStorage.getItem(this.KEY_SLIDES);
     return data ? JSON.parse(data) : [];
   },
 
@@ -45,7 +46,7 @@ const storageManager = {
 
   // 모든 데이터를 삭제하는 함수 (필요 시 사용)
   clear() {
-    localStorage.removeItem(this.KEY);
+    localStorage.removeItem(this.KEY_SLIDES);
   },
 
   // 변경된 순서를 저장하는 함수
@@ -60,5 +61,16 @@ const storageManager = {
       return item;
     });
     this.save(reorderedArray);
+  },
+
+  // 커버 데이터를 저장하는 함수
+  saveCoverData(coverData) {
+    localStorage.setItem(this.KEY_COVER, JSON.stringify(coverData));
+  },
+
+  // 커버 데이터를 불러오는 함수
+  loadCoverData() {
+    const data = localStorage.getItem(this.KEY_COVER);
+    return data ? JSON.parse(data) : null;
   }
 };

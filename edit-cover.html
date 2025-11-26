@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
+      <link rel="stylesheet" href="css/reset.css">
+      <link rel="stylesheet" href="css/basic.css">
+      <link rel="stylesheet" href="css/pretendard-subset.css">
+      <title>Digital Signage</title>
+  </head>
+  <body>
+    <header>
+      <div class="main-title">
+        Edit Cover
+      </div>
+      <div class="btn-group">
+        <a href="edit-slider.html" class="btn-1">
+          <img src="img/back.svg" alt="Back">
+          <div class="text">
+            Back (<span class="countdown"></span>)
+          </div>
+        </a>
+        <button type="submit" id="btn-apply-cover" class="btn-2">
+          <img src="img/check.svg" alt="apply">
+          <div class="text">Apply</div>
+        </button>
+      </div>
+    </header>
+
+    <main>
+      <form id="cover-edit" class="section">
+        <div class="input-group">
+          <div class="input-container">
+            <h2 class="label">Tester Name</h2>
+            <input type="text" autocomplete="off" id="input-tester-name" placeholder="" maxlength="30" required>
+          </div>
+          <div class="input-container">
+            <h2 class="label">Function</h2>
+            <input type="text" autocomplete="off" id="input-function" placeholder="" maxlength="60" required>
+          </div>
+          <div class="input-container">
+            <h2 class="label">Specifications</h2>
+            <input type="text" autocomplete="off" id="input-specifications" placeholder="" maxlength="60" required>
+          </div>
+        </div>
+      </form>
+    </main>
+  </body>
+
+  <script src="js/clock.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/timer.js"></script>
+  <script src="js/slider.js"></script>
+  <script src="js/edit-cover.js"></script>
+</html>
