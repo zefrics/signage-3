@@ -1,3 +1,18 @@
+// Capacitor 유틸리티 가져오기
+// Capacitor 객체가 이미 선언되지 않았을 경우에만 초기화
+if (typeof window.Capacitor === 'undefined') {
+  // 웹 브라우저 환경을 위한 Mock(가짜) 플러그인 설정
+  if (typeof capacitorExports === 'undefined') {
+    console.warn('Capacitor is not available. Using mock Capacitor object for browser testing.');
+    window.Capacitor = {
+      convertFileSrc: (path) => path // 웹에서는 경로를 그대로 반환
+    };
+  } else {
+    // 실제 기기 환경에서는 Capacitor 객체를 사용합니다.
+    window.Capacitor = capacitorExports.Capacitor;
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   const testerNameElement = document.querySelector('#tester-name');
   const functionElement = document.querySelector('#function');
@@ -16,16 +31,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // cover-view 섹션의 내용을 업데이트하는 함수
   const updateCoverView = () => {
-    const coverData = storageManager.loadCoverData();
+    // coverData가 null일 경우를 대비해 기본값을 빈 객체로 설정
+    const coverData = storageManager.loadCoverData() || {};
+
     if (testerNameElement && functionElement && specificationsElement) {
-      if (coverData) {
-        testerNameElement.textContent = coverData.testerName || '';
-        functionElement.textContent = coverData.function || '';
-        specificationsElement.textContent = coverData.specifications || '';
+      testerNameElement.textContent = coverData.testerName || '(Cover Title)';
+
+      // 이미지 표시 로직 추가
+      const coverImgSelectedFrame = document.querySelector('#cover-img-selected');
+      const coverImgDefaultFrame = document.querySelector('#cover-img-default');
+      if (coverData.imagePath && coverImgSelectedFrame && coverImgDefaultFrame) {
+        // 저장된 경로를 웹뷰가 사용할 수 있는 URL로 변환
+        coverImgSelectedFrame.querySelector('.selected').src = Capacitor.convertFileSrc(coverData.imagePath);
+        coverImgSelectedFrame.style.display = 'flex';
+        coverImgDefaultFrame.style.display = 'none';
+      } else if (coverImgSelectedFrame && coverImgDefaultFrame) {
+        // 이미지가 없을 경우
+        coverImgSelectedFrame.style.display = 'none';
+        coverImgDefaultFrame.style.display = 'flex';
+      }
+
+      // Function 데이터를 li 형태로 변환하여 기존 ul에 삽입
+      if (coverData.function && coverData.function.length > 0) {
+        functionElement.innerHTML = coverData.function.map(item => `<li class="content">${item}</li>`).join('');
       } else {
-        testerNameElement.textContent = '(Tester Name)';
-        functionElement.textContent = '(Function Content)';
-        specificationsElement.textContent = '(Specifications Content)';
+        functionElement.innerHTML = `<li class="content"></li>`;
+      }
+
+      // Specifications 데이터를 li 형태로 변환하여 기존 ul에 삽입
+      if (coverData.specifications && coverData.specifications.length > 0) {
+        specificationsElement.innerHTML = coverData.specifications.map(item => `<li class="content">${item}</li>`).join('');
+      } else {
+        specificationsElement.innerHTML = `<li class="content"></li>`;
       }
     }
   };

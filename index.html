@@ -26,13 +26,21 @@
 
         <main>
           <div id="cover-view" class="section">
-            <div class="slide-content">
-              <h2 class="label">Function</h2>
-              <p class="content" id="function"></p>
+            <div class="slide-content-container">
+              <div class="slide-content">
+                <h2 class="label">Function</h2>
+                <ul id="function"></ul>
+              </div>
+              <div class="slide-content">
+                <h2 class="label">Specifications</h2>
+                <ul id="specifications"></ul>
+              </div>
             </div>
-            <div class="slide-content">
-              <h2 class="label">Specifications</h2>
-              <p class="content" id="specifications"></p>
+            <div class="img-frame" id="cover-img-default">
+              <img src="/img/logo.svg" alt="Default Image" class="default">
+            </div>
+            <div class="img-frame" id="cover-img-selected" style="display: none;">
+              <img src="" alt="Selected Image" class="selected">
             </div>
           </div>
         </main>
@@ -56,25 +64,33 @@
 
         <main>
           <div id="slide-view" class="section">
-            <div class="slide-content">
-              <h2 class="label">Test Machine</h2>
-              <p class="content test-machine-content">
-              </p>
+            <div class="slide-content-container">
+              <div class="slide-content">
+                <h2 class="label">Test Machine</h2>
+                <p class="content test-machine-content">
+                </p>
+              </div>
+              <div class="slide-content">
+                <h2 class="label">Model</h2>
+                <p class="content model-content">
+                </p>
+              </div>
+              <div class="slide-content">
+                <h2 class="label">Purpose</h2>
+                <p class="content purpose-content">
+                </p>
+              </div>
+              <div class="slide-content">
+                <h2 class="label">Schedule</h2>
+                <p class="content schedule-content">
+                </p>
+              </div>
             </div>
-            <div class="slide-content">
-              <h2 class="label">Model</h2>
-              <p class="content model-content">
-              </p>
+            <div class="img-frame" id="slide-img-default">
+              <img src="/img/logo.svg" alt="Default Image" class="default">
             </div>
-            <div class="slide-content">
-              <h2 class="label">Purpose</h2>
-              <p class="content purpose-content">
-              </p>
-            </div>
-            <div class="slide-content">
-              <h2 class="label">Schedule</h2>
-              <p class="content schedule-content">
-              </p>
+            <div class="img-frame" id="slide-img-selected" style="display: none;">
+              <img src="" alt="Selected Image" class="selected">
             </div>
           </div>
         </main>
@@ -89,8 +105,6 @@
         </button>
       </div>
     </div>
-    
-    
   </body>
 
   <script src="js/clock.js"></script>

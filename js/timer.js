@@ -1,6 +1,6 @@
 // js/timer.js
 const timerManager = (() => {
-  const INACTIVITY_TIMEOUT = 90; // 90 Seconds
+  const INACTIVITY_TIMEOUT = 999; // 90 Seconds
   let inactivityTimer;
   let countdownInterval;
   let countdownElements;

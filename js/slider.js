@@ -1,8 +1,23 @@
+// Capacitor 유틸리티 가져오기
+// Capacitor 객체가 이미 선언되지 않았을 경우에만 초기화
+if (typeof window.Capacitor === 'undefined') {
+  // 웹 브라우저 환경을 위한 Mock(가짜) 플러그인 설정
+  if (typeof capacitorExports === 'undefined') {
+    console.warn('Capacitor is not available. Using mock Capacitor object for browser testing.');
+    window.Capacitor = {
+      convertFileSrc: (path) => path // 웹에서는 경로를 그대로 반환
+    };
+  } else {
+    // 실제 기기 환경에서는 Capacitor 객체를 사용합니다.
+    window.Capacitor = capacitorExports.Capacitor;
+  }
+}
+
 const sliderManager = {
   totalSlides: [], // 커버와 슬라이드 데이터를 모두 포함할 배열
   currentIndex: 0,
   intervalId: null,
-  slideDuration: 500000, // 5초
+  slideDuration: 5000, // 5초
   // DOM 요소 참조
   prevButton: document.querySelector('#btn-slide-prev'),
   nextButton: document.querySelector('#btn-slide-next'),
@@ -13,19 +28,53 @@ const sliderManager = {
   // 슬라이더 초기화
   init(dataArray) {
     this.stop();
-    this.addEventListeners();
 
-    // 1. 커버 데이터를 첫 번째 슬라이드로 추가
-    const coverData = storageManager.loadCoverData();
-    this.totalSlides = [{ type: 'cover', data: coverData }];
+    // 데이터가 없는 경우, 커버만 표시하고 슬라이더를 비활성화
+    if (!dataArray || dataArray.length === 0) {
+      this.totalSlides = [{ type: 'cover', data: storageManager.loadCoverData() }];
+      this.currentIndex = 0;
+      this.showSlide(this.currentIndex);
+      
+      // 슬라이더 컨트롤 숨기기
+      const controls = document.querySelector('.slider-controls');
+      if (controls) controls.style.display = 'none';
 
-    // 2. 슬라이드 데이터를 'order' 순서대로 정렬하여 추가
-    const sortedSlides = [...dataArray].sort((a, b) => a.order - b.order);
-    sortedSlides.forEach(slide => {
-      this.totalSlides.push({ type: 'slide', data: slide });
-    });
+      // "Change View" 버튼 비활성화
+      const changeViewButtons = document.querySelectorAll('.btn-4');
+      changeViewButtons.forEach(button => {
+        button.style.opacity = '0.4';
+        button.style.cursor = 'not-allowed';
+        button.addEventListener('click', (e) => e.preventDefault());
+      });
 
-    this.currentIndex = 0; // 항상 첫 번째 슬라이드(커버)에서 시작
+      return; // 슬라이더 시작하지 않고 종료
+    }
+
+    const isListPage = document.querySelector('#view-list-page');
+
+    if (isListPage) {
+      // view-list.html의 경우: [커버, 목록] 2개의 슬라이드로 구성
+      this.addEventListeners();
+      this.totalSlides = [
+        { type: 'cover', data: storageManager.loadCoverData() },
+        { type: 'list', data: null } // 목록 뷰를 위한 슬라이드
+      ];
+    } else {
+      // index.html의 경우: [커버, 슬라이드1, 슬라이드2, ...]
+      // 1. 커버 데이터를 첫 번째 슬라이드로 추가
+      this.addEventListeners();
+      const coverData = storageManager.loadCoverData();
+      this.totalSlides = [{ type: 'cover', data: coverData }];
+
+      // 2. 슬라이드 데이터를 'order' 순서대로 정렬하여 추가
+      const sortedSlides = [...dataArray].sort((a, b) => a.order - b.order);
+      sortedSlides.forEach(slide => {
+        this.totalSlides.push({ type: 'slide', data: slide });
+      });
+    }
+
+    // 데이터가 있으면 첫번째 슬라이드(index: 1)부터, 없으면 커버(index: 0)부터 시작
+    this.currentIndex = this.totalSlides.length > 1 ? 1 : 0;
 
     this.showSlide(this.currentIndex);
     this.start();
@@ -71,7 +120,7 @@ const sliderManager = {
       this.coverElement.style.display = 'block';
       this.slidesElement.style.display = 'none';
       // view-data.js의 updateCoverView가 이미 내용을 채웠으므로 여기서는 별도 작업 불필요
-    } else {
+    } else if (slideInfo.type === 'slide') {
       // 일반 슬라이드를 보여주고, 커버 슬라이드는 숨김
       this.coverElement.style.display = 'none';
       this.slidesElement.style.display = 'block';
@@ -79,6 +128,12 @@ const sliderManager = {
     }
 
     this.updateCounter();
+
+    // view-list.html의 목록 뷰 처리
+    if (slideInfo.type === 'list') {
+      this.coverElement.style.display = 'none';
+      this.slidesElement.style.display = 'block';
+    }
   },
 
   // 일반 슬라이드의 내용을 채우는 함수
@@ -94,11 +149,23 @@ const sliderManager = {
       return `${shortYear}년 ${month}월 ${day}일`;
     };
 
-    const { testMachine, model, purpose, startDate, endDate } = data;
+    const { testMachine, model, purpose, startDate, endDate, imagePath } = data;
 
     const scheduleText = (startDate || endDate)
       ? `${formatFullDate(startDate)}&nbsp;&nbsp;~&nbsp;&nbsp;${formatFullDate(endDate)}`
       : '-';
+
+    // 이미지 표시 로직 추가
+    const slideImgSelectedFrame = slideContainer.querySelector('#slide-img-selected');
+    const slideImgDefaultFrame = slideContainer.querySelector('#slide-img-default');
+    if (imagePath && slideImgSelectedFrame && slideImgDefaultFrame) {
+      slideImgSelectedFrame.querySelector('.selected').src = Capacitor.convertFileSrc(imagePath);
+      slideImgSelectedFrame.style.display = 'flex';
+      slideImgDefaultFrame.style.display = 'none';
+    } else if (slideImgSelectedFrame && slideImgDefaultFrame) {
+      slideImgSelectedFrame.style.display = 'none';
+      slideImgDefaultFrame.style.display = 'flex';
+    }
 
     // slide-view 내부의 각 p 태그에 내용 채우기
     slideContainer.querySelector('.test-machine-content').textContent = testMachine || '-';
@@ -110,8 +177,11 @@ const sliderManager = {
   // 슬라이드 카운터 업데이트
   updateCounter() {
     if (this.counterElement) {
-      const total = this.totalSlides.length;
-      const current = total > 0 ? this.currentIndex + 1 : 0;
+      // 전체 개수에서 커버는 제외
+      const total = this.totalSlides.length > 1 ? this.totalSlides.length - 1 : 0;
+      // 현재 인덱스를 그대로 사용하여 커버는 0번으로 표시
+      const current = this.currentIndex;
+
       this.counterElement.textContent = `${current} / ${total}`;
     }
   },

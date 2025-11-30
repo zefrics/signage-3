@@ -28,30 +28,36 @@
 
     <main>
       <form id="slide-edit" class="section">
-        <div class="input-group">
-          <div class="input-container">
+        <div class="input-content-group">
+          <div class="input-content">
             <h2 class="label">Test Machine</h2>
-            <input type="text" autocomplete="off" id="input-test-machine" placeholder="" maxlength="30" required>
+            <input type="text" autocomplete="off" id="input-test-machine" placeholder="필수 입력 항목입니다." maxlength="36" required>
           </div>
-          <div class="input-container">
+          <div class="input-content">
             <h2 class="label">Model</h2>
-            <input type="text" autocomplete="off" id="input-model" placeholder="" maxlength="30" required>
+            <input type="text" autocomplete="off" id="input-model" placeholder="필수 입력 항목입니다." maxlength="36" required>
           </div>
-          <div class="input-container">
+          <div class="input-content">
             <h2 class="label">Purpose</h2>
-            <input type="text" autocomplete="off" id="input-purpose" placeholder="" maxlength="30" required>
+            <input type="text" autocomplete="off" id="input-purpose" placeholder="필수 입력 항목입니다." maxlength="36" required>
           </div>
-          <div class="input-container">
+          <div class="input-content">
             <h2 class="label">Image</h2>
-            <input type="file" autocomplete="off" id="input-slide-image">
+            <div class="file-input-wrapper">
+              <div class="file-name-wrapper">
+                <span id="file-name-display">선택된 파일이 없습니다.</span>
+              </div>
+              <button type="button" id="btn-clear-image" style="display: none;">Delete</button>
+              <button type="button" id="btn-select-image">Select</button>
+            </div>
           </div>
-          <div class="input-container">
+          <div class="input-content">
             <h2 class="label">Start Date</h2>
-            <input type="date" autocomplete="off" id="input-start-date" required>
+            <input type="date" autocomplete="off" id="input-start-date" placeholder="필수 입력 항목입니다." required>
           </div>
-          <div class="input-container">
+          <div class="input-content">
             <h2 class="label">End Date</h2>
-            <input type="date" autocomplete="off" id="input-end-date" required>
+            <input type="date" autocomplete="off" id="input-end-date" placeholder="필수 입력 항목입니다." required>
           </div>
         </div>
       </form>
