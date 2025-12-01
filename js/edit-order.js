@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const applyOrderButton = document.querySelector('#btn-apply-order');
 
   let initialOrderInEdit = []; // Edit Order 모드 진입 시의 초기 순서를 저장
-  let isApplying = false; // Apply 버튼 클릭 여부 플래그
+  const isApplyingRef = { current: false }; // 페이지 이탈 방지 로직을 위한 참조 객체
 
   // settings, order-edit 섹션의 내용을 업데이트하는 함수
   const updateSettings = () => {
@@ -38,14 +38,6 @@ document.addEventListener('DOMContentLoaded', () => {
       `;
       orderEditContainer.appendChild(orderEditTableRow);
     });
-  };
-
-  // 날짜 포맷 변경 함수 (YYYY-MM-DD -> yy/mm/dd)
-  const formatDate = (dateString) => {
-    if (!dateString) return '';
-    const [year, month, day] = dateString.split('-');
-    const shortYear = year.slice(-2);
-    return `${shortYear}/${month}/${day}`;
   };
 
   // Up/Down 버튼의 활성화/비활성화 상태를 업데이트하는 함수
@@ -136,7 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // 이벤트 리스너 등록: Apply 버튼 클릭 시
   applyOrderButton.addEventListener('click', () => {
     if (confirm("변경된 순서를 적용하시겠습니까?")) {
-      isApplying = true; // 제출 시작
+      isApplyingRef.current = true; // 제출 시작
       // 현재 DOM 순서대로 data-order 값을 배열로 만듦
       const orderedIds = Array.from(orderEditContainer.querySelectorAll('.table-content'))
         .map(row => row.dataset.order);
@@ -145,30 +137,18 @@ document.addEventListener('DOMContentLoaded', () => {
       storageManager.saveOrder(orderedIds);
 
       alert('변경된 순서가 적용되었습니다.');
-      window.location.reload(); // 페이지를 새로고침하여 변경된 순서를 보여줌
+      window.location.href = 'edit-slider.html'; // 저장 후 edit-slider.html로 이동
     }
   });
 
-  // 페이지를 벗어나기 전에 변경 사항이 있는지 확인
-  window.addEventListener('beforeunload', (event) => {
+  const isOrderChanged = () => {
     // 현재 DOM 순서대로 data-order 값을 배열로 만듦
     const currentOrder = Array.from(orderEditContainer.querySelectorAll('.table-content'))
-      .map(row => row.dataset.order);
-
+      .map(row => parseInt(row.dataset.order, 10));
     // initialOrderInEdit과 현재 순서(currentOrder)를 비교
-    const isOrderChanged = !initialOrderInEdit.every((value, index) => value == currentOrder[index]);
+    return JSON.stringify(initialOrderInEdit) !== JSON.stringify(currentOrder);
+  };
 
-    // 순서가 변경되었으면 경고 메시지를 표시
-    if (isOrderChanged && !isApplying) {
-      // 경고 메시지 설정
-      const message = '순서가 변경되었습니다. 적용하지 않고 페이지를 나가시겠습니까?';
-      event.returnValue = message; // 표준
-      return message; // IE, Firefox, Safari에서 동작
-    }
-  });
-
-  // Edit Order 화면 진입 시의 초기 순서를 저장
-  initialOrderInEdit = Array.from(orderEditContainer.querySelectorAll('.table-content'))
-    .map(row => row.dataset.order);
-
+  // 페이지 이탈 방지 경고 설정
+  setupUnloadWarning(isOrderChanged, isApplyingRef);
 });

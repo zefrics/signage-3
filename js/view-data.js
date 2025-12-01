@@ -1,18 +1,3 @@
-// Capacitor 유틸리티 가져오기
-// Capacitor 객체가 이미 선언되지 않았을 경우에만 초기화
-if (typeof window.Capacitor === 'undefined') {
-  // 웹 브라우저 환경을 위한 Mock(가짜) 플러그인 설정
-  if (typeof capacitorExports === 'undefined') {
-    console.warn('Capacitor is not available. Using mock Capacitor object for browser testing.');
-    window.Capacitor = {
-      convertFileSrc: (path) => path // 웹에서는 경로를 그대로 반환
-    };
-  } else {
-    // 실제 기기 환경에서는 Capacitor 객체를 사용합니다.
-    window.Capacitor = capacitorExports.Capacitor;
-  }
-}
-
 document.addEventListener('DOMContentLoaded', () => {
   const testerNameElement = document.querySelector('#tester-name');
   const functionElement = document.querySelector('#function');
@@ -20,14 +5,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const listViewContainer = document.querySelector('#list-view-container');
   const sliderEditContainer = document.querySelector('#slider-edit-container');
-
-  // 날짜 포맷 변경 함수 (YYYY-MM-DD -> yy/mm/dd)
-  const formatDate = (dateString) => {
-    if (!dateString) return '';
-    const [year, month, day] = dateString.split('-');
-    const shortYear = year.slice(-2);
-    return `${shortYear}/${month}/${day}`;
-  };
 
   // cover-view 섹션의 내용을 업데이트하는 함수
   const updateCoverView = () => {
@@ -94,6 +71,44 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   };
 
+  // slide-view 섹션의 내용을 업데이트하는 함수 (slider.js에서 이동)
+  const updateSlideView = (data) => {
+    const slideContainer = document.querySelector('#slide-view');
+    if (!slideContainer || !data) return;
+
+    // 날짜 포맷 변경 함수 (YYYY-MM-DD -> yy년 mm월 dd일)
+    const formatFullDate = (dateString) => {
+      if (!dateString) return '';
+      const [fullYear, month, day] = dateString.split('-');
+      const shortYear = fullYear.slice(-2); // 연도의 마지막 두 자리만 추출
+      return `${shortYear}년 ${month}월 ${day}일`;
+    };
+
+    const { testMachine, model, purpose, startDate, endDate, imagePath } = data;
+
+    const scheduleText = (startDate || endDate)
+      ? `${formatFullDate(startDate)}&nbsp;&nbsp;~&nbsp;&nbsp;${formatFullDate(endDate)}`
+      : '-';
+
+    // 이미지 표시 로직
+    const slideImgSelectedFrame = slideContainer.querySelector('#slide-img-selected');
+    const slideImgDefaultFrame = slideContainer.querySelector('#slide-img-default');
+    if (imagePath && slideImgSelectedFrame && slideImgDefaultFrame) {
+      slideImgSelectedFrame.querySelector('.selected').src = Capacitor.convertFileSrc(imagePath);
+      slideImgSelectedFrame.style.display = 'flex';
+      slideImgDefaultFrame.style.display = 'none';
+    } else if (slideImgSelectedFrame && slideImgDefaultFrame) {
+      slideImgSelectedFrame.style.display = 'none';
+      slideImgDefaultFrame.style.display = 'flex';
+    }
+
+    // slide-view 내부의 각 p 태그에 내용 채우기
+    slideContainer.querySelector('.test-machine-content').textContent = testMachine || '-';
+    slideContainer.querySelector('.model-content').textContent = model || '-';
+    slideContainer.querySelector('.purpose-content').textContent = purpose || '-';
+    slideContainer.querySelector('.schedule-content').innerHTML = scheduleText;
+  };
+
   // edit-slider 섹션의 내용을 업데이트하는 함수
   const updateSliderEditView = (dataArray) => {
     if (!sliderEditContainer) return;
@@ -129,13 +144,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 페이지 로드 시 localStorage에서 데이터 불러오기
   const loadData = () => {
-    const dataArray = storageManager.load(); 
-    const slidesContainer = document.querySelector('#slides');
-    if (slidesContainer) sliderManager.init(dataArray);
-    if (listViewContainer) updateListView(dataArray);
-    if (sliderEditContainer) updateSliderEditView(dataArray);
+    const slideData = storageManager.load();
+    const coverData = storageManager.loadCoverData();
 
-    // index.html의 cover에만 적용
+    // sliderManager가 init 시점에 updateSlideView를 호출할 수 있도록 viewDataManager 객체를 먼저 생성하고 노출합니다.
+    window.viewDataManager = { updateSlideView };
+
+    const slidesContainer = document.querySelector('#slides');
+    if (slidesContainer) sliderManager.init(slideData, coverData); // coverData 전달
+    if (listViewContainer) updateListView(slideData);
+    if (sliderEditContainer) updateSliderEditView(slideData);
+
+    // index.html 또는 view-list.html의 cover에 적용
     const slideCover = document.querySelector('#cover');
     if (slideCover) updateCoverView();
   };

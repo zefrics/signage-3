@@ -1,6 +1,6 @@
 // js/timer.js
 const timerManager = (() => {
-  const INACTIVITY_TIMEOUT = 999; // 90 Seconds
+  const INACTIVITY_TIMEOUT = 99; // 90초
   let inactivityTimer;
   let countdownInterval;
   let countdownElements;
@@ -72,34 +72,36 @@ const timerManager = (() => {
       clearTimeout(inactivityTimer);
       clearInterval(countdownInterval);
       removeActivityListeners();
-    },
-    autoStart: () => { // 페이지에 따라 타이머를 자동으로 시작하는 함수
-      const path = window.location.pathname.split("/").pop();
-      let elementToMonitor = null;
-      let redirectUrl = 'index.html'; // 기본 리다이렉트 URL
-
-      if (path === 'edit-slider.html') {
-        elementToMonitor = document.querySelector('#slider-edit');
-      } else if (path === 'edit-order.html') {
-        elementToMonitor = document.querySelector('#order-edit');
-        redirectUrl = 'edit-slider.html'; // edit-order.html에서는 edit-slider.html로 이동
-      } else if (path === 'edit-slide.html') {
-        elementToMonitor = document.querySelector('#slide-edit');
-        redirectUrl = 'edit-slider.html'; // edit-slide.html에서는 edit-slider.html로 이동
-      } else if (path === 'edit-cover.html') {
-        elementToMonitor = document.querySelector('#cover-edit'); // edit-cover.html의 모니터링 요소
-        redirectUrl = 'edit-slider.html'; // edit-cover.html에서는 edit-slider.html로 이동
-      }
-
-      if (elementToMonitor) {
-        timerManager.init(() => {
-          window.location.href = redirectUrl; // 타임아웃 시 지정된 URL로 리다이렉트
-        });
-        timerManager.start([elementToMonitor]);
-      }
     }
   };
 })();
 
 // DOM이 로드되면 타이머 자동 시작 로직 실행
-document.addEventListener('DOMContentLoaded', timerManager.autoStart);
+document.addEventListener('DOMContentLoaded', () => {
+  // 페이지 경로에 따라 타이머를 자동으로 시작하는 로직
+  const path = window.location.pathname.split("/").pop();
+  let elementToMonitor = null;
+  let redirectUrl = 'index.html'; // 기본 리다이렉트 URL
+
+  if (path === 'edit-slider.html') {
+    elementToMonitor = document.querySelector('#slider-edit');
+  } else if (path === 'edit-order.html') {
+    elementToMonitor = document.querySelector('#order-edit');
+    redirectUrl = 'edit-slider.html';
+  } else if (path === 'edit-slide.html') {
+    elementToMonitor = document.querySelector('#slide-edit');
+    redirectUrl = 'edit-slider.html';
+  } else if (path === 'edit-cover.html') {
+    elementToMonitor = document.querySelector('#cover-edit');
+    redirectUrl = 'edit-slider.html';
+  }
+
+  if (elementToMonitor) {
+    // 1. 타임아웃 시 실행할 동작을 정의하여 타이머 초기화
+    timerManager.init(() => {
+      window.location.href = redirectUrl;
+    });
+    // 2. 모니터링할 요소를 지정하여 타이머 시작
+    timerManager.start([elementToMonitor]);
+  }
+});

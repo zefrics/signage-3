@@ -1,32 +1,3 @@
-// Capacitor 플러그인 가져오기
-// Capacitor 플러그인 객체가 이미 선언되지 않았을 경우에만 초기화
-if (typeof window.Camera === 'undefined') {
-  // 웹 브라우저 환경을 위한 Mock(가짜) 플러그인 설정
-  if (typeof capacitorExports === 'undefined') {
-    console.warn('Capacitor is not available. Using mock plugins for browser testing.');
-    window.Camera = {
-      getPhoto: async () => {
-        const fakePath = prompt('Mock Image Path:', '/img/test.JPG');
-        if (!fakePath) throw new Error('User cancelled photos app');
-        return { webPath: fakePath };
-      }
-    };
-    window.CameraResultType = { Uri: 'uri' };
-    window.CameraSource = { Photos: 'PHOTOS' };
-    window.Filesystem = {
-      copy: async ({ from }) => ({ uri: from })
-    };
-    window.Directory = { Data: 'DATA' };
-  } else {
-    // 실제 기기 환경에서는 Capacitor 플러그인을 사용합니다.
-    window.Camera = capacitorExports.Camera.Camera;
-    window.CameraResultType = capacitorExports.Camera.CameraResultType;
-    window.CameraSource = capacitorExports.Camera.CameraSource;
-    window.Filesystem = capacitorExports.Filesystem.Filesystem;
-    window.Directory = capacitorExports.Filesystem.Directory;
-  }
-}
-
 document.addEventListener('DOMContentLoaded', () => {
   const coverEditForm = document.querySelector('#cover-edit');
 
@@ -177,7 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
       );
     };
 
-    let isSubmitting = false; // Apply 버튼 클릭 여부 플래그
+    const isSubmittingRef = { current: false }; // 페이지 이탈 방지 로직을 위한 참조 객체
 
     // 적용 버튼 클릭 이벤트
     applyButton.addEventListener('click', async (event) => {
@@ -189,7 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       if (confirm("작성하신 내용을 적용하시겠습니까?")) {
-        isSubmitting = true; // 제출 시작
+        isSubmittingRef.current = true; // 제출 시작
 
         // 새로운 이미지가 선택된 경우에만 파일 복사 및 경로 업데이트
         if (tempImage.path && tempImage.name) {
@@ -228,15 +199,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    // 페이지를 벗어나기 전에 변경 사항이 있는지 확인
-    window.addEventListener('beforeunload', (event) => {
-      // Apply 버튼을 통한 제출이 아니고, 폼 내용이 변경되었을 경우
-      if (!isSubmitting && isFormChanged()) {
-        // 경고 메시지 설정
-        const message = '변경사항이 있습니다. 적용하지 않고 페이지를 나가시겠습니까?';
-        event.returnValue = message; // 표준
-        return message; // 일부 오래된 브라우저 지원
-      }
-    });
+    // 페이지 이탈 방지 경고 설정
+    setupUnloadWarning(isFormChanged, isSubmittingRef);
   }
 });
