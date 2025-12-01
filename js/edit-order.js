@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   // DOM 요소 참조
   const orderEditContainer = document.querySelector('#order-edit-container');
+  const backButton = document.querySelector('#btn-back');
   const orderUpButton = document.querySelector('#btn-order-up');
   const orderDownButton = document.querySelector('#btn-order-down');
   const applyOrderButton = document.querySelector('#btn-apply-order');
@@ -149,6 +150,14 @@ document.addEventListener('DOMContentLoaded', () => {
     return JSON.stringify(initialOrderInEdit) !== JSON.stringify(currentOrder);
   };
 
-  // 페이지 이탈 방지 경고 설정
-  setupUnloadWarning(isOrderChanged, isApplyingRef);
+  // Back 버튼 클릭 이벤트
+  backButton.addEventListener('click', () => {
+    if (isOrderChanged()) {
+      if (confirm('변경사항이 저장되지 않았습니다. 정말로 페이지를 나가시겠습니까?')) {
+        window.location.href = 'edit-slider.html';
+      }
+    } else {
+      window.location.href = 'edit-slider.html';
+    }
+  });
 });

@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // edit-slide.html의 이벤트 처리
   if (slideEditForm) {
     const slideEditTitle = document.querySelector('#slide-edit-title');
-    const applySlideButton = document.querySelector('#btn-apply-slide');
+    const backButton = document.querySelector('#btn-back');
     const testMachineInput = document.querySelector('#input-test-machine');
     const modelInput = document.querySelector('#input-model');
     const purposeInput = document.querySelector('#input-purpose');
@@ -193,7 +193,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const isSubmittingRef = { current: false }; // 페이지 이탈 방지 로직을 위한 참조 객체
 
     // 적용 버튼 클릭 이벤트
-    applySlideButton.addEventListener('click', async (event) => {
+    slideEditForm.addEventListener('submit', async (event) => {
       event.preventDefault(); // 기본 제출 동작 방지
 
       if (!slideEditForm.checkValidity()) {
@@ -245,7 +245,15 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    // 페이지 이탈 방지 경고 설정
-    setupUnloadWarning(isFormChanged, isSubmittingRef);
+    // Back 버튼 클릭 이벤트
+    backButton.addEventListener('click', () => {
+      if (isFormChanged()) {
+        if (confirm('변경사항이 저장되지 않았습니다. 정말로 페이지를 나가시겠습니까?')) {
+          window.location.href = 'edit-slider.html';
+        }
+      } else {
+        window.location.href = 'edit-slider.html';
+      }
+    });
   }
 });

@@ -51,20 +51,5 @@ const formatDate = (dateString) => {
   return `${shortYear}/${month}/${day}`;
 };
 
-/**
- * 폼 변경사항이 있을 때 페이지 이탈을 방지하는 경고창을 설정합니다.
- * @param {function} isChangedFn - 변경 여부를 확인하는 함수 (true/false 반환)
- * @param {object} isSubmittingRef - { current: boolean } 형태의 참조 객체
- */
-const setupUnloadWarning = (isChangedFn, isSubmittingRef) => {
-  window.addEventListener('beforeunload', (event) => {
-    if (!isSubmittingRef.current && isChangedFn()) {
-      const message = '변경사항이 있습니다. 적용하지 않고 페이지를 나가시겠습니까?';
-      event.returnValue = message;
-      return message;
-    }
-  });
-};
-
 // 스크립트 로드 시 즉시 Capacitor 초기화 실행
 initializeCapacitor();
