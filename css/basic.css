@@ -90,8 +90,9 @@ header .main-title#tester-name {
   background-color: rgba(240, 78, 35, 0.05);
 }
 .slider #cover-view .img-frame .default, .slider #slide-view .img-frame .default {
-  width: 50%;
+  width: 35%;
   height: auto;
+  opacity: 0.6;
 }
 .slider #cover-view .img-frame .selected, .slider #slide-view .img-frame .selected {
   height: 100%;
