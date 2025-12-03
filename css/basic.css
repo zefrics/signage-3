@@ -66,14 +66,15 @@ header .main-title#tester-name {
   margin-bottom: -6px;
 }
 .slider #cover-view .slide-content-container .slide-content .label, .slider #slide-view .slide-content-container .slide-content .label {
-  margin-bottom: 10.5px;
+  margin-bottom: 7.5px;
   font-size: 24px;
   font-weight: 400;
   color: rgba(240, 78, 35, 0.75);
 }
 .slider #cover-view .slide-content-container .slide-content .content, .slider #slide-view .slide-content-container .slide-content .content {
-  font-size: 48px;
+  font-size: 45px;
   font-weight: 600;
+  line-height: 54px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -105,7 +106,7 @@ header .main-title#tester-name {
   -webkit-user-drag: none;
 }
 .slider #cover-view#cover-view .slide-content-container .slide-content, .slider #slide-view#cover-view .slide-content-container .slide-content {
-  height: 285.5px;
+  height: 270.5px;
 }
 .slider #cover-view#cover-view .slide-content-container .slide-content ul, .slider #slide-view#cover-view .slide-content-container .slide-content ul {
   display: flex;
@@ -119,7 +120,7 @@ header .main-title#tester-name {
 .slider .slider-controls {
   position: absolute;
   top: 15px;
-  right: 405px;
+  right: 435px;
   display: flex;
   align-items: center;
   gap: 6px;

@@ -115,6 +115,18 @@ document.addEventListener('DOMContentLoaded', () => {
       };
     }
 
+    // 한글 입력 시 maxlength가 적용되지 않는 현상 방지
+    const inputsWithMaxLength = slideEditForm.querySelectorAll('input[maxlength]');
+    inputsWithMaxLength.forEach(input => {
+      input.addEventListener('input', () => {
+        const maxLength = parseInt(input.getAttribute('maxlength'), 10);
+        if (input.value.length > maxLength) {
+          input.value = input.value.substring(0, maxLength);
+          // 사용자에게 입력이 잘렸음을 알리는 시각적 피드백을 추가할 수도 있습니다.
+        }
+      });
+    });
+
     // 폼의 변경 여부를 확인하는 함수
     const isFormChanged = () => {
       return (

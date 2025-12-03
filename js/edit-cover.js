@@ -58,11 +58,23 @@ document.addEventListener('DOMContentLoaded', () => {
       };
     }
 
-    // Slide Duration 입력 필드에 소수점 입력을 방지하는 이벤트 리스너 추가
+    // Slide Duration 입력 필드에 소수점, 빼기, 공백 입력을 방지하는 이벤트 리스너 추가
     slideDurationInput.addEventListener('keydown', (event) => {
-      if (event.key === '.') {
+      if (event.key === '.' || event.key === '-' || event.key === ' ') {
         event.preventDefault();
       }
+    });
+
+    // 한글 입력 시 maxlength가 적용되지 않는 현상 방지
+    const inputsWithMaxLength = coverEditForm.querySelectorAll('input[maxlength]');
+    inputsWithMaxLength.forEach(input => {
+      input.addEventListener('input', () => {
+        const maxLength = parseInt(input.getAttribute('maxlength'), 10);
+        if (input.value.length > maxLength) {
+          input.value = input.value.substring(0, maxLength);
+          // 사용자에게 입력이 잘렸음을 알리는 시각적 피드백을 추가할 수도 있습니다.
+        }
+      });
     });
 
     // 이미지 선택 버튼 클릭 이벤트
