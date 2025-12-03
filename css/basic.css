@@ -23,6 +23,7 @@ header .logo-container .logo {
   margin-left: 6px;
   height: 45px;
   width: auto;
+  -webkit-user-drag: none;
 }
 header .logo-container .date {
   font-size: 18px;
@@ -92,6 +93,7 @@ header .main-title#tester-name {
   width: 35%;
   height: auto;
   opacity: 0.6;
+  -webkit-user-drag: none;
 }
 .slider #cover-view .img-frame .selected, .slider #slide-view .img-frame .selected {
   height: 100%;
@@ -100,6 +102,7 @@ header .main-title#tester-name {
      object-fit: cover;
   -o-object-position: center;
      object-position: center;
+  -webkit-user-drag: none;
 }
 .slider #cover-view#cover-view .slide-content-container .slide-content, .slider #slide-view#cover-view .slide-content-container .slide-content {
   height: 285.5px;

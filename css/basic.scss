@@ -89,6 +89,7 @@ header {
     .logo {
       margin-left: 6px;
       height: 45px; width: auto;
+      -webkit-user-drag: none;
     }
     .date {
       font-size: $fs-date;
@@ -154,10 +155,12 @@ header {
       .default {
         width: 35%; height: auto;
         opacity: 0.6;
+        -webkit-user-drag: none;
       }
       .selected {
         height: 100%; width: 100%;
         object-fit: cover; object-position: center;
+        -webkit-user-drag: none;
       }
     }
     &#cover-view {
