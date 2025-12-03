@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const { testMachine, model, purpose, startDate, endDate, imagePath } = data;
 
     const scheduleText = (startDate || endDate)
-      ? `${formatFullDate(startDate)}&nbsp;&nbsp;~&nbsp;&nbsp;${formatFullDate(endDate)}`
+      ? `${formatFullDate(startDate)}&nbsp;~&nbsp;${formatFullDate(endDate)}`
       : '-';
 
     // 이미지 표시 로직
