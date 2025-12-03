@@ -120,7 +120,7 @@ header .main-title#tester-name {
 .slider .slider-controls {
   position: absolute;
   top: 15px;
-  right: 435px;
+  right: 420px;
   display: flex;
   align-items: center;
   gap: 6px;

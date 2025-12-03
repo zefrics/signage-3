@@ -58,11 +58,9 @@ document.addEventListener('DOMContentLoaded', () => {
       };
     }
 
-    // Slide Duration 입력 필드에 소수점, 빼기, 공백 입력을 방지하는 이벤트 리스너 추가
-    slideDurationInput.addEventListener('keydown', (event) => {
-      if (event.key === '.' || event.key === '-' || event.key === ' ') {
-        event.preventDefault();
-      }
+    // Slide Duration 입력 필드에 숫자만 입력되도록 input 이벤트를 사용합니다.
+    slideDurationInput.addEventListener('input', () => {
+      slideDurationInput.value = slideDurationInput.value.replace(/[^0-9]/g, '');
     });
 
     // 한글 입력 시 maxlength가 적용되지 않는 현상 방지
