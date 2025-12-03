@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
+      <link rel="stylesheet" href="css/reset.css">
+      <link rel="stylesheet" href="css/basic.css">
+      <link rel="stylesheet" href="css/pretendard-subset.css">
+      <title>Digital Signage</title>
+  </head>
+  <body>
+    <header>
+      <div class="main-title">
+        Edit Timer
+      </div>
+      <div class="btn-group">
+        <button type="button" id="btn-back" class="btn-1">
+          <img src="img/back.svg" alt="back">
+          <div class="text">
+            Back (<span class="countdown"></span>)
+          </div>
+        </button>
+        <button type="submit" id="btn-apply-timer" form="timer-edit" class="btn-2">
+          <img src="img/check.svg" alt="apply">
+          <div class="text">Apply</div>
+        </button>
+      </div>
+    </header>
+
+    <main>
+      <form id="timer-edit" class="section">
+        <div class="input-content-group">
+          <div class="input-content">
+            <h2 class="label">Slider (1 ~ 99 Seconds)</h2>
+            <input type="text" inputmode="numeric" autocomplete="off" id="input-slider-timer" placeholder="1 ~ 99 사이의 숫자를 입력하세요." minlength="1" maxlength="2" required>
+          </div>
+          <div class="input-content">
+            <h2 class="label">Home Button (1 ~ 99 Seconds)</h2>
+            <input type="text" inputmode="numeric" autocomplete="off" id="input-home-timer" placeholder="1 ~ 99 사이의 숫자를 입력하세요." minlength="1" maxlength="2" required>
+          </div>
+          <div class="input-content">
+            <h2 class="label">Back Button (1 ~ 99 Seconds)</h2>
+            <input type="text" inputmode="numeric" autocomplete="off" id="input-back-timer" placeholder="1 ~ 99 사이의 숫자를 입력하세요." minlength="1" maxlength="2" required>
+          </div>
+        </div>
+      </form>
+    </main>
+  </body>
+
+  <script type="module" src="https://unpkg.com/@capacitor/core@latest/dist/capacitor.js"></script>
+  <script src="js/clock.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/edit-timer.js"></script>
+  <script src="js/edit-slide.js"></script>
+</html>

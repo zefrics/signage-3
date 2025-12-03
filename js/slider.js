@@ -14,13 +14,10 @@ const sliderManager = {
   init(slideData, coverData) {
     this.stop();
     
-    // coverData에 slideDuration이 항상 존재하므로, 그 값을 사용.
-    // coverData에서 slideDuration을 가져와서 설정 (값이 없으면 기본값 5초 사용)
-    // coverData.slideDuration은 초 단위이므로 1000을 곱해 ms로 변환
-    this.slideDuration = (coverData && coverData.slideDuration)
-      ? parseInt(coverData.slideDuration, 10) * 1000
-      : 5000; // coverData가 없는 극단적인 경우를 대비한 최종 안전장치
-
+    // 로컬 스토리지에서 타이머 설정을 불러옴
+    const timerSettings = storageManager.loadTimerSettings();
+    // sliderTimer 값이 있으면 해당 값을 초 단위로 변환하여 사용하고, 없으면 5초(5000ms)를 기본값으로 사용
+    this.slideDuration = timerSettings && timerSettings.sliderTimer ? parseInt(timerSettings.sliderTimer, 10) * 1000 : 5000;
     // 데이터가 없는 경우, 커버만 표시하고 슬라이더를 비활성화
     if (!slideData || slideData.length === 0) {
       this.totalSlides = [{ type: 'cover', data: coverData }];

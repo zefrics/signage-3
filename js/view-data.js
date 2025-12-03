@@ -9,10 +9,10 @@ document.addEventListener('DOMContentLoaded', () => {
   // cover-view 섹션의 내용을 업데이트하는 함수
   const updateCoverView = () => {
     // coverData가 null일 경우를 대비해 기본값을 빈 객체로 설정
-    const coverData = storageManager.loadCoverData() || {};
+    const coverData = storageManager.loadCoverData();
 
-    if (testerNameElement && functionElement && specificationsElement) {
-      testerNameElement.textContent = coverData.testerName || '(Cover Title)';
+    if (coverData && testerNameElement && functionElement && specificationsElement) {
+      testerNameElement.textContent = coverData.testerName;
 
       // 이미지 표시 로직 추가
       const coverImgSelectedFrame = document.querySelector('#cover-img-selected');
@@ -30,16 +30,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Function 데이터를 li 형태로 변환하여 기존 ul에 삽입
       if (coverData.function && coverData.function.length > 0) {
-        functionElement.innerHTML = coverData.function.map(item => `<li class="content">${item}</li>`).join('');
+        functionElement.innerHTML = coverData.function.filter(Boolean).map(item => `<li class="content">${item}</li>`).join('');
       } else {
-        functionElement.innerHTML = `<li class="content"></li>`;
+        functionElement.innerHTML = '';
       }
 
       // Specifications 데이터를 li 형태로 변환하여 기존 ul에 삽입
       if (coverData.specifications && coverData.specifications.length > 0) {
-        specificationsElement.innerHTML = coverData.specifications.map(item => `<li class="content">${item}</li>`).join('');
+        specificationsElement.innerHTML = coverData.specifications.filter(Boolean).map(item => `<li class="content">${item}</li>`).join('');
       } else {
-        specificationsElement.innerHTML = `<li class="content"></li>`;
+        specificationsElement.innerHTML = '';
       }
     }
   };

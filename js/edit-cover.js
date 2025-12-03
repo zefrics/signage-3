@@ -4,9 +4,8 @@ document.addEventListener('DOMContentLoaded', () => {
   if (coverEditForm) {
     const backButton = document.querySelector('#btn-back');
     const testerNameInput = document.querySelector('#input-tester-name');
-    const slideDurationInput = document.querySelector('#input-slide-duration');
-    const functionInputs = document.querySelectorAll('[id^="input-function-"]'); // 이 부분은 이전 로직을 유지합니다.
-    const specificationsInputs = document.querySelectorAll('[id^="input-specifications-"]'); // 이 부분은 이전 로직을 유지합니다.
+    const functionInputs = document.querySelectorAll('[id^="input-function-"]');
+    const specificationsInputs = document.querySelectorAll('[id^="input-specifications-"]');
     const imageSelectButton = document.querySelector('#btn-select-image');
     const imageClearButton = document.querySelector('#btn-clear-image');
     const fileNameDisplay = document.querySelector('#file-name-display');
@@ -15,53 +14,41 @@ document.addEventListener('DOMContentLoaded', () => {
     
     let initialData = {}; // 초기 데이터를 저장할 객체
 
-    // 기존 커버 데이터 불러오기
-    const existingCoverData = storageManager.loadCoverData();
-    if (existingCoverData) {
-      testerNameInput.value = existingCoverData.testerName || '';
-      slideDurationInput.value = existingCoverData.slideDuration || '5';
-      // 저장된 이미지 경로가 있으면 파일명 표시
-      if (existingCoverData.imagePath) {
-        const pathParts = existingCoverData.imagePath.split('/');
-        fileNameDisplay.textContent = pathParts.pop();
-        fileNameDisplay.classList.add('file-selected');
-        // Delete 버튼은 보이고, Select 버튼은 숨김
-        imageClearButton.style.display = 'flex';
-        imageSelectButton.style.display = 'none';
-      }
-      savedImagePath = existingCoverData.imagePath || null; // 저장된 이미지 경로 불러오기
+    // 기본값 정의
+    const defaultCoverData = {
+      testerName: '(Tester Name)',
+      imagePath: null,
+      function: ['(Function #1)', '', ''],
+      specifications: ['(Specifications #1)', '', ''],
+    };
 
-      // Function 및 Specifications 데이터 채우기 (배열 형태)
-      (existingCoverData.function || []).forEach((value, index) => {
-        if (functionInputs[index]) functionInputs[index].value = value;
-      });
-      (existingCoverData.specifications || []).forEach((value, index) => {
-        if (specificationsInputs[index]) specificationsInputs[index].value = value;
-      });
+    // 저장된 데이터 불러오기
+    const savedCoverData = storageManager.loadCoverData() || {};
 
-      initialData = {
-        testerName: existingCoverData.testerName || '',
-        slideDuration: existingCoverData.slideDuration || '5',
-        imagePath: existingCoverData.imagePath || null,
-        function: Array.from(functionInputs).map(input => input.value.trim()),
-        specifications: Array.from(specificationsInputs).map(input => input.value.trim()),
-      };
-    } else {
-      // 새 커버 데이터의 경우, slideDuration 기본값을 '5'로 설정
-      slideDurationInput.value = '5';
-      initialData = {
-        testerName: '',
-        slideDuration: '5',
-        imagePath: null,
-        function: Array(functionInputs.length).fill(''),
-        specifications: Array(specificationsInputs.length).fill(''),
-      };
+    // 기본값과 저장된 값을 병합하여 최종값 결정 (저장된 값이 우선)
+    // function과 specifications는 배열 길이를 유지하며 병합
+    const finalCoverData = {
+      ...defaultCoverData,
+      ...savedCoverData,
+      function: (savedCoverData.function || []).concat(defaultCoverData.function.slice((savedCoverData.function || []).length)),
+      specifications: (savedCoverData.specifications || []).concat(defaultCoverData.specifications.slice((savedCoverData.specifications || []).length)),
+    };
+
+    // 최종값으로 입력 필드 채우기 및 스토리지 업데이트
+    testerNameInput.value = finalCoverData.testerName;
+    finalCoverData.function.forEach((val, i) => functionInputs[i] && (functionInputs[i].value = val));
+    finalCoverData.specifications.forEach((val, i) => specificationsInputs[i] && (specificationsInputs[i].value = val));
+    storageManager.saveCoverData(finalCoverData);
+
+    // 이미지 데이터 처리
+    savedImagePath = finalCoverData.imagePath;
+    if (savedImagePath) {
+      const pathParts = savedImagePath.split('/');
+      fileNameDisplay.textContent = pathParts.pop();
+      fileNameDisplay.classList.add('file-selected');
+      imageClearButton.style.display = 'flex';
+      imageSelectButton.style.display = 'none';
     }
-
-    // Slide Duration 입력 필드에 숫자만 입력되도록 input 이벤트를 사용합니다.
-    slideDurationInput.addEventListener('input', () => {
-      slideDurationInput.value = slideDurationInput.value.replace(/[^0-9]/g, '');
-    });
 
     // 한글 입력 시 maxlength가 적용되지 않는 현상 방지
     const inputsWithMaxLength = coverEditForm.querySelectorAll('input[maxlength]');
@@ -145,7 +132,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
       return (
         initialData.testerName !== testerNameInput.value.trim() ||
-        initialData.slideDuration !== slideDurationInput.value ||
         (tempImage.path !== null || initialData.imagePath !== savedImagePath) || // 이미지 변경 감지
         JSON.stringify(initialData.function) !== JSON.stringify(currentFunctionValues) ||
         JSON.stringify(initialData.specifications) !== JSON.stringify(currentSpecificationsValues)
@@ -191,7 +177,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const coverData = {
           testerName: testerNameInput.value.trim(),
-          slideDuration: slideDurationInput.value,
           imagePath: savedImagePath, // 최종 이미지 경로 저장
           function: functionValues,
           specifications: specificationsValues,
@@ -208,10 +193,10 @@ document.addEventListener('DOMContentLoaded', () => {
     backButton.addEventListener('click', () => {
       if (isFormChanged()) {
         if (confirm('변경사항이 저장되지 않았습니다. 정말로 페이지를 나가시겠습니까?')) {
-          window.location.href = 'edit-slider.html';
+          window.location.href = 'settings.html';
         }
       } else {
-        window.location.href = 'edit-slider.html';
+        window.location.href = 'settings.html';
       }
     });
   }

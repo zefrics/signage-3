@@ -1,12 +1,12 @@
-$fs-main-title: 54px; // Main Title 폰트 사이즈
+$fs-main-title: 60px; // Main Title 폰트 사이즈
 $fw-main-title: 800; // Main Title 폰트 웨이트
 
 $fs-slide-label: 24px; // Slide View Label 폰트 사이즈
 $fw-slide-label: 400; // Slide View Label 폰트 웨이트
 
-$fs-slide-content: 45px; // Slide View Content 폰트 사이즈
+$fs-slide-content: 54px; // Slide View Content 폰트 사이즈
 $fw-slide-content: 600; // Slide View Content 폰트 웨이트
-$lh-slide-content: 54px; // Slide View Line Height
+$lh-slide-content: 64.5px; // Slide View Line Height
 
 $fs-list-title: 18px; // List View Title 폰트 사이즈
 $fw-list-title: 500; // List View Title 폰트 웨이트
@@ -131,7 +131,7 @@ header {
       margin-bottom: -6px;
       .slide-content {
         .label {
-          margin-bottom: 7.5px;
+          margin-bottom: 9px;
           font-size: $fs-slide-label;
           font-weight: $fw-slide-label;
           color: $color-r3;
@@ -168,9 +168,9 @@ header {
     &#cover-view {
       .slide-content-container {
         .slide-content {
-          height: 270.5px;
+          height: 249.5px;
           ul {
-            display: flex; flex-direction: column; gap: 6px;
+            display: flex; flex-direction: column; gap: 9px;
             li::before {
               content: "·";
               margin-right: 18px;
@@ -354,11 +354,11 @@ form {
   border: 3px solid $color-g5;
   .input-content-group {
     display: grid; grid-template-columns: repeat(3, 1fr);
-    column-gap: 60px; row-gap: 34.5px;
+    column-gap: 60px; row-gap: 45px;
     .input-content {
       min-width: 0;
       .label {
-        margin-bottom: 9px;
+        margin-bottom: 12px;
         font-size: $fs-edit-label; line-height: 21px;
         font-weight: $fw-edit-label;
         color: $color-k1;
@@ -434,26 +434,31 @@ form {
       &:nth-child(2) {
         grid-column: 1 / 2; grid-row: 2 / 3;
       }
-      &:nth-child(3) {
-        grid-column: 1 / 2;
-        grid-row: 3 / 4;
-      }
-      &:nth-child(4), &:nth-child(5) {
+      &:nth-child(3), &:nth-child(4) {
         display: flex;
         flex-direction: column;
       }
-      &:nth-child(4) {
+      &:nth-child(3) {
         grid-column: 2 / 3;
-        grid-row: 1 / 4;
+        grid-row: 1 / 3;
       }
-      &:nth-child(5) {
+      &:nth-child(4) {
         grid-column: 3 / 4;
-        grid-row: 1 / 4;
+        grid-row: 1 / 3;
       }
       .input-group {
         flex-grow: 1; /* 남은 공간을 모두 차지하도록 설정 */
         display: flex; flex-direction: column;
         justify-content: space-between;
+        .input-dot {
+          display: flex; align-items: center;
+          &::before {
+            content: '·';
+            margin-left: 9px;
+            margin-right: 18px;
+            font-size: 30px;
+          }
+        }
       }
     }
   }

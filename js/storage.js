@@ -6,6 +6,7 @@ const storageManager = {
   // 저장 시 사용할 키(key) 정의
   KEY_SLIDES: 'slideData',
   KEY_COVER: 'coverData',
+  KEY_TIMERS: 'timerSettings',
 
   /**
    * 슬라이드 데이터 배열을 로컬 스토리지에 저장합니다.
@@ -101,5 +102,22 @@ const storageManager = {
   loadCoverData() {
     const data = localStorage.getItem(this.KEY_COVER);
     return data ? JSON.parse(data) : null;
+  },
+
+  /**
+   * 타이머 설정(슬라이더, 홈, 뒤로가기)을 로컬 스토리지에 저장합니다.
+   * @param {Object} timerSettings - 저장할 타이머 설정 객체
+   */
+  saveTimerSettings(timerSettings) {
+    localStorage.setItem(this.KEY_TIMERS, JSON.stringify(timerSettings));
+  },
+
+  /**
+   * 로컬 스토리지에서 타이머 설정을 불러옵니다.
+   * @returns {Object} 저장된 타이머 설정 객체. 데이터가 없으면 빈 객체를 반환합니다.
+   */
+  loadTimerSettings() {
+    const data = localStorage.getItem(this.KEY_TIMERS);
+    return data ? JSON.parse(data) : {};
   }
 };

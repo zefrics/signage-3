@@ -138,7 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
       storageManager.saveOrder(orderedIds);
 
       alert('변경된 순서가 적용되었습니다.');
-      window.location.href = 'edit-slider.html'; // 저장 후 edit-slider.html로 이동
+      window.location.href = 'settings.html'; // 저장 후 settings.html로 이동
     }
   });
 
@@ -153,11 +153,11 @@ document.addEventListener('DOMContentLoaded', () => {
   // Back 버튼 클릭 이벤트
   backButton.addEventListener('click', () => {
     if (isOrderChanged()) {
-      if (confirm('변경사항이 저장되지 않았습니다. 정말로 페이지를 나가시겠습니까?')) {
-        window.location.href = 'edit-slider.html';
+      if (confirm('변경사항이 저장되지 않았습니다. 정말로 페이지를 나가시겠습니까?')) { 
+        window.location.href = 'settings.html';
       }
     } else {
-      window.location.href = 'edit-slider.html';
+      window.location.href = 'settings.html';
     }
   });
 });
