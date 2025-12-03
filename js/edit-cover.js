@@ -58,6 +58,13 @@ document.addEventListener('DOMContentLoaded', () => {
       };
     }
 
+    // Slide Duration 입력 필드에 소수점 입력을 방지하는 이벤트 리스너 추가
+    slideDurationInput.addEventListener('keydown', (event) => {
+      if (event.key === '.') {
+        event.preventDefault();
+      }
+    });
+
     // 이미지 선택 버튼 클릭 이벤트
     imageSelectButton.addEventListener('click', async (event) => {
       try {
