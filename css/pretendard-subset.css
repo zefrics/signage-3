@@ -11,26 +11,26 @@ http://scripts.sil.org/OFL
 	font-family: 'Pretendard';
 	font-weight: 800;
 	font-display: swap;
-	src: local('Pretendard ExtraBold'), url(./font/Pretendard-ExtraBold.subset.woff2) format('woff2'), url(./font/Pretendard-ExtraBold.subset.woff) format('woff');
+	src: local('Pretendard ExtraBold'), url(../font/Pretendard-ExtraBold.subset.woff2) format('woff2'), url(../font/Pretendard-ExtraBold.subset.woff) format('woff');
 }
 
 @font-face {
 	font-family: 'Pretendard';
 	font-weight: 600;
 	font-display: swap;
-	src: local('Pretendard SemiBold'), url(./font/Pretendard-SemiBold.subset.woff2) format('woff2'), url(./font/Pretendard-SemiBold.subset.woff) format('woff');
+	src: local('Pretendard SemiBold'), url(../font/Pretendard-SemiBold.subset.woff2) format('woff2'), url(../font/Pretendard-SemiBold.subset.woff) format('woff');
 }
 
 @font-face {
 	font-family: 'Pretendard';
 	font-weight: 400;
 	font-display: swap;
-	src: local('Pretendard Regular'), url(./font/Pretendard-Regular.subset.woff2) format('woff2'), url(./font/Pretendard-Regular.subset.woff) format('woff');
+	src: local('Pretendard Regular'), url(../font/Pretendard-Regular.subset.woff2) format('woff2'), url(../font/Pretendard-Regular.subset.woff) format('woff');
 }
 
 @font-face {
 	font-family: 'Pretendard';
 	font-weight: 300;
 	font-display: swap;
-	src: local('Pretendard Light'), url(./font/Pretendard-Light.subset.woff2) format('woff2'), url(./font/Pretendard-Light.subset.woff) format('woff');
+	src: local('Pretendard Light'), url(../font/Pretendard-Light.subset.woff2) format('woff2'), url(../font/Pretendard-Light.subset.woff) format('woff');
 }
