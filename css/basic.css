@@ -111,7 +111,7 @@ header .main-title#tester-name {
 .slider #cover-view#cover-view .slide-content-container .slide-content ul, .slider #slide-view#cover-view .slide-content-container .slide-content ul {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 15px;
 }
 .slider #cover-view#cover-view .slide-content-container .slide-content ul li::before, .slider #slide-view#cover-view .slide-content-container .slide-content ul li::before {
   content: "·";
