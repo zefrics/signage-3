@@ -4,9 +4,9 @@ $fw-main-title: 800; // Main Title 폰트 웨이트
 $fs-slide-label: 24px; // Slide View Label 폰트 사이즈
 $fw-slide-label: 400; // Slide View Label 폰트 웨이트
 
-$fs-slide-content: 51px; // Slide View Content 폰트 사이즈
+$fs-slide-content: 49.5px; // Slide View Content 폰트 사이즈
 $fw-slide-content: 600; // Slide View Content 폰트 웨이트
-$lh-slide-content: 61px; // Slide View Line Height
+$lh-slide-content: 59px; // Slide View Line Height
 
 $fs-list-title: 18px; // List View Title 폰트 사이즈
 $fw-list-title: 500; // List View Title 폰트 웨이트
@@ -168,9 +168,9 @@ header {
     &#cover-view {
       .slide-content-container {
         .slide-content {
-          height: 240.5px;
+          height: 237.5px;
           ul {
-            display: flex; flex-direction: column; gap: 10.5px;
+            display: flex; flex-direction: column; gap: 12px;
             li::before {
               content: "·";
               margin-right: 18px;

@@ -72,9 +72,9 @@ header .main-title#tester-name {
   color: rgba(240, 78, 35, 0.75);
 }
 .slider #cover-view .slide-content-container .slide-content .content, .slider #slide-view .slide-content-container .slide-content .content {
-  font-size: 51px;
+  font-size: 49.5px;
   font-weight: 600;
-  line-height: 61px;
+  line-height: 59px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -106,12 +106,12 @@ header .main-title#tester-name {
   -webkit-user-drag: none;
 }
 .slider #cover-view#cover-view .slide-content-container .slide-content, .slider #slide-view#cover-view .slide-content-container .slide-content {
-  height: 240.5px;
+  height: 237.5px;
 }
 .slider #cover-view#cover-view .slide-content-container .slide-content ul, .slider #slide-view#cover-view .slide-content-container .slide-content ul {
   display: flex;
   flex-direction: column;
-  gap: 10.5px;
+  gap: 12px;
 }
 .slider #cover-view#cover-view .slide-content-container .slide-content ul li::before, .slider #slide-view#cover-view .slide-content-container .slide-content ul li::before {
   content: "·";
