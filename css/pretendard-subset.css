@@ -23,6 +23,13 @@ http://scripts.sil.org/OFL
 
 @font-face {
 	font-family: 'Pretendard';
+	font-weight: 500;
+	font-display: swap;
+	src: local('Pretendard SemiBold'), url(../font/Pretendard-Medium.subset.woff2) format('woff2'), url(../font/Pretendard-Medium.subset.woff) format('woff');
+}
+
+@font-face {
+	font-family: 'Pretendard';
 	font-weight: 400;
 	font-display: swap;
 	src: local('Pretendard Regular'), url(../font/Pretendard-Regular.subset.woff2) format('woff2'), url(../font/Pretendard-Regular.subset.woff) format('woff');

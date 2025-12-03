@@ -66,7 +66,7 @@ header .main-title#tester-name {
   margin-bottom: -6px;
 }
 .slider #cover-view .slide-content-container .slide-content .label, .slider #slide-view .slide-content-container .slide-content .label {
-  margin-bottom: 9px;
+  margin-bottom: 6px;
   font-size: 24px;
   font-weight: 400;
   color: rgba(240, 78, 35, 0.75);
@@ -156,7 +156,7 @@ header .main-title#tester-name {
 }
 #list-view .table-header {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 285px;
+  grid-template-columns: 1fr 1fr 1fr 270px;
   border-bottom: 2px solid rgba(240, 78, 35, 0.15);
   border-top-left-radius: 12px;
   border-top-right-radius: 12px;
@@ -181,7 +181,7 @@ header .main-title#tester-name {
 }
 #list-view #list-view-container .table-content {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 285px;
+  grid-template-columns: 1fr 1fr 1fr 270px;
   height: 100%;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   font-size: 24px;
@@ -242,7 +242,7 @@ header .main-title#tester-name {
   height: 100%;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   font-size: 16.5px;
-  font-weight: 500;
+  font-weight: 400;
 }
 .edit-table .table-container .table-content li {
   display: flex;
@@ -262,11 +262,11 @@ header .main-title#tester-name {
 }
 .edit-table#slider-edit .table-header {
   display: grid;
-  grid-template-columns: 75px 1fr 1fr 1fr 195px 225px;
+  grid-template-columns: 75px 1fr 1fr 1fr 185px 225px;
 }
 .edit-table#slider-edit #slider-edit-container .table-content {
   display: grid;
-  grid-template-columns: 75px 1fr 1fr 1fr 195px 225px;
+  grid-template-columns: 75px 1fr 1fr 1fr 185px 225px;
 }
 .edit-table#slider-edit #slider-edit-container .table-content li:last-child {
   gap: 21px;
@@ -289,11 +289,11 @@ header .main-title#tester-name {
 }
 .edit-table#order-edit .table-header {
   display: grid;
-  grid-template-columns: 60px 120px 1fr 1fr 1fr 195px;
+  grid-template-columns: 60px 125px 1fr 1fr 1fr 185px;
 }
 .edit-table#order-edit #order-edit-container .table-content {
   display: grid;
-  grid-template-columns: 60px 120px 1fr 1fr 1fr 195px;
+  grid-template-columns: 60px 125px 1fr 1fr 1fr 185px;
 }
 .edit-table#order-edit #order-edit-container .table-content.selected {
   outline: 5px solid rgb(153, 202, 59);
@@ -465,7 +465,7 @@ form#cover-edit .input-content .input-group .input-dot::before {
   padding: 0;
   border-radius: 15px;
   font-size: 21px;
-  font-weight: 500;
+  font-weight: 400;
 }
 .btn-group .btn-1 img, .btn-group .btn-2 img, .btn-group .btn-3 img, .btn-group .btn-4 img {
   height: 21px;

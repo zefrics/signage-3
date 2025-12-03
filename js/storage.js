@@ -101,7 +101,15 @@ const storageManager = {
    */
   loadCoverData() {
     const data = localStorage.getItem(this.KEY_COVER);
-    return data ? JSON.parse(data) : null;
+    // 데이터가 없으면 기본값을 반환
+    return data ? JSON.parse(data) : {
+      testerName: '(Tester Name)',
+      imagePath: null,
+      // function과 specifications는 배열 길이를 유지하며 병합
+      // edit-cover.js의 defaultCoverData와 동일하게 설정
+      function: ['(Function #1)', '', ''],
+      specifications: ['(Specifications #1)', '', ''],
+    };
   },
 
   /**

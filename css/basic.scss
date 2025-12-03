@@ -18,7 +18,7 @@ $fs-edit-table-title: 18px; // Edit Tables Title 폰트 사이즈
 $fw-edit-table-title: 500; // Edit Tables Title 폰트 웨이트
 
 $fs-edit-table-content: 16.5px; // Edit Tables Content 폰트 사이즈
-$fw-edit-table-content: 500; // Edit Tables Content 폰트 웨이트
+$fw-edit-table-content: 400; // Edit Tables Content 폰트 웨이트
 
 $fs-edit-label: 18px; // Input Label 폰트 사이즈
 $fw-edit-label: 500; // Input Label 폰트 웨이트
@@ -131,7 +131,7 @@ header {
       margin-bottom: -6px;
       .slide-content {
         .label {
-          margin-bottom: 9px;
+          margin-bottom: 6px;
           font-size: $fs-slide-label;
           font-weight: $fw-slide-label;
           color: $color-r3;
@@ -210,7 +210,7 @@ header {
   display: flex; flex-direction: column;
   border: 3px solid $color-r6;
   .table-header {
-    display: grid; grid-template-columns: 1fr 1fr 1fr 285px;
+    display: grid; grid-template-columns: 1fr 1fr 1fr 270px;
     border-bottom: 2px solid $color-r7;
     border-top-left-radius: 12px;
     border-top-right-radius: 12px;
@@ -230,7 +230,7 @@ header {
     display: flex; flex-direction: column;
     height: 100%;
     .table-content {
-      display: grid; grid-template-columns: 1fr 1fr 1fr 285px;
+      display: grid; grid-template-columns: 1fr 1fr 1fr 270px;
       height: 100%;
       border-bottom: 1px solid $color-k8;
       font-size: $fs-list-content; font-weight: $fw-list-content;
@@ -301,11 +301,11 @@ header {
   }
   &#slider-edit {
     .table-header {
-      display: grid; grid-template-columns: 75px 1fr 1fr 1fr 195px 225px;
+      display: grid; grid-template-columns: 75px 1fr 1fr 1fr 185px 225px;
     }
     #slider-edit-container {
       .table-content {
-        display: grid; grid-template-columns: 75px 1fr 1fr 1fr 195px 225px;
+        display: grid; grid-template-columns: 75px 1fr 1fr 1fr 185px 225px;
         li {
           &:last-child {
             gap: 21px;
@@ -325,11 +325,11 @@ header {
   }
   &#order-edit {
     .table-header {
-      display: grid; grid-template-columns: 60px 120px 1fr 1fr 1fr 195px;
+      display: grid; grid-template-columns: 60px 125px 1fr 1fr 1fr 185px;
     }
     #order-edit-container {
       .table-content {
-        display: grid; grid-template-columns: 60px 120px 1fr 1fr 1fr 195px;
+        display: grid; grid-template-columns: 60px 125px 1fr 1fr 1fr 185px;
         &.selected {
           outline: 5px solid $color-g1;
           outline-offset: -3px;
@@ -476,7 +476,7 @@ form {
     width: 165px;
     padding: 0;
     border-radius: 15px;
-    font-size: 21px; font-weight: 500;
+    font-size: 21px; font-weight: 400;
     img {
       height: 21px; width: 21px;
       -webkit-user-drag: none;

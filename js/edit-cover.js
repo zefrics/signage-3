@@ -50,6 +50,15 @@ document.addEventListener('DOMContentLoaded', () => {
       imageSelectButton.style.display = 'none';
     }
 
+    // 초기 데이터 저장 (isFormChanged 함수에서 비교하기 위함)
+    initialData = {
+      testerName: finalCoverData.testerName,
+      imagePath: finalCoverData.imagePath,
+      // .trim()을 사용하지 않고 원본 배열을 그대로 저장
+      function: finalCoverData.function,
+      specifications: finalCoverData.specifications,
+    };
+
     // 한글 입력 시 maxlength가 적용되지 않는 현상 방지
     const inputsWithMaxLength = coverEditForm.querySelectorAll('input[maxlength]');
     inputsWithMaxLength.forEach(input => {
@@ -127,12 +136,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 폼의 변경 여부를 확인하는 함수
     const isFormChanged = () => {
-      const currentFunctionValues = Array.from(functionInputs).map(input => input.value.trim());
-      const currentSpecificationsValues = Array.from(specificationsInputs).map(input => input.value.trim());
+      const currentFunctionValues = Array.from(functionInputs).map(input => input.value);
+      const currentSpecificationsValues = Array.from(specificationsInputs).map(input => input.value);
 
       return (
         initialData.testerName !== testerNameInput.value.trim() ||
-        (tempImage.path !== null || initialData.imagePath !== savedImagePath) || // 이미지 변경 감지
+        initialData.imagePath !== savedImagePath || // 이미지 변경 감지 (tempImage는 저장 시에만 고려)
         JSON.stringify(initialData.function) !== JSON.stringify(currentFunctionValues) ||
         JSON.stringify(initialData.specifications) !== JSON.stringify(currentSpecificationsValues)
       );
