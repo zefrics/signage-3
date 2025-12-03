@@ -354,7 +354,7 @@ form {
   border: 3px solid $color-g5;
   .input-content-group {
     display: grid; grid-template-columns: repeat(3, 1fr);
-    column-gap: 60px; row-gap: 36px;
+    column-gap: 60px; row-gap: 34.5px;
     .input-content {
       min-width: 0;
       .label {

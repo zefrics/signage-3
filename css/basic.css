@@ -319,7 +319,7 @@ form .input-content-group {
   grid-template-columns: repeat(3, 1fr);
   -moz-column-gap: 60px;
        column-gap: 60px;
-  row-gap: 36px;
+  row-gap: 34.5px;
 }
 form .input-content-group .input-content {
   min-width: 0;
