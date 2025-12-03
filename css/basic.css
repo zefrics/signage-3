@@ -72,9 +72,9 @@ header .main-title#tester-name {
   color: rgba(240, 78, 35, 0.75);
 }
 .slider #cover-view .slide-content-container .slide-content .content, .slider #slide-view .slide-content-container .slide-content .content {
-  font-size: 54px;
+  font-size: 52.5px;
   font-weight: 600;
-  line-height: 64.5px;
+  line-height: 62.5px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -106,12 +106,12 @@ header .main-title#tester-name {
   -webkit-user-drag: none;
 }
 .slider #cover-view#cover-view .slide-content-container .slide-content, .slider #slide-view#cover-view .slide-content-container .slide-content {
-  height: 249.5px;
+  height: 243.5px;
 }
 .slider #cover-view#cover-view .slide-content-container .slide-content ul, .slider #slide-view#cover-view .slide-content-container .slide-content ul {
   display: flex;
   flex-direction: column;
-  gap: 9px;
+  gap: 10.5px;
 }
 .slider #cover-view#cover-view .slide-content-container .slide-content ul li::before, .slider #slide-view#cover-view .slide-content-container .slide-content ul li::before {
   content: "·";
@@ -325,7 +325,7 @@ form .input-content-group .input-content {
   min-width: 0;
 }
 form .input-content-group .input-content .label {
-  margin-bottom: 12px;
+  margin-bottom: 9px;
   font-size: 18px;
   line-height: 21px;
   font-weight: 500;
@@ -442,7 +442,6 @@ form#cover-edit .input-content .input-group .input-dot {
 }
 form#cover-edit .input-content .input-group .input-dot::before {
   content: "·";
-  margin-left: 9px;
   margin-right: 18px;
   font-size: 30px;
 }
