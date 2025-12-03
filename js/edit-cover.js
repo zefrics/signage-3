@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (coverEditForm) {
     const backButton = document.querySelector('#btn-back');
     const testerNameInput = document.querySelector('#input-tester-name');
+    const slideDurationInput = document.querySelector('#input-slide-duration');
     const functionInputs = document.querySelectorAll('[id^="input-function-"]'); // 이 부분은 이전 로직을 유지합니다.
     const specificationsInputs = document.querySelectorAll('[id^="input-specifications-"]'); // 이 부분은 이전 로직을 유지합니다.
     const imageSelectButton = document.querySelector('#btn-select-image');
@@ -14,19 +15,11 @@ document.addEventListener('DOMContentLoaded', () => {
     
     let initialData = {}; // 초기 데이터를 저장할 객체
 
-    // 입력 필드 그룹의 활성화 상태를 업데이트하는 함수 (사용자 입력용)
-    const updateInputStatesOnInput = (inputs) => {
-      inputs[1].disabled = inputs[0].value.trim() === '';
-      if (inputs[1].disabled) inputs[1].value = '';
-
-      inputs[2].disabled = inputs[0].value.trim() === '' || inputs[1].value.trim() === '';
-      if (inputs[2].disabled) inputs[2].value = '';
-    };
-
     // 기존 커버 데이터 불러오기
     const existingCoverData = storageManager.loadCoverData();
     if (existingCoverData) {
       testerNameInput.value = existingCoverData.testerName || '';
+      slideDurationInput.value = existingCoverData.slideDuration || '5';
       // 저장된 이미지 경로가 있으면 파일명 표시
       if (existingCoverData.imagePath) {
         const pathParts = existingCoverData.imagePath.split('/');
@@ -38,12 +31,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       savedImagePath = existingCoverData.imagePath || null; // 저장된 이미지 경로 불러오기
 
-      // 페이지 로드 시: 저장된 데이터를 기준으로 필드 활성화 상태 설정
-      functionInputs[1].disabled = !existingCoverData.function || !existingCoverData.function[0];
-      functionInputs[2].disabled = !existingCoverData.function || !existingCoverData.function[1];
-      specificationsInputs[1].disabled = !existingCoverData.specifications || !existingCoverData.specifications[0];
-      specificationsInputs[2].disabled = !existingCoverData.specifications || !existingCoverData.specifications[1];
-      
       // Function 및 Specifications 데이터 채우기 (배열 형태)
       (existingCoverData.function || []).forEach((value, index) => {
         if (functionInputs[index]) functionInputs[index].value = value;
@@ -54,24 +41,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
       initialData = {
         testerName: existingCoverData.testerName || '',
+        slideDuration: existingCoverData.slideDuration || '5',
         imagePath: existingCoverData.imagePath || null,
         function: Array.from(functionInputs).map(input => input.value.trim()),
         specifications: Array.from(specificationsInputs).map(input => input.value.trim()),
       };
     } else {
+      // 새 커버 데이터의 경우, slideDuration 기본값을 '5'로 설정
+      slideDurationInput.value = '5';
       initialData = {
         testerName: '',
+        slideDuration: '5',
         imagePath: null,
         function: Array(functionInputs.length).fill(''),
         specifications: Array(specificationsInputs.length).fill(''),
       };
     }
-
-    // 사용자 입력에 대한 이벤트 리스너 추가
-    [functionInputs, specificationsInputs].forEach(inputs => {
-      // 사용자가 입력할 때마다 활성화 상태를 실시간으로 변경
-      inputs.forEach(input => input.addEventListener('input', () => updateInputStatesOnInput(inputs)));
-    });
 
     // 이미지 선택 버튼 클릭 이벤트
     imageSelectButton.addEventListener('click', async (event) => {
@@ -143,6 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       return (
         initialData.testerName !== testerNameInput.value.trim() ||
+        initialData.slideDuration !== slideDurationInput.value ||
         (tempImage.path !== null || initialData.imagePath !== savedImagePath) || // 이미지 변경 감지
         JSON.stringify(initialData.function) !== JSON.stringify(currentFunctionValues) ||
         JSON.stringify(initialData.specifications) !== JSON.stringify(currentSpecificationsValues)
@@ -188,6 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const coverData = {
           testerName: testerNameInput.value.trim(),
+          slideDuration: slideDurationInput.value,
           imagePath: savedImagePath, // 최종 이미지 경로 저장
           function: functionValues,
           specifications: specificationsValues,

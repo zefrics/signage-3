@@ -6,7 +6,6 @@ $fw-slide-label: 400; // Slide View Label 폰트 웨이트
 
 $fs-slide-content: 48px; // Slide View Content 폰트 사이즈
 $fw-slide-content: 600; // Slide View Content 폰트 웨이트
-$lh-slide-content: 63.5px; // Slide View Line Height
 
 $fs-list-title: 18px; // List View Title 폰트 사이즈
 $fw-list-title: 500; // List View Title 폰트 웨이트
@@ -130,7 +129,7 @@ header {
       margin-bottom: -6px;
       .slide-content {
         .label {
-          margin-bottom: 7.5px;
+          margin-bottom: 10.5px;
           font-size: $fs-slide-label;
           font-weight: $fw-slide-label;
           color: $color-r3;
@@ -138,7 +137,6 @@ header {
         .content {
           font-size: $fs-slide-content;
           font-weight: $fw-slide-content;
-          line-height: $lh-slide-content;
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
@@ -149,7 +147,7 @@ header {
       display: flex; align-items: center; justify-content: center;
       border: 1px solid $color-r7;
       height: 100%;
-      aspect-ratio: 1 / 1; // 너비를 높이와 동일하게 설정
+      aspect-ratio: 4 / 5; // 너비를 높이와 동일하게 설정
       &#cover-img-default, &#slide-img-default {
         background-color: $color-r9;
       }
@@ -165,7 +163,7 @@ header {
     &#cover-view {
       .slide-content-container {
         .slide-content {
-          height: 240px;
+          height: 285.5px;
           ul {
             display: flex; flex-direction: column; gap: 6px;
             li::before {
@@ -179,7 +177,7 @@ header {
   }
   
   .slider-controls {
-    position: absolute; top: 15px; right: 424px;
+    position: absolute; top: 15px; right: 405px;
     display: flex; align-items: center; gap: 6px;
     opacity: 0.6;
     button {
@@ -351,7 +349,7 @@ form {
   border: 3px solid $color-g5;
   .input-content-group {
     display: grid; grid-template-columns: repeat(3, 1fr);
-    column-gap: 60px; row-gap: 45px;
+    column-gap: 60px; row-gap: 36px;
     .input-content {
       min-width: 0;
       .label {
@@ -364,7 +362,7 @@ form {
         box-sizing: border-box;
         font-family: 'Pretendard', sans-serif;
         height: 45px; width: 100%;
-        padding: 9px 12px; margin: 0;
+        padding: 0 12px; margin: 0;
         border: 1px solid $color-k6;
         border-radius: 6px;
         font-size: $fs-edit-input;
@@ -426,23 +424,31 @@ form {
   &#cover-edit {
     .input-content {
       &:nth-child(1) {
-        grid-column: 1 / 2;
-        grid-row: 1 / 2;
+        grid-column: 1 / 2; grid-row: 1 / 2;
       }
       &:nth-child(2) {
-        grid-column: 1 / 2;
-        grid-row: 2 / 3;
+        grid-column: 1 / 2; grid-row: 2 / 3;
       }
       &:nth-child(3) {
-        grid-column: 2 / 3;
-        grid-row: 1 / 3;
+        grid-column: 1 / 2;
+        grid-row: 3 / 4;
+      }
+      &:nth-child(4), &:nth-child(5) {
+        display: flex;
+        flex-direction: column;
       }
       &:nth-child(4) {
+        grid-column: 2 / 3;
+        grid-row: 1 / 4;
+      }
+      &:nth-child(5) {
         grid-column: 3 / 4;
-        grid-row: 1 / 3;
+        grid-row: 1 / 4;
       }
       .input-group {
-        display: flex; flex-direction: column; gap: 15px;
+        flex-grow: 1; /* 남은 공간을 모두 차지하도록 설정 */
+        display: flex; flex-direction: column;
+        justify-content: space-between;
       }
     }
   }

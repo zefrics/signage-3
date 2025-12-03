@@ -2,7 +2,7 @@ const sliderManager = {
   totalSlides: [], // 커버와 슬라이드 데이터를 모두 포함할 배열
   currentIndex: 0,
   intervalId: null,
-  slideDuration: 5000, // 5초
+  slideDuration: 5000, // 슬라이드 전환 시간 (ms), init에서 coverData를 기반으로 덮어씀
   // DOM 요소 참조
   prevButton: document.querySelector('#btn-slide-prev'),
   nextButton: document.querySelector('#btn-slide-next'),
@@ -13,6 +13,13 @@ const sliderManager = {
   // 슬라이더 초기화
   init(slideData, coverData) {
     this.stop();
+    
+    // coverData에 slideDuration이 항상 존재하므로, 그 값을 사용.
+    // coverData에서 slideDuration을 가져와서 설정 (값이 없으면 기본값 5초 사용)
+    // coverData.slideDuration은 초 단위이므로 1000을 곱해 ms로 변환
+    this.slideDuration = (coverData && coverData.slideDuration)
+      ? parseInt(coverData.slideDuration, 10) * 1000
+      : 5000; // coverData가 없는 극단적인 경우를 대비한 최종 안전장치
 
     // 데이터가 없는 경우, 커버만 표시하고 슬라이더를 비활성화
     if (!slideData || slideData.length === 0) {

@@ -65,7 +65,7 @@ header .main-title#tester-name {
   margin-bottom: -6px;
 }
 .slider #cover-view .slide-content-container .slide-content .label, .slider #slide-view .slide-content-container .slide-content .label {
-  margin-bottom: 7.5px;
+  margin-bottom: 10.5px;
   font-size: 24px;
   font-weight: 400;
   color: rgba(240, 78, 35, 0.75);
@@ -73,7 +73,6 @@ header .main-title#tester-name {
 .slider #cover-view .slide-content-container .slide-content .content, .slider #slide-view .slide-content-container .slide-content .content {
   font-size: 48px;
   font-weight: 600;
-  line-height: 63.5px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -84,7 +83,7 @@ header .main-title#tester-name {
   justify-content: center;
   border: 1px solid rgba(240, 78, 35, 0.15);
   height: 100%;
-  aspect-ratio: 1/1;
+  aspect-ratio: 4/5;
 }
 .slider #cover-view .img-frame#cover-img-default, .slider #cover-view .img-frame#slide-img-default, .slider #slide-view .img-frame#cover-img-default, .slider #slide-view .img-frame#slide-img-default {
   background-color: rgba(240, 78, 35, 0.05);
@@ -103,7 +102,7 @@ header .main-title#tester-name {
      object-position: center;
 }
 .slider #cover-view#cover-view .slide-content-container .slide-content, .slider #slide-view#cover-view .slide-content-container .slide-content {
-  height: 240px;
+  height: 285.5px;
 }
 .slider #cover-view#cover-view .slide-content-container .slide-content ul, .slider #slide-view#cover-view .slide-content-container .slide-content ul {
   display: flex;
@@ -117,7 +116,7 @@ header .main-title#tester-name {
 .slider .slider-controls {
   position: absolute;
   top: 15px;
-  right: 424px;
+  right: 405px;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -316,7 +315,7 @@ form .input-content-group {
   grid-template-columns: repeat(3, 1fr);
   -moz-column-gap: 60px;
        column-gap: 60px;
-  row-gap: 45px;
+  row-gap: 36px;
 }
 form .input-content-group .input-content {
   min-width: 0;
@@ -333,7 +332,7 @@ form .input-content-group .input-content input {
   font-family: "Pretendard", sans-serif;
   height: 45px;
   width: 100%;
-  padding: 9px 12px;
+  padding: 0 12px;
   margin: 0;
   border: 1px solid rgba(0, 0, 0, 0.3);
   border-radius: 6px;
@@ -416,17 +415,26 @@ form#cover-edit .input-content:nth-child(2) {
   grid-row: 2/3;
 }
 form#cover-edit .input-content:nth-child(3) {
-  grid-column: 2/3;
-  grid-row: 1/3;
+  grid-column: 1/2;
+  grid-row: 3/4;
 }
-form#cover-edit .input-content:nth-child(4) {
-  grid-column: 3/4;
-  grid-row: 1/3;
-}
-form#cover-edit .input-content .input-group {
+form#cover-edit .input-content:nth-child(4), form#cover-edit .input-content:nth-child(5) {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+}
+form#cover-edit .input-content:nth-child(4) {
+  grid-column: 2/3;
+  grid-row: 1/4;
+}
+form#cover-edit .input-content:nth-child(5) {
+  grid-column: 3/4;
+  grid-row: 1/4;
+}
+form#cover-edit .input-content .input-group {
+  flex-grow: 1; /* 남은 공간을 모두 차지하도록 설정 */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .btn-group {
