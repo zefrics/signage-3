@@ -262,11 +262,11 @@ header .main-title#tester-name {
 }
 .edit-table#slider-edit .table-header {
   display: grid;
-  grid-template-columns: 75px 1fr 1fr 1fr 185px 225px;
+  grid-template-columns: 75px 1fr 1fr 1fr 195px 225px;
 }
 .edit-table#slider-edit #slider-edit-container .table-content {
   display: grid;
-  grid-template-columns: 75px 1fr 1fr 1fr 185px 225px;
+  grid-template-columns: 75px 1fr 1fr 1fr 195px 225px;
 }
 .edit-table#slider-edit #slider-edit-container .table-content li:last-child {
   gap: 21px;
@@ -289,11 +289,11 @@ header .main-title#tester-name {
 }
 .edit-table#order-edit .table-header {
   display: grid;
-  grid-template-columns: 60px 125px 1fr 1fr 1fr 185px;
+  grid-template-columns: 60px 125px 1fr 1fr 1fr 195px;
 }
 .edit-table#order-edit #order-edit-container .table-content {
   display: grid;
-  grid-template-columns: 60px 125px 1fr 1fr 1fr 185px;
+  grid-template-columns: 60px 125px 1fr 1fr 1fr 195px;
 }
 .edit-table#order-edit #order-edit-container .table-content.selected {
   outline: 5px solid rgb(153, 202, 59);

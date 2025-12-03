@@ -301,11 +301,11 @@ header {
   }
   &#slider-edit {
     .table-header {
-      display: grid; grid-template-columns: 75px 1fr 1fr 1fr 185px 225px;
+      display: grid; grid-template-columns: 75px 1fr 1fr 1fr 195px 225px;
     }
     #slider-edit-container {
       .table-content {
-        display: grid; grid-template-columns: 75px 1fr 1fr 1fr 185px 225px;
+        display: grid; grid-template-columns: 75px 1fr 1fr 1fr 195px 225px;
         li {
           &:last-child {
             gap: 21px;
@@ -325,11 +325,11 @@ header {
   }
   &#order-edit {
     .table-header {
-      display: grid; grid-template-columns: 60px 125px 1fr 1fr 1fr 185px;
+      display: grid; grid-template-columns: 60px 125px 1fr 1fr 1fr 195px;
     }
     #order-edit-container {
       .table-content {
-        display: grid; grid-template-columns: 60px 125px 1fr 1fr 1fr 185px;
+        display: grid; grid-template-columns: 60px 125px 1fr 1fr 1fr 195px;
         &.selected {
           outline: 5px solid $color-g1;
           outline-offset: -3px;
