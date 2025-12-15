@@ -1,3 +1,9 @@
+const { Capacitor } = window;
+import { formatDate } from './date.js';
+import { storageManager } from './storage.js';
+import { sliderManager } from './slider.js';
+import { timerManager } from './edit-timer.js';
+
 document.addEventListener('DOMContentLoaded', () => {
   const testerNameElement = document.querySelector('#tester-name');
   const functionElement = document.querySelector('#function');
@@ -159,6 +165,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const slideCover = document.querySelector('#cover');
     if (slideCover) updateCoverView();
   };
+
+  // settings.html 페이지의 타이머 초기화
+  const path = window.location.pathname.split("/").pop();
+  if (path === 'settings.html') {
+    const elementToMonitor = document.querySelector('#slider-edit');
+    const timerSettings = storageManager.loadTimerSettings();
+    const timeoutSeconds = timerSettings.homeTimer || 90;
+    timerManager.init(() => {
+      window.location.href = 'index.html';
+    }, timeoutSeconds);
+    timerManager.start([elementToMonitor]);
+  }
 
   // 페이지가 처음 로드될 때 저장된 데이터를 불러옴
   loadData();

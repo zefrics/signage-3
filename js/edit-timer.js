@@ -1,5 +1,7 @@
 // js/timer.js
-const timerManager = (() => {
+import { storageManager } from './storage.js';
+
+export const timerManager = (() => {
   let INACTIVITY_TIMEOUT = 90; // 기본 비활성 시간 (초)
   let inactivityTimer;
   let countdownInterval;
@@ -88,53 +90,9 @@ const timerManager = (() => {
 
 // DOM이 로드되면 타이머 자동 시작 로직 실행
 document.addEventListener('DOMContentLoaded', () => {
-  // 페이지 경로에 따라 타이머를 자동으로 시작하는 로직
   const path = window.location.pathname.split("/").pop();
-  let elementToMonitor = null;
-  let redirectUrl = 'index.html'; // 기본 리다이렉트 URL
-  let timerType = null; // 'home' 또는 'back' 타이머
-
-  if (path === 'settings.html') {
-    elementToMonitor = document.querySelector('#slider-edit');
-    timerType = 'home';
-  } else if (path === 'edit-order.html') {
-    elementToMonitor = document.querySelector('#order-edit');
-    redirectUrl = 'settings.html';
-    timerType = 'back';
-  } else if (path === 'edit-slide.html') {
-    elementToMonitor = document.querySelector('#slide-edit');
-    redirectUrl = 'settings.html';
-    timerType = 'back';
-  } else if (path === 'edit-cover.html') {
-    elementToMonitor = document.querySelector('#cover-edit');
-    redirectUrl = 'settings.html';
-    timerType = 'back';
-  } else if (path === 'edit-timer.html') {
-    elementToMonitor = document.querySelector('#timer-edit');
-    redirectUrl = 'settings.html';
-    timerType = 'back';
-  }
-
-  if (elementToMonitor) {
-    const timerSettings = storageManager.loadTimerSettings();
-    let timeoutSeconds = 90; // 기본값
-
-    if (timerType === 'home' && timerSettings.homeTimer) {
-      timeoutSeconds = timerSettings.homeTimer;
-    } else if (timerType === 'back' && timerSettings.backTimer) {
-      timeoutSeconds = timerSettings.backTimer;
-    }
-
-    // 1. 타임아웃 시 실행할 동작과 시간을 정의하여 타이머 초기화
-    timerManager.init(() => {
-      window.location.href = redirectUrl;
-    }, timeoutSeconds);
-
-    // 2. 모니터링할 요소를 지정하여 타이머 시작
-    timerManager.start([elementToMonitor]);
-  }
-
-  // edit-timer.html의 Back 버튼 이벤트 처리
+  
+  // edit-timer.html 페이지의 로직만 남김
   if (path === 'edit-timer.html') {
     const form = document.querySelector('#timer-edit');
     const sliderTimerInput = document.querySelector('#input-slider-timer');
@@ -171,6 +129,18 @@ document.addEventListener('DOMContentLoaded', () => {
       homeTimer: homeTimerInput.value,
       backTimer: backTimerInput.value,
     };
+
+    // 타이머 초기화 및 시작
+    const timerSettings = storageManager.loadTimerSettings();
+    const timeoutSeconds = timerSettings.backTimer || 90;
+    timerManager.init(() => {
+      if (isFormChanged()) {
+        // 변경사항이 있으면 settings.html로 이동하기 전에 확인 메시지를 표시하지 않음
+      } else {
+        window.location.href = 'settings.html';
+      }
+    }, timeoutSeconds);
+    timerManager.start([form]);
 
     const isFormChanged = () => {
       return initialTimers.sliderTimer !== sliderTimerInput.value ||

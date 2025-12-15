@@ -1,4 +1,6 @@
-const sliderManager = {
+import { storageManager } from './storage.js';
+
+export const sliderManager = {
   totalSlides: [], // 커버와 슬라이드 데이터를 모두 포함할 배열
   currentIndex: 0,
   intervalId: null,

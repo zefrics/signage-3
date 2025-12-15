@@ -1,3 +1,17 @@
+// const { Camera, Filesystem } = window.Capacitor.Plugins;
+// Capacitor 플러그인 Enum을 상수로 정의
+// const CameraResultType = {
+//   Uri: 'uri',
+// };
+// const CameraSource = {
+//   Photos: 'PHOTOS',
+// };
+// const Directory = {
+//   Data: 'Data',
+// };
+import { storageManager } from './storage.js';
+import { timerManager } from './edit-timer.js';
+
 document.addEventListener('DOMContentLoaded', () => {
   const coverEditForm = document.querySelector('#cover-edit');
 
@@ -72,67 +86,67 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // 이미지 선택 버튼 클릭 이벤트
-    imageSelectButton.addEventListener('click', async (event) => {
-      try {
-        const image = await Camera.getPhoto({
-          quality: 90,
-          allowEditing: false,
-          resultType: CameraResultType.Uri, // 파일 경로(URI)를 받음
-          source: CameraSource.Photos // 갤러리를 염
-        });
+    // imageSelectButton.addEventListener('click', async (event) => {
+    //   try {
+    //     const image = await Camera.getPhoto({
+    //       quality: 90,
+    //       allowEditing: false,
+    //       resultType: CameraResultType.Uri, // 파일 경로(URI)를 받음
+    //       source: CameraSource.Photos // 갤러리를 염
+    //     });
 
-        // YYYYMMDDHHMMSS 형식의 타임스탬프 생성
-        const now = new Date();
-        const timestamp = `${now.getFullYear()}` +
-                          `${String(now.getMonth() + 1).padStart(2, '0')}` +
-                          `${String(now.getDate()).padStart(2, '0')}` +
-                          `${String(now.getHours()).padStart(2, '0')}` +
-                          `${String(now.getMinutes()).padStart(2, '0')}` +
-                          `${String(now.getSeconds()).padStart(2, '0')}`;
+    //     // YYYYMMDDHHMMSS 형식의 타임스탬프 생성
+    //     const now = new Date();
+    //     const timestamp = `${now.getFullYear()}` +
+    //                       `${String(now.getMonth() + 1).padStart(2, '0')}` +
+    //                       `${String(now.getDate()).padStart(2, '0')}` +
+    //                       `${String(now.getHours()).padStart(2, '0')}` +
+    //                       `${String(now.getMinutes()).padStart(2, '0')}` +
+    //                       `${String(now.getSeconds()).padStart(2, '0')}`;
         
-        const fileName = `${timestamp}.${image.format}`;
+    //     const fileName = `${timestamp}.${image.format}`;
 
-        // 파일을 바로 복사하지 않고, 임시 경로와 생성될 파일명만 저장
-        tempImage = { path: image.webPath, name: fileName };
+    //     // 파일을 바로 복사하지 않고, 임시 경로와 생성될 파일명만 저장
+    //     tempImage = { path: image.webPath, name: fileName };
 
-        // 화면에 파일명 표시
-        fileNameDisplay.textContent = fileName;
-        fileNameDisplay.classList.add('file-selected');
-        // Delete 버튼은 보이고, Select 버튼은 숨김
-        imageClearButton.style.display = 'flex';
-        imageSelectButton.style.display = 'none';
+    //     // 화면에 파일명 표시
+    //     fileNameDisplay.textContent = fileName;
+    //     fileNameDisplay.classList.add('file-selected');
+    //     // Delete 버튼은 보이고, Select 버튼은 숨김
+    //     imageClearButton.style.display = 'flex';
+    //     imageSelectButton.style.display = 'none';
 
-      } catch (error) {
-        console.error('이미지를 선택하는 데 실패했습니다.', error);
-        // 사용자가 이미지 선택을 취소한 경우는 오류로 처리하지 않음
-        if (error.message !== "User cancelled photos app") {
-          alert('이미지를 불러오는 데 실패했습니다.');
-        }
-      }
-    });
+    //   } catch (error) {
+    //     console.error('이미지를 선택하는 데 실패했습니다.', error);
+    //     // 사용자가 이미지 선택을 취소한 경우는 오류로 처리하지 않음
+    //     if (error.message !== "User cancelled photos app") {
+    //       alert('이미지를 불러오는 데 실패했습니다.');
+    //     }
+    //   }
+    // });
 
     // 이미지 삭제 버튼 클릭 이벤트
-    imageClearButton.addEventListener('click', async () => {
-      const pathToDelete = savedImagePath; // 1. 삭제할 경로를 미리 저장
+    // imageClearButton.addEventListener('click', async () => {
+    //   const pathToDelete = savedImagePath; // 1. 삭제할 경로를 미리 저장
 
-      // 2. 변수와 화면 UI를 먼저 초기화
-      // 임시 이미지 정보와 최종 이미지 경로 모두 초기화
-      tempImage = { path: null, name: null };
-      savedImagePath = null;
-      fileNameDisplay.textContent = '선택된 파일 없음';
-      fileNameDisplay.classList.remove('file-selected');
-      imageClearButton.style.display = 'none';
-      imageSelectButton.style.display = 'flex';
+    //   // 2. 변수와 화면 UI를 먼저 초기화
+    //   // 임시 이미지 정보와 최종 이미지 경로 모두 초기화
+    //   tempImage = { path: null, name: null };
+    //   savedImagePath = null;
+    //   fileNameDisplay.textContent = '선택된 파일 없음';
+    //   fileNameDisplay.classList.remove('file-selected');
+    //   imageClearButton.style.display = 'none';
+    //   imageSelectButton.style.display = 'flex';
 
-      // 3. 삭제할 경로가 있으면 실제 파일 삭제 시도
-      if (pathToDelete) {
-        try {
-          await Filesystem.deleteFile({ path: pathToDelete });
-        } catch (error) {
-          console.error('파일 삭제에 실패했습니다.', error);
-        }
-      }
-    });
+    //   // 3. 삭제할 경로가 있으면 실제 파일 삭제 시도
+    //   if (pathToDelete) {
+    //     try {
+    //       await Filesystem.deleteFile({ path: pathToDelete });
+    //     } catch (error) {
+    //       console.error('파일 삭제에 실패했습니다.', error);
+    //     }
+    //   }
+    // });
 
     // 폼의 변경 여부를 확인하는 함수
     const isFormChanged = () => {
@@ -162,23 +176,23 @@ document.addEventListener('DOMContentLoaded', () => {
         isSubmittingRef.current = true; // 제출 시작
 
         // 새로운 이미지가 선택된 경우에만 파일 복사 및 경로 업데이트
-        if (tempImage.path && tempImage.name) {
-          // 만약 기존 이미지가 있었다면 삭제 (교체 시)
-          if (initialData.imagePath) {
-            try {
-              await Filesystem.deleteFile({ path: initialData.imagePath });
-            } catch (e) {
-              console.error("기존 이미지 파일 삭제 실패", e);
-            }
-          }
-          // 새 파일 복사
-          const savedFile = await Filesystem.copy({
-            from: tempImage.path,
-            to: tempImage.name,
-            directory: Directory.Data
-          });
-          savedImagePath = savedFile.uri;
-        }
+        // if (tempImage.path && tempImage.name) {
+        //   // 만약 기존 이미지가 있었다면 삭제 (교체 시)
+        //   if (initialData.imagePath) {
+        //     try {
+        //       await Filesystem.deleteFile({ path: initialData.imagePath });
+        //     } catch (e) {
+        //       console.error("기존 이미지 파일 삭제 실패", e);
+        //     }
+        //   }
+        //   // 새 파일 복사
+        //   const savedFile = await Filesystem.copy({
+        //     from: tempImage.path,
+        //     to: tempImage.name,
+        //     directory: Directory.Data
+        //   });
+        //   savedImagePath = savedFile.uri;
+        // }
 
         // Function과 Specifications 값을 배열로 수집 (빈 값은 제외)
         const functionValues = Array.from(functionInputs).map(input => input.value.trim()).filter(Boolean);
@@ -208,5 +222,13 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = 'settings.html';
       }
     });
+
+    // 타이머 초기화 및 시작
+    const timerSettings = storageManager.loadTimerSettings();
+    const timeoutSeconds = timerSettings.backTimer || 90;
+    timerManager.init(() => {
+      window.location.href = 'settings.html';
+    }, timeoutSeconds);
+    timerManager.start([coverEditForm]);
   }
 });

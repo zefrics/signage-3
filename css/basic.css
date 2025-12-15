@@ -393,6 +393,10 @@ form .input-content-group .input-content .file-input-wrapper #btn-select-image {
   border: 0;
   border-radius: 6px;
 }
+form .input-content-group .input-content .file-input-wrapper #btn-select-image:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
 form .input-content-group .input-content .file-input-wrapper #btn-clear-image {
   display: flex;
   align-items: center;
@@ -409,6 +413,10 @@ form .input-content-group .input-content .file-input-wrapper #btn-clear-image {
   color: rgb(255, 255, 255);
   border: 0;
   border-radius: 6px;
+}
+form .input-content-group .input-content .file-input-wrapper #btn-clear-image:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 form#cover-edit .input-content:nth-child(1) {
   grid-column: 1/2;

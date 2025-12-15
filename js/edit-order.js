@@ -1,3 +1,7 @@
+import { formatDate } from './date.js';
+import { storageManager } from './storage.js';
+import { timerManager } from './edit-timer.js';
+
 document.addEventListener('DOMContentLoaded', () => {
   // DOM 요소 참조
   const orderEditContainer = document.querySelector('#order-edit-container');
@@ -160,4 +164,12 @@ document.addEventListener('DOMContentLoaded', () => {
       window.location.href = 'settings.html';
     }
   });
+
+  // 타이머 초기화 및 시작
+  const timerSettings = storageManager.loadTimerSettings();
+  const timeoutSeconds = timerSettings.backTimer || 90;
+  timerManager.init(() => {
+    window.location.href = 'settings.html';
+  }, timeoutSeconds);
+  timerManager.start([orderEditContainer]);
 });

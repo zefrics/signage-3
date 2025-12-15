@@ -2,7 +2,7 @@
  * 로컬 스토리지를 사용하여 앱의 데이터를 관리하는 객체.
  * 슬라이드 데이터와 커버 데이터를 별도로 처리합니다.
  */
-const storageManager = {
+export const storageManager = {
   // 저장 시 사용할 키(key) 정의
   KEY_SLIDES: 'slideData',
   KEY_COVER: 'coverData',
