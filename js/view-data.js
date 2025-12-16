@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // slide-view 섹션의 내용을 업데이트하는 함수 (slider.js에서 이동)
   const updateSlideView = (data) => {
-    const slideContainer = document.querySelector('#slide-view');
+    const slideContainer = document.querySelector('#item-view');
     if (!slideContainer || !data) return;
 
     // 날짜 포맷 변경 함수 (YYYY-MM-DD -> yy년 mm월 dd일)
@@ -97,15 +97,15 @@ document.addEventListener('DOMContentLoaded', () => {
       : '-';
 
     // 이미지 표시 로직
-    const slideImgSelectedFrame = slideContainer.querySelector('#slide-img-selected');
-    const slideImgDefaultFrame = slideContainer.querySelector('#slide-img-default');
-    if (imagePath && slideImgSelectedFrame && slideImgDefaultFrame) {
-      slideImgSelectedFrame.querySelector('.selected').src = Capacitor.convertFileSrc(imagePath);
-      slideImgSelectedFrame.style.display = 'flex';
-      slideImgDefaultFrame.style.display = 'none';
-    } else if (slideImgSelectedFrame && slideImgDefaultFrame) {
-      slideImgSelectedFrame.style.display = 'none';
-      slideImgDefaultFrame.style.display = 'flex';
+    const itemImgSelectedFrame = slideContainer.querySelector('#item-img-selected');
+    const itemImgDefaultFrame = slideContainer.querySelector('#item-img-default');
+    if (imagePath && itemImgSelectedFrame && itemImgDefaultFrame) {
+      itemImgSelectedFrame.querySelector('.selected').src = Capacitor.convertFileSrc(imagePath);
+      itemImgSelectedFrame.style.display = 'flex';
+      itemImgDefaultFrame.style.display = 'none';
+    } else if (itemImgSelectedFrame && itemImgDefaultFrame) {
+      itemImgSelectedFrame.style.display = 'none';
+      itemImgDefaultFrame.style.display = 'flex';
     }
 
     // slide-view 내부의 각 p 태그에 내용 채우기
@@ -156,14 +156,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // sliderManager가 init 시점에 updateSlideView를 호출할 수 있도록 viewDataManager 객체를 먼저 생성하고 노출합니다.
     window.viewDataManager = { updateSlideView };
 
-    const slidesContainer = document.querySelector('#slides');
-    if (slidesContainer) sliderManager.init(slideData, coverData); // coverData 전달
+    const itemsContainer = document.querySelector('#items');
+    if (itemsContainer) sliderManager.init(slideData, coverData); // coverData 전달
     if (listViewContainer) updateListView(slideData);
     if (sliderEditContainer) updateSliderEditView(slideData);
 
     // index.html 또는 view-list.html의 cover에 적용
-    const slideCover = document.querySelector('#cover');
-    if (slideCover) updateCoverView();
+    const coversContainer = document.querySelector('#covers');
+    if (coversContainer) updateCoverView();
   };
 
   // settings.html 페이지의 타이머 초기화

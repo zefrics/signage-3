@@ -1,12 +1,12 @@
-$fs-main-title: 60px; // Main Title 폰트 사이즈
+$fs-main-title: 54px; // Main Title 폰트 사이즈
 $fw-main-title: 800; // Main Title 폰트 웨이트
 
 $fs-slide-label: 24px; // Slide View Label 폰트 사이즈
 $fw-slide-label: 400; // Slide View Label 폰트 웨이트
 
-$fs-slide-content: 49.5px; // Slide View Content 폰트 사이즈
+$fs-slide-content: 45px; // Slide View Content 폰트 사이즈
 $fw-slide-content: 600; // Slide View Content 폰트 웨이트
-$lh-slide-content: 59px; // Slide View Line Height
+$lh-slide-content: 54px; // Slide View Line Height
 
 $fs-list-title: 18px; // List View Title 폰트 사이즈
 $fw-list-title: 500; // List View Title 폰트 웨이트
@@ -81,8 +81,8 @@ body {
 }
 
 header {
-  display: flex; align-items: center; justify-content: space-between;
-  height: 64.5px;
+  display: flex; align-items: center; justify-content: space-between; gap: 45px;
+  height: 64.5px; // font-size: 54px에 맞춘 값
   margin-bottom: 24px;
 
   .logo-container {
@@ -120,18 +120,18 @@ header {
 .slider {
   position: relative;
 
-  #cover-view, #slide-view {
+  #cover-view, #item-view {
     display: flex; gap: 45px;
     padding: 45px;
     border: 3px solid $color-r6;
-    .slide-content-container {
+    .slide-content-container { // #cover-view, #item-view 공통
       display: flex; flex-direction: column; justify-content: space-between;
       width: 100%;
       min-width: 0; // flex 아이템이 할당된 공간보다 작아질 수 있도록 허용
       margin-bottom: -6px;
       .slide-content {
         .label {
-          margin-bottom: 7.5px;
+          margin-bottom: 9px;
           font-size: $fs-slide-label;
           font-weight: $fw-slide-label;
           color: $color-r3;
@@ -146,12 +146,12 @@ header {
         }
       }
     }
-    .img-frame {
+    .img-frame { // #cover-view, #item-view 공통
       display: flex; align-items: center; justify-content: center;
       border: 1px solid $color-r7;
       height: 100%;
-      aspect-ratio: 4 / 5; // 너비를 높이와 동일하게 설정
-      &#cover-img-default, &#slide-img-default {
+      aspect-ratio: 3 / 4;
+      &#cover-img-default, &#item-img-default { // #cover-view, #item-view 공통
         background-color: $color-r9;
       }
       .default {
@@ -165,10 +165,10 @@ header {
         -webkit-user-drag: none;
       }
     }
-    &#cover-view {
+    &#cover-view { // #cover-view 전용
       .slide-content-container {
         .slide-content {
-          height: 237.5px;
+          height: 230px;
           ul {
             display: flex; flex-direction: column; gap: 15px;
             li::before {
@@ -182,8 +182,8 @@ header {
   }
   
   .slider-controls {
-    position: absolute; top: 15px; right: 420px;
-    display: flex; align-items: center; gap: 6px;
+    position: absolute; top: 15px; right: 267px;
+    display: flex; align-items: center; gap: 3px;
     opacity: 0.6;
     button {
       cursor: pointer;
@@ -472,7 +472,11 @@ form {
 }
 
 .btn-group {
-  display: flex; gap: 30px;
+  display: flex; justify-content: flex-end;
+  gap: 30px;
+  &.main-btn-group {
+    width: 430px;
+  }
   .btn-1, .btn-2, .btn-3, .btn-4 {
     display: flex; justify-content: center; align-items: center; gap: 12px;
     box-sizing: border-box;
@@ -512,6 +516,27 @@ form {
     border: 3px solid $color-g1;
     background-color: $color-w1;
     color: $color-g1;
+  }
+  .btn-settings, .btn-change {
+    display: flex; align-items: center; justify-content: center;
+    box-sizing: border-box;
+    cursor: pointer;
+    -webkit-user-drag: none;
+    text-decoration: none;
+    height: 60px; width: 60px;
+    padding: 0;
+    border-radius: 15px;
+    img {
+      width: 30px; height: 30px;
+    }
+  }
+  .btn-settings {
+    border: 0;
+    background-color: $color-g1;
+  }
+  .btn-change {
+    border: 3px solid $color-g1;
+    background-color: $color-w1;
   }
 }
 

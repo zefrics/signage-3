@@ -14,7 +14,7 @@ import { timerManager } from './edit-timer.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   const sliderEditContainer = document.querySelector('#slider-edit-container');
-  const slideEditForm = document.querySelector('#slide-edit');
+  const itemEditForm = document.querySelector('#item-edit');
 
   // edit.html의 이벤트 처리
   if (sliderEditContainer) {
@@ -57,14 +57,14 @@ document.addEventListener('DOMContentLoaded', () => {
       if (target.matches('.btn-modify')) {
         const order = target.dataset.order;
         // URL 파라미터로 order를 전달하며 edit-slide.html로 이동
-        window.location.href = `edit-slide.html?order=${order}`;
+        window.location.href = `edit-item.html?order=${order}`;
       }
     });
   }
 
   // edit-slide.html의 이벤트 처리
-  if (slideEditForm) {
-    const slideEditTitle = document.querySelector('#slide-edit-title');
+  if (itemEditForm) {
+    const itemEditTitle = document.querySelector('#item-edit-title');
     const backButton = document.querySelector('#btn-back');
     const testMachineInput = document.querySelector('#input-test-machine');
     const modelInput = document.querySelector('#input-model');
@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (editingOrder) {
       // 수정 모드
-      slideEditTitle.textContent = 'Edit Slide';
+      itemEditTitle.textContent = 'Edit Item';
       const dataArray = storageManager.load();
       const dataToEdit = dataArray.find(d => d.order == editingOrder);
       if (dataToEdit) {
@@ -117,7 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     } else {
       // 생성 모드
-      slideEditTitle.textContent = 'New Slide';
+      itemEditTitle.textContent = 'New Item';
       // 생성 모드의 초기 데이터는 비어있음
       initialData = {
         testMachine: '',
@@ -130,7 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // 한글 입력 시 maxlength가 적용되지 않는 현상 방지
-    const inputsWithMaxLength = slideEditForm.querySelectorAll('input[maxlength]');
+    const inputsWithMaxLength = itemEditForm.querySelectorAll('input[maxlength]');
     inputsWithMaxLength.forEach(input => {
       input.addEventListener('input', () => {
         const maxLength = parseInt(input.getAttribute('maxlength'), 10);
@@ -219,11 +219,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const isSubmittingRef = { current: false }; // 페이지 이탈 방지 로직을 위한 참조 객체
 
     // 적용 버튼 클릭 이벤트
-    slideEditForm.addEventListener('submit', async (event) => {
+    itemEditForm.addEventListener('submit', async (event) => {
       event.preventDefault(); // 기본 제출 동작 방지
 
-      if (!slideEditForm.checkValidity()) {
-        slideEditForm.reportValidity();
+      if (!itemEditForm.checkValidity()) {
+        itemEditForm.reportValidity();
         return;
       }
 
@@ -288,6 +288,6 @@ document.addEventListener('DOMContentLoaded', () => {
     timerManager.init(() => {
       window.location.href = 'settings.html';
     }, timeoutSeconds);
-    timerManager.start([slideEditForm]);
+    timerManager.start([itemEditForm]);
   }
 });

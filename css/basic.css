@@ -11,6 +11,7 @@ header {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 45px;
   height: 64.5px;
   margin-bottom: 24px;
 }
@@ -32,7 +33,7 @@ header .logo-container .date {
   color: rgba(0, 0, 0, 0.45);
 }
 header .main-title {
-  font-size: 60px;
+  font-size: 54px;
   font-weight: 800;
 }
 header .main-title#tester-name {
@@ -51,13 +52,13 @@ header .main-title#tester-name {
 .slider {
   position: relative;
 }
-.slider #cover-view, .slider #slide-view {
+.slider #cover-view, .slider #item-view {
   display: flex;
   gap: 45px;
   padding: 45px;
   border: 3px solid rgba(240, 78, 35, 0.3);
 }
-.slider #cover-view .slide-content-container, .slider #slide-view .slide-content-container {
+.slider #cover-view .slide-content-container, .slider #item-view .slide-content-container {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -65,38 +66,38 @@ header .main-title#tester-name {
   min-width: 0;
   margin-bottom: -6px;
 }
-.slider #cover-view .slide-content-container .slide-content .label, .slider #slide-view .slide-content-container .slide-content .label {
-  margin-bottom: 7.5px;
+.slider #cover-view .slide-content-container .slide-content .label, .slider #item-view .slide-content-container .slide-content .label {
+  margin-bottom: 9px;
   font-size: 24px;
   font-weight: 400;
   color: rgba(240, 78, 35, 0.75);
 }
-.slider #cover-view .slide-content-container .slide-content .content, .slider #slide-view .slide-content-container .slide-content .content {
-  font-size: 49.5px;
+.slider #cover-view .slide-content-container .slide-content .content, .slider #item-view .slide-content-container .slide-content .content {
+  font-size: 45px;
   font-weight: 600;
-  line-height: 59px;
+  line-height: 54px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.slider #cover-view .img-frame, .slider #slide-view .img-frame {
+.slider #cover-view .img-frame, .slider #item-view .img-frame {
   display: flex;
   align-items: center;
   justify-content: center;
   border: 1px solid rgba(240, 78, 35, 0.15);
   height: 100%;
-  aspect-ratio: 4/5;
+  aspect-ratio: 3/4;
 }
-.slider #cover-view .img-frame#cover-img-default, .slider #cover-view .img-frame#slide-img-default, .slider #slide-view .img-frame#cover-img-default, .slider #slide-view .img-frame#slide-img-default {
+.slider #cover-view .img-frame#cover-img-default, .slider #cover-view .img-frame#item-img-default, .slider #item-view .img-frame#cover-img-default, .slider #item-view .img-frame#item-img-default {
   background-color: rgba(240, 78, 35, 0.05);
 }
-.slider #cover-view .img-frame .default, .slider #slide-view .img-frame .default {
+.slider #cover-view .img-frame .default, .slider #item-view .img-frame .default {
   width: 35%;
   height: auto;
   opacity: 0.6;
   -webkit-user-drag: none;
 }
-.slider #cover-view .img-frame .selected, .slider #slide-view .img-frame .selected {
+.slider #cover-view .img-frame .selected, .slider #item-view .img-frame .selected {
   height: 100%;
   width: 100%;
   -o-object-fit: cover;
@@ -105,25 +106,25 @@ header .main-title#tester-name {
      object-position: center;
   -webkit-user-drag: none;
 }
-.slider #cover-view#cover-view .slide-content-container .slide-content, .slider #slide-view#cover-view .slide-content-container .slide-content {
-  height: 237.5px;
+.slider #cover-view#cover-view .slide-content-container .slide-content, .slider #item-view#cover-view .slide-content-container .slide-content {
+  height: 230px;
 }
-.slider #cover-view#cover-view .slide-content-container .slide-content ul, .slider #slide-view#cover-view .slide-content-container .slide-content ul {
+.slider #cover-view#cover-view .slide-content-container .slide-content ul, .slider #item-view#cover-view .slide-content-container .slide-content ul {
   display: flex;
   flex-direction: column;
   gap: 15px;
 }
-.slider #cover-view#cover-view .slide-content-container .slide-content ul li::before, .slider #slide-view#cover-view .slide-content-container .slide-content ul li::before {
+.slider #cover-view#cover-view .slide-content-container .slide-content ul li::before, .slider #item-view#cover-view .slide-content-container .slide-content ul li::before {
   content: "·";
   margin-right: 18px;
 }
 .slider .slider-controls {
   position: absolute;
   top: 15px;
-  right: 420px;
+  right: 267px;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 3px;
   opacity: 0.6;
 }
 .slider .slider-controls button {
@@ -456,7 +457,11 @@ form#cover-edit .input-content .input-group .input-dot::before {
 
 .btn-group {
   display: flex;
+  justify-content: flex-end;
   gap: 30px;
+}
+.btn-group.main-btn-group {
+  width: 430px;
 }
 .btn-group .btn-1, .btn-group .btn-2, .btn-group .btn-3, .btn-group .btn-4 {
   display: flex;
@@ -502,6 +507,31 @@ form#cover-edit .input-content .input-group .input-dot::before {
   border: 3px solid rgb(153, 202, 59);
   background-color: rgb(255, 255, 255);
   color: rgb(153, 202, 59);
+}
+.btn-group .btn-settings, .btn-group .btn-change {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  cursor: pointer;
+  -webkit-user-drag: none;
+  text-decoration: none;
+  height: 60px;
+  width: 60px;
+  padding: 0;
+  border-radius: 15px;
+}
+.btn-group .btn-settings img, .btn-group .btn-change img {
+  width: 30px;
+  height: 30px;
+}
+.btn-group .btn-settings {
+  border: 0;
+  background-color: rgb(153, 202, 59);
+}
+.btn-group .btn-change {
+  border: 3px solid rgb(153, 202, 59);
+  background-color: rgb(255, 255, 255);
 }
 
 .hide {

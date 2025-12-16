@@ -9,7 +9,7 @@
   </head>
   <body>
     <header>
-      <div id="slide-edit-title" class="main-title">
+      <div id="item-edit-title" class="main-title">
         
       </div>
       <div class="btn-group">
@@ -19,7 +19,7 @@
             Back (<span class="countdown"></span>)
           </div>
         </button>
-        <button type="submit" id="btn-apply-slide" form="slide-edit" class="btn-2">
+        <button type="submit" id="btn-apply-item" form="item-edit" class="btn-2">
           <img src="img/check.svg" alt="apply">
           <div class="text">Apply</div>
         </button>
@@ -27,19 +27,19 @@
     </header>
 
     <main>
-      <form id="slide-edit" class="section">
+      <form id="item-edit" class="section">
         <div class="input-content-group">
           <div class="input-content">
             <h2 class="label">Test Machine</h2>
-            <input type="text" autocomplete="off" id="input-test-machine" placeholder="필수 입력 항목입니다." maxlength="33" required>
+            <input type="text" autocomplete="off" id="input-test-machine" placeholder="필수 입력 항목입니다." maxlength="30" required>
           </div>
           <div class="input-content">
             <h2 class="label">Model</h2>
-            <input type="text" autocomplete="off" id="input-model" placeholder="필수 입력 항목입니다." maxlength="33" required>
+            <input type="text" autocomplete="off" id="input-model" placeholder="필수 입력 항목입니다." maxlength="30" required>
           </div>
           <div class="input-content">
             <h2 class="label">Purpose</h2>
-            <input type="text" autocomplete="off" id="input-purpose" placeholder="필수 입력 항목입니다." maxlength="33" required>
+            <input type="text" autocomplete="off" id="input-purpose" placeholder="필수 입력 항목입니다." maxlength="30" required>
           </div>
           <div class="input-content">
             <h2 class="label">Slide Image</h2>
@@ -53,11 +53,11 @@
           </div>
           <div class="input-content">
             <h2 class="label">Start Date</h2>
-            <input type="date" autocomplete="off" id="input-start-date" placeholder="필수 입력 항목입니다." required>
+            <input type="date" autocomplete="off" id="input-start-date">
           </div>
           <div class="input-content">
             <h2 class="label">End Date</h2>
-            <input type="date" autocomplete="off" id="input-end-date" placeholder="필수 입력 항목입니다." required>
+            <input type="date" autocomplete="off" id="input-end-date">
           </div>
         </div>
       </form>
@@ -66,5 +66,5 @@
   <script type="module" src="js/date.js"></script>
   <script type="module" src="js/storage.js"></script>
   <script type="module" src="js/edit-timer.js"></script> 
-  <script type="module" src="js/edit-slide.js"></script>
+  <script type="module" src="js/edit-item.js"></script>
 </html>

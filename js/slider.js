@@ -9,8 +9,8 @@ export const sliderManager = {
   prevButton: document.querySelector('#btn-slide-prev'),
   nextButton: document.querySelector('#btn-slide-next'),
   counterElement: document.querySelector('#slide-counter'),
-  coverElement: document.querySelector('#cover'),
-  slidesElement: document.querySelector('#slides'),
+  coverElement: document.querySelector('#covers'),
+  slidesElement: document.querySelector('#items'),
 
   // 슬라이더 초기화
   init(slideData, coverData) {
@@ -31,7 +31,7 @@ export const sliderManager = {
       if (controls) controls.style.display = 'none';
 
       // "Change View" 버튼 비활성화
-      const changeViewButtons = document.querySelectorAll('.btn-4');
+      const changeViewButtons = document.querySelectorAll('.btn-change');
       changeViewButtons.forEach(button => {
         button.style.opacity = '0.4';
         button.style.cursor = 'not-allowed';
