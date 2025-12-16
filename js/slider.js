@@ -10,61 +10,83 @@ export const sliderManager = {
   nextButton: document.querySelector('#btn-slide-next'),
   counterElement: document.querySelector('#slide-counter'),
   coverElement: document.querySelector('#covers'),
-  slidesElement: document.querySelector('#items'),
+  itemElement: document.querySelector('#items'),
 
   // 슬라이더 초기화
-  init(slideData, coverData) {
+  init(slideData) {
     this.stop();
     
     // 로컬 스토리지에서 타이머 설정을 불러옴
     const timerSettings = storageManager.loadTimerSettings();
     // sliderTimer 값이 있으면 해당 값을 초 단위로 변환하여 사용하고, 없으면 5초(5000ms)를 기본값으로 사용
     this.slideDuration = timerSettings && timerSettings.sliderTimer ? parseInt(timerSettings.sliderTimer, 10) * 1000 : 5000;
-    // 데이터가 없는 경우, 커버만 표시하고 슬라이더를 비활성화
+    
+    // 데이터가 없는 경우, #no-data를 표시하고 슬라이더를 숨김
     if (!slideData || slideData.length === 0) {
-      this.totalSlides = [{ type: 'cover', data: coverData }];
-      this.currentIndex = 0;
-      this.showSlide(this.currentIndex);
-      
-      // 슬라이더 컨트롤 숨기기
-      const controls = document.querySelector('.slider-controls');
-      if (controls) controls.style.display = 'none';
+      const sliderElement = document.querySelector('.slider');
+      const noDataElement = document.querySelector('#no-data');
 
-      // "Change View" 버튼 비활성화
-      const changeViewButtons = document.querySelectorAll('.btn-change');
-      changeViewButtons.forEach(button => {
-        button.style.opacity = '0.4';
-        button.style.cursor = 'not-allowed';
-        button.addEventListener('click', (e) => e.preventDefault());
-      });
-
+      if (sliderElement) sliderElement.style.display = 'none';
+      if (noDataElement) {
+        noDataElement.style.display = 'block';
+        // #no-data 내부의 Change View 버튼은 Item이 없으므로 비활성화
+        const changeViewButton = noDataElement.querySelector('.btn-change');
+        if(changeViewButton) {
+          changeViewButton.style.pointerEvents = 'none';
+          changeViewButton.style.opacity = '0.4';
+        }
+      }
       return; // 슬라이더 시작하지 않고 종료
     }
 
     const isListPage = document.querySelector('#view-list-page');
+    const hasItems = slideData.some(d => d.type === 'Item');
+
+    // index.html이고 Item이 없을 경우, Change View 버튼 비활성화
+    if (!isListPage && !hasItems) {
+      const changeViewButtons = document.querySelectorAll('.btn-change');
+      changeViewButtons.forEach(button => {
+        button.style.pointerEvents = 'none';
+        button.style.opacity = '0.4';
+      });
+    }
+
+    // 데이터가 1개 이하일 경우 컨트롤 비활성화
+    const controls = document.querySelector('.slider-controls');
+    if (slideData.length <= 1 && controls) {
+      controls.style.opacity = '0.4';
+      const buttons = controls.querySelectorAll('button');
+      buttons.forEach(button => {
+        button.disabled = true;
+        button.style.cursor = 'default';
+      });
+    }
 
     if (isListPage) {
       // view-list.html의 경우: [커버, 목록] 2개의 슬라이드로 구성
       this.addEventListeners();
+      // 1. 'Cover' 타입의 데이터들을 order 순으로 정렬
+      const coverSlides = slideData
+        .filter(d => d.type === 'Cover')
+        .sort((a, b) => a.order - b.order)
+        .map(cover => ({ type: 'cover', data: cover }));
+
+      // 2. 첫 페이지는 항상 list, 그 뒤로 cover들을 추가
       this.totalSlides = [
-        { type: 'cover', data: coverData },
-        { type: 'list', data: null } // 목록 뷰를 위한 슬라이드
+        { type: 'list', data: null }, // 목록 뷰를 항상 첫 번째로
+        ...coverSlides
       ];
     } else {
-      // index.html의 경우: [커버, 슬라이드1, 슬라이드2, ...]
-      // 1. 커버 데이터를 첫 번째 슬라이드로 추가
+      // index.html의 경우: 저장된 모든 데이터를 order 순서대로 슬라이드로 구성
       this.addEventListeners();
-      this.totalSlides = [{ type: 'cover', data: coverData }];
-
-      // 2. 슬라이드 데이터를 'order' 순서대로 정렬하여 추가
-      const sortedSlides = [...slideData].sort((a, b) => a.order - b.order);
-      sortedSlides.forEach(slide => {
-        this.totalSlides.push({ type: 'slide', data: slide });
+      this.totalSlides = [...slideData].sort((a, b) => a.order - b.order).map(d => {
+        // 데이터 타입에 따라 슬라이드 타입을 결정
+        return { type: d.type === 'Cover' ? 'cover' : 'slide', data: d };
       });
     }
 
-    // 데이터가 있으면 첫번째 슬라이드(index: 1)부터, 없으면 커버(index: 0)부터 시작
-    this.currentIndex = this.totalSlides.length > 1 ? 1 : 0;
+    // 첫 번째 슬라이드부터 시작
+    this.currentIndex = 0;
 
     this.showSlide(this.currentIndex);
     this.start();
@@ -104,39 +126,45 @@ export const sliderManager = {
   // 특정 인덱스의 슬라이드를 표시
   showSlide(index) {
     const slideInfo = this.totalSlides[index];
+    // 슬라이드 정보가 없으면 아무것도 하지 않음
+    if (!slideInfo) return;
+
+    const isListPage = document.querySelector('#view-list-page');
 
     if (slideInfo.type === 'cover') {
-      // 커버 슬라이드를 보여주고, 일반 슬라이드는 숨김
+      // Cover 타입일 경우: coverElement를 보여주고 다른 컨테이너는 숨김
       this.coverElement.style.display = 'block';
-      this.slidesElement.style.display = 'none';
-      // view-data.js의 updateCoverView가 이미 내용을 채웠으므로 여기서는 별도 작업 불필요
-    } else if (slideInfo.type === 'slide') {
-      // 일반 슬라이드를 보여주고, 커버 슬라이드는 숨김
+      if (this.itemElement) this.itemElement.style.display = 'none';
+      const listElement = document.querySelector('#lists');
+      if (listElement) listElement.style.display = 'none';
+
+      if (window.viewDataManager?.updateItemView) {
+        window.viewDataManager.updateItemView(slideInfo.data); // 모든 cover 표시는 updateItemView에 위임
+      }
+    } else {
+      // Item(slide) 또는 List 타입일 경우:
+      // 해당 컨테이너를 보여주고 coverElement를 숨김
       this.coverElement.style.display = 'none';
-      this.slidesElement.style.display = 'block';
+      const contentElement = isListPage ? document.querySelector('#lists') : this.itemElement;
+      if (contentElement) contentElement.style.display = 'block';
       // view-data.js에 데이터 표시 위임
-      if (window.viewDataManager && typeof window.viewDataManager.updateSlideView === 'function') {
-        window.viewDataManager.updateSlideView(slideInfo.data);
+      if (window.viewDataManager?.updateItemView) {
+        window.viewDataManager.updateItemView(slideInfo.data);
       }
     }
 
     this.updateCounter();
 
     // view-list.html의 목록 뷰 처리
-    if (slideInfo.type === 'list') {
-      this.coverElement.style.display = 'none';
-      this.slidesElement.style.display = 'block';
-    }
   },
 
   // 슬라이드 카운터 업데이트
   updateCounter() {
     if (this.counterElement) {
-      // 전체 개수에서 커버는 제외
-      const total = this.totalSlides.length > 1 ? this.totalSlides.length - 1 : 0;
-      // 현재 인덱스를 그대로 사용하여 커버는 0번으로 표시
-      const current = this.currentIndex;
-
+      // 슬라이드의 총 개수는 totalSlides 배열의 길이를 사용
+      const total = this.totalSlides.length;
+      // 현재 인덱스 + 1
+      const current = this.currentIndex + 1;
       this.counterElement.textContent = `${current} / ${total}`;
     }
   },

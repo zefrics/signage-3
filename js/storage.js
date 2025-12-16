@@ -5,7 +5,6 @@
 export const storageManager = {
   // 저장 시 사용할 키(key) 정의
   KEY_SLIDES: 'slideData',
-  KEY_COVER: 'coverData',
   KEY_TIMERS: 'timerSettings',
 
   /**
@@ -31,12 +30,25 @@ export const storageManager = {
    */
   addData(newData) {
     const dataArray = this.load();
+    const type = newData.type;
+    const limit = type === 'Cover' ? 5 : 10; // 타입별 제한 개수 설정 (Cover는 5개, Item은 10개)
+
+    const currentCount = dataArray.filter(d => d.type === type).length;
+
+    if (currentCount >= limit) {
+      alert(`${type}는 최대 ${limit}개까지 생성할 수 있습니다.`);
+      // false를 반환하여 데이터 추가가 실패했음을 알릴 수 있습니다.
+      return false;
+    }
 
     // order 값 계산: 기존 데이터가 있으면 가장 큰 order + 1, 없으면 1
     const maxOrder = dataArray.length > 0 ? Math.max(...dataArray.map(d => d.order)) : 0;
     newData.order = maxOrder + 1;
     dataArray.push(newData);
     this.save(dataArray);
+
+    // true를 반환하여 성공적으로 추가되었음을 알릴 수 있습니다.
+    return true;
   },
 
   /**
@@ -58,9 +70,17 @@ export const storageManager = {
    * @param {string|number} order - 삭제할 데이터의 order 값
    */
   deleteData(order) {
-    let dataArray = this.load();
-    dataArray = dataArray.filter(d => d.order != order);
-    this.save(dataArray);
+    const dataArray = this.load();
+    // 지정된 order의 항목을 제외한 새 배열 생성
+    const remainingData = dataArray.filter(d => d.order != order);
+
+    // 남아있는 데이터를 기존 order 순서대로 정렬
+    remainingData.sort((a, b) => a.order - b.order);
+
+    // order 값을 1부터 순차적으로 재할당
+    const reorderedData = remainingData.map((item, index) => ({ ...item, order: index + 1 }));
+
+    this.save(reorderedData);
   },
 
   /**
@@ -85,31 +105,6 @@ export const storageManager = {
       return item;
     });
     this.save(reorderedArray);
-  },
-
-  /**
-   * 커버 데이터를 로컬 스토리지에 저장합니다.
-   * @param {Object} coverData - 저장할 커버 데이터 객체
-   */
-  saveCoverData(coverData) {
-    localStorage.setItem(this.KEY_COVER, JSON.stringify(coverData));
-  },
-
-  /**
-   * 로컬 스토리지에서 커버 데이터를 불러옵니다.
-   * @returns {Object|null} 저장된 커버 데이터 객체. 데이터가 없으면 null을 반환합니다.
-   */
-  loadCoverData() {
-    const data = localStorage.getItem(this.KEY_COVER);
-    // 데이터가 없으면 기본값을 반환
-    return data ? JSON.parse(data) : {
-      testerName: '(Tester Name)',
-      imagePath: null,
-      // function과 specifications는 배열 길이를 유지하며 병합
-      // edit-cover.js의 defaultCoverData와 동일하게 설정
-      function: ['(Function #1)', '', ''],
-      specifications: ['(Specifications #1)', '', ''],
-    };
   },
 
   /**

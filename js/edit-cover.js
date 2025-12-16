@@ -1,21 +1,12 @@
-// const { Camera, Filesystem } = window.Capacitor.Plugins;
-// Capacitor 플러그인 Enum을 상수로 정의
-// const CameraResultType = {
-//   Uri: 'uri',
-// };
-// const CameraSource = {
-//   Photos: 'PHOTOS',
-// };
-// const Directory = {
-//   Data: 'Data',
-// };
 import { storageManager } from './storage.js';
 import { timerManager } from './edit-timer.js';
 
 document.addEventListener('DOMContentLoaded', () => {
+  // 이 파일은 edit-cover.html에서만 사용되므로, 해당 페이지의 form만 선택합니다.
   const coverEditForm = document.querySelector('#cover-edit');
 
   if (coverEditForm) {
+    const coverEditTitle = document.querySelector('#cover-edit-title');
     const backButton = document.querySelector('#btn-back');
     const testerNameInput = document.querySelector('#input-tester-name');
     const functionInputs = document.querySelectorAll('[id^="input-function-"]');
@@ -27,51 +18,48 @@ document.addEventListener('DOMContentLoaded', () => {
     let tempImage = { path: null, name: null }; // 임시로 선택된 이미지 정보를 저장할 객체
     
     let initialData = {}; // 초기 데이터를 저장할 객체
+    
+    // URL 파라미터에서 'order' 값을 가져옴
+    const urlParams = new URLSearchParams(window.location.search);
+    const editingOrder = urlParams.get('order');
 
-    // 기본값 정의
-    const defaultCoverData = {
-      testerName: '(Tester Name)',
-      imagePath: null,
-      function: ['(Function #1)', '', ''],
-      specifications: ['(Specifications #1)', '', ''],
-    };
+    if (editingOrder) {
+      // 수정 모드
+      coverEditTitle.textContent = 'Edit Cover';
+      const dataArray = storageManager.load();
+      const dataToEdit = dataArray.find(d => d.order == editingOrder);
+      if (dataToEdit) {
+        testerNameInput.value = dataToEdit.testerName || '';
+        (dataToEdit.function || []).forEach((val, i) => functionInputs[i] && (functionInputs[i].value = val));
+        (dataToEdit.specifications || []).forEach((val, i) => specificationsInputs[i] && (specificationsInputs[i].value = val));
+        savedImagePath = dataToEdit.imagePath || null;
 
-    // 저장된 데이터 불러오기
-    const savedCoverData = storageManager.loadCoverData() || {};
+        if (savedImagePath) {
+          const pathParts = savedImagePath.split('/');
+          fileNameDisplay.textContent = pathParts.pop();
+          fileNameDisplay.classList.add('file-selected');
+          imageClearButton.style.display = 'flex';
+          imageSelectButton.style.display = 'none';
+        }
 
-    // 기본값과 저장된 값을 병합하여 최종값 결정 (저장된 값이 우선)
-    // function과 specifications는 배열 길이를 유지하며 병합
-    const finalCoverData = {
-      ...defaultCoverData,
-      ...savedCoverData,
-      function: (savedCoverData.function || []).concat(defaultCoverData.function.slice((savedCoverData.function || []).length)),
-      specifications: (savedCoverData.specifications || []).concat(defaultCoverData.specifications.slice((savedCoverData.specifications || []).length)),
-    };
-
-    // 최종값으로 입력 필드 채우기 및 스토리지 업데이트
-    testerNameInput.value = finalCoverData.testerName;
-    finalCoverData.function.forEach((val, i) => functionInputs[i] && (functionInputs[i].value = val));
-    finalCoverData.specifications.forEach((val, i) => specificationsInputs[i] && (specificationsInputs[i].value = val));
-    storageManager.saveCoverData(finalCoverData);
-
-    // 이미지 데이터 처리
-    savedImagePath = finalCoverData.imagePath;
-    if (savedImagePath) {
-      const pathParts = savedImagePath.split('/');
-      fileNameDisplay.textContent = pathParts.pop();
-      fileNameDisplay.classList.add('file-selected');
-      imageClearButton.style.display = 'flex';
-      imageSelectButton.style.display = 'none';
+        // 초기 데이터 저장
+        initialData = {
+          testerName: dataToEdit.testerName || '',
+          imagePath: dataToEdit.imagePath || null,
+          function: Array.from(functionInputs).map(input => input.value),
+          specifications: Array.from(specificationsInputs).map(input => input.value),
+        };
+      }
+    } else {
+      // 생성 모드
+      coverEditTitle.textContent = 'New Cover';
+      initialData = {
+        testerName: '',
+        imagePath: null,
+        function: ['', '', ''],
+        specifications: ['', '', ''],
+      };
     }
-
-    // 초기 데이터 저장 (isFormChanged 함수에서 비교하기 위함)
-    initialData = {
-      testerName: finalCoverData.testerName,
-      imagePath: finalCoverData.imagePath,
-      // .trim()을 사용하지 않고 원본 배열을 그대로 저장
-      function: finalCoverData.function,
-      specifications: finalCoverData.specifications,
-    };
 
     // 한글 입력 시 maxlength가 적용되지 않는 현상 방지
     const inputsWithMaxLength = coverEditForm.querySelectorAll('input[maxlength]');
@@ -155,7 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       return (
         initialData.testerName !== testerNameInput.value.trim() ||
-        initialData.imagePath !== savedImagePath || // 이미지 변경 감지 (tempImage는 저장 시에만 고려)
+        (tempImage.path !== null || initialData.imagePath !== savedImagePath) || // 이미지 변경 감지
         JSON.stringify(initialData.function) !== JSON.stringify(currentFunctionValues) ||
         JSON.stringify(initialData.specifications) !== JSON.stringify(currentSpecificationsValues)
       );
@@ -195,20 +183,27 @@ document.addEventListener('DOMContentLoaded', () => {
         // }
 
         // Function과 Specifications 값을 배열로 수집 (빈 값은 제외)
-        const functionValues = Array.from(functionInputs).map(input => input.value.trim()).filter(Boolean);
-        const specificationsValues = Array.from(specificationsInputs).map(input => input.value.trim()).filter(Boolean);
+        const functionValues = Array.from(functionInputs).map(input => input.value.trim());
+        const specificationsValues = Array.from(specificationsInputs).map(input => input.value.trim());
 
         const coverData = {
           testerName: testerNameInput.value.trim(),
           imagePath: savedImagePath, // 최종 이미지 경로 저장
           function: functionValues,
           specifications: specificationsValues,
+          type: 'Cover', // 타입을 'Cover'로 명시
         };
 
-        storageManager.saveCoverData(coverData);
-
+        if (editingOrder) {
+          // 데이터 수정
+          storageManager.updateData(editingOrder, coverData);
+        } else {
+          // 새 데이터 추가
+          storageManager.addData(coverData);
+        }
+        
         alert('작성하신 내용이 적용되었습니다.');
-        window.location.href = 'index.html'; // 저장 후 index.html로 이동
+        window.location.href = 'settings.html'; // 저장 후 settings.html로 이동
       }
     });
 

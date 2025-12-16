@@ -1,12 +1,12 @@
 $fs-main-title: 54px; // Main Title 폰트 사이즈
 $fw-main-title: 800; // Main Title 폰트 웨이트
 
-$fs-slide-label: 24px; // Slide View Label 폰트 사이즈
-$fw-slide-label: 400; // Slide View Label 폰트 웨이트
+$fs-slide-label: 24px; // Slide Label 폰트 사이즈
+$fw-slide-label: 400; // Slide Label 폰트 웨이트
 
-$fs-slide-content: 45px; // Slide View Content 폰트 사이즈
-$fw-slide-content: 600; // Slide View Content 폰트 웨이트
-$lh-slide-content: 54px; // Slide View Line Height
+$fs-slide-content: 45px; // Slide Content 폰트 사이즈
+$fw-slide-content: 600; // Slide Content 폰트 웨이트
+$lh-slide-content: 54px; // Slide Line Height
 
 $fs-list-title: 18px; // List View Title 폰트 사이즈
 $fw-list-title: 500; // List View Title 폰트 웨이트
@@ -14,11 +14,11 @@ $fw-list-title: 500; // List View Title 폰트 웨이트
 $fs-list-content: 24px; // List View Content 폰트 사이즈
 $fw-list-content: 600; // List View Content 폰트 웨이트
 
-$fs-edit-table-title: 18px; // Edit Tables Title 폰트 사이즈
-$fw-edit-table-title: 500; // Edit Tables Title 폰트 웨이트
+$fs-slider-edit-title: 18px; // Edit Tables Title 폰트 사이즈
+$fw-slider-edit-title: 500; // Edit Tables Title 폰트 웨이트
 
-$fs-edit-table-content: 16.5px; // Edit Tables Content 폰트 사이즈
-$fw-edit-table-content: 400; // Edit Tables Content 폰트 웨이트
+$fs-slider-edit-content: 16.5px; // Edit Tables Content 폰트 사이즈
+$fw-slider-edit-content: 400; // Edit Tables Content 폰트 웨이트
 
 $fs-edit-label: 18px; // Input Label 폰트 사이즈
 $fw-edit-label: 500; // Input Label 폰트 웨이트
@@ -114,73 +114,25 @@ header {
 .section {
   height: $main-height;
   box-sizing: border-box;
-  border-radius: 15px;
+}
+
+/* 데이터가 없을 때 표시될 섹션 */
+#no-data {
+  display: none; /* 기본적으로 숨김 */
+  .section {
+    border: 3px solid $color-r6;
+    border-radius: 15px;
+    display: flex; align-items: center; justify-content: center;
+    p {
+      font-size: 45px;
+      font-weight: 600;
+      color: $color-k1;
+    }
+  }
 }
 
 .slider {
   position: relative;
-
-  #cover-view, #item-view {
-    display: flex; gap: 45px;
-    padding: 45px;
-    border: 3px solid $color-r6;
-    .slide-content-container { // #cover-view, #item-view 공통
-      display: flex; flex-direction: column; justify-content: space-between;
-      width: 100%;
-      min-width: 0; // flex 아이템이 할당된 공간보다 작아질 수 있도록 허용
-      margin-bottom: -6px;
-      .slide-content {
-        .label {
-          margin-bottom: 9px;
-          font-size: $fs-slide-label;
-          font-weight: $fw-slide-label;
-          color: $color-r3;
-        }
-        .content {
-          font-size: $fs-slide-content;
-          font-weight: $fw-slide-content;
-          line-height: $lh-slide-content;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
-      }
-    }
-    .img-frame { // #cover-view, #item-view 공통
-      display: flex; align-items: center; justify-content: center;
-      border: 1px solid $color-r7;
-      height: 100%;
-      aspect-ratio: 3 / 4;
-      &#cover-img-default, &#item-img-default { // #cover-view, #item-view 공통
-        background-color: $color-r9;
-      }
-      .default {
-        width: 35%; height: auto;
-        opacity: 0.6;
-        -webkit-user-drag: none;
-      }
-      .selected {
-        height: 100%; width: 100%;
-        object-fit: cover; object-position: center;
-        -webkit-user-drag: none;
-      }
-    }
-    &#cover-view { // #cover-view 전용
-      .slide-content-container {
-        .slide-content {
-          height: 230px;
-          ul {
-            display: flex; flex-direction: column; gap: 15px;
-            li::before {
-              content: "·";
-              margin-right: 18px;
-            }
-          }
-        }
-      }
-    }
-  }
-  
   .slider-controls {
     position: absolute; top: 15px; right: 267px;
     display: flex; align-items: center; gap: 3px;
@@ -206,9 +158,72 @@ header {
   }
 }
 
+#cover-view, #item-view {
+  display: flex; gap: 45px;
+  padding: 45px;
+  border: 3px solid $color-r6;
+  border-radius: 15px;
+  .slide-content-container { // #cover-view, #item-view 공통
+    display: flex; flex-direction: column; justify-content: space-between;
+    width: 100%;
+    min-width: 0; // flex 아이템이 할당된 공간보다 작아질 수 있도록 허용
+    margin-bottom: -6px;
+    .slide-content {
+      .label {
+        margin-bottom: 9px;
+        font-size: $fs-slide-label;
+        font-weight: $fw-slide-label;
+        color: $color-r3;
+      }
+      .content {
+        font-size: $fs-slide-content;
+        font-weight: $fw-slide-content;
+        line-height: $lh-slide-content;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+  }
+  .img-frame { // #cover-view, #item-view 공통
+    display: flex; align-items: center; justify-content: center;
+    border: 1px solid $color-r7;
+    height: 100%;
+    aspect-ratio: 3 / 4;
+    &#cover-img-default, &#item-img-default { // #cover-view, #item-view 공통
+      background-color: $color-r9;
+    }
+    .default {
+      width: 35%; height: auto;
+      opacity: 0.6;
+      -webkit-user-drag: none;
+    }
+    .selected {
+      height: 100%; width: 100%;
+      object-fit: cover; object-position: center;
+      -webkit-user-drag: none;
+    }
+  }
+  &#cover-view { // #cover-view 전용
+    .slide-content-container {
+      .slide-content {
+        height: 230px;
+        ul {
+          display: flex; flex-direction: column; gap: 15px;
+          li::before {
+            content: "·";
+            margin-right: 18px;
+          }
+        }
+      }
+    }
+  }
+}
+
 #list-view {
   display: flex; flex-direction: column;
   border: 3px solid $color-r6;
+  border-radius: 15px;
   .table-header {
     display: grid; grid-template-columns: 1fr 1fr 1fr 270px;
     border-bottom: 2px solid $color-r7;
@@ -258,14 +273,14 @@ header {
   }
 }
 
-.edit-table {
+#slider-edit {
   display: flex; flex-direction: column;
   border: 3px solid $color-g5;
   .table-header {
+    display: grid; grid-template-columns: 120px 120px 1fr 255px;
+    padding-right: 9px;
     border-bottom: 2px solid $color-g7;
-    border-top-left-radius: 12px;
-    border-top-right-radius: 12px;
-    font-size: $fs-edit-table-title; font-weight: $fw-edit-table-title;
+    font-size: $fs-slider-edit-title; font-weight: $fw-slider-edit-title;
     background-color: $color-g7;
     li {
       padding: 15px;
@@ -278,74 +293,49 @@ header {
   }
   .table-container {
     height: 100%;
-    display: grid; grid-template-rows: repeat(10, 1fr);
+    overflow-y: scroll;
     .table-content {
-      height: 100%;
+      display: grid; grid-template-columns: 60px 60px 120px 1fr 255px;
       border-bottom: 1px solid $color-k8;
-      font-size: $fs-edit-table-content; font-weight: $fw-edit-table-content;
+      font-size: $fs-slider-edit-content; font-weight: $fw-slider-edit-content;
       li {
         display: flex; align-items: center; justify-content: center;
         border-right: 1px solid $color-k8;
         min-width: 0; // flex 아이템이 콘텐츠 크기보다 작아질 수 있도록 허용.  이렇게 해야 말줄임표 적용 가능
-        padding: 0 15px;
+        padding: 15px;
         span {
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
         }
+        .btn-modify, .btn-delete {
+          cursor: pointer;
+          height: 30px; width: 81px;
+          border: 0; border-radius: 6px;
+          font-size: 18px; font-weight: 400;
+          color: $color-w1;
+        }
+        .btn-modify { background-color: $color-g1; }
+        .btn-delete { background-color: $color-r1; }
         &:last-child {
           border-right: none;
+          gap: 21px;
         }
       }
     }
   }
-  &#slider-edit {
-    .table-header {
-      display: grid; grid-template-columns: 75px 1fr 1fr 1fr 195px 225px;
-    }
-    #slider-edit-container {
-      .table-content {
-        display: grid; grid-template-columns: 75px 1fr 1fr 1fr 195px 225px;
-        li {
-          &:last-child {
-            gap: 18px;
-            .btn-modify, .btn-delete {
-              cursor: pointer;
-              height: 30px; width: 81px;
-              border: 0; border-radius: 6px;
-              font-size: 18px; font-weight: 400;
-              color: $color-w1;
-            }
-            .btn-modify { background-color: $color-g1; }
-            .btn-delete { background-color: $color-r1; }
-          }
-        }
-      }
-    }
+  /* Webkit 브라우저(Chrome, Safari, Edge)를 위한 커스텀 플로팅 스크롤바 */
+  .table-container::-webkit-scrollbar {
+    width: 9px; /* 스크롤바의 너비 */
   }
-  &#order-edit {
-    .table-header {
-      display: grid; grid-template-columns: 60px 125px 1fr 1fr 1fr 195px;
-    }
-    #order-edit-container {
-      .table-content {
-        display: grid; grid-template-columns: 60px 125px 1fr 1fr 1fr 195px;
-        &.selected {
-          outline: 5px solid $color-g1;
-          outline-offset: -3px;
-        }
-        li {
-          &:first-child {
-            background-color: $color-g9;
-            input {
-              cursor: pointer;
-              height: 30px; width: 30px;
-              margin: 0; padding: 0;
-            }
-          }
-        }
-      }
-    }
+  .table-container::-webkit-scrollbar-track {
+    background-color: $color-g7;
+  }
+  .table-container::-webkit-scrollbar-thumb {
+    background-color: $color-g3;
+    border-radius: 9px; /* 스크롤바 막대의 모서리를 둥글게 */
+    border: 3px solid transparent; /* 막대 주변에 투명한 여백을 주어 떠 있는 효과 생성 */
+    background-clip: content-box; /* border를 제외한 영역에만 배경색 적용 */
   }
 }
 
@@ -474,9 +464,6 @@ form {
 .btn-group {
   display: flex; justify-content: flex-end;
   gap: 30px;
-  &.main-btn-group {
-    width: 430px;
-  }
   .btn-1, .btn-2, .btn-3, .btn-4 {
     display: flex; justify-content: center; align-items: center; gap: 12px;
     box-sizing: border-box;
@@ -517,6 +504,11 @@ form {
     background-color: $color-w1;
     color: $color-g1;
   }
+}
+
+.main-btn-group {
+  display: flex; justify-content: flex-end; gap: 24px;
+  width: 430px;
   .btn-settings, .btn-change {
     display: flex; align-items: center; justify-content: center;
     box-sizing: border-box;
@@ -539,6 +531,31 @@ form {
     background-color: $color-w1;
   }
 }
+
+/* index.html의 #items와 view-list.html의 #lists에 공통으로 적용되는 스타일 */
+#items, #lists {
+  display: none; /* 슬라이더에 의해 제어되므로 기본적으로 숨김 */
+}
+
+/* SortableJS */
+.sortable-ghost {
+  opacity: 1 !important;
+  background-color: $color-g9 !important;
+  outline: 3px solid $color-g1 !important;
+  outline-offset: -3px;
+}
+
+.sortable-drag {
+  opacity: 0 !important; /* 드래그하는 항목은 보이지 않도록 투명하게 처리 */
+}
+
+.drag-handle {
+  cursor: grab;
+  img {
+    height: 21px; width: 21px;
+  }
+}
+/* End of SortableJS */
 
 .hide {
   display: none;

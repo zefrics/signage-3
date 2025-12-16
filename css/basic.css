@@ -46,77 +46,27 @@ header .main-title#tester-name {
 .section {
   height: calc(100svh - 197.5px);
   box-sizing: border-box;
+}
+
+/* 데이터가 없을 때 표시될 섹션 */
+#no-data {
+  display: none; /* 기본적으로 숨김 */
+}
+#no-data .section {
+  border: 3px solid rgba(240, 78, 35, 0.3);
   border-radius: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#no-data .section p {
+  font-size: 45px;
+  font-weight: 600;
+  color: rgb(0, 0, 0);
 }
 
 .slider {
   position: relative;
-}
-.slider #cover-view, .slider #item-view {
-  display: flex;
-  gap: 45px;
-  padding: 45px;
-  border: 3px solid rgba(240, 78, 35, 0.3);
-}
-.slider #cover-view .slide-content-container, .slider #item-view .slide-content-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  width: 100%;
-  min-width: 0;
-  margin-bottom: -6px;
-}
-.slider #cover-view .slide-content-container .slide-content .label, .slider #item-view .slide-content-container .slide-content .label {
-  margin-bottom: 9px;
-  font-size: 24px;
-  font-weight: 400;
-  color: rgba(240, 78, 35, 0.75);
-}
-.slider #cover-view .slide-content-container .slide-content .content, .slider #item-view .slide-content-container .slide-content .content {
-  font-size: 45px;
-  font-weight: 600;
-  line-height: 54px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.slider #cover-view .img-frame, .slider #item-view .img-frame {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid rgba(240, 78, 35, 0.15);
-  height: 100%;
-  aspect-ratio: 3/4;
-}
-.slider #cover-view .img-frame#cover-img-default, .slider #cover-view .img-frame#item-img-default, .slider #item-view .img-frame#cover-img-default, .slider #item-view .img-frame#item-img-default {
-  background-color: rgba(240, 78, 35, 0.05);
-}
-.slider #cover-view .img-frame .default, .slider #item-view .img-frame .default {
-  width: 35%;
-  height: auto;
-  opacity: 0.6;
-  -webkit-user-drag: none;
-}
-.slider #cover-view .img-frame .selected, .slider #item-view .img-frame .selected {
-  height: 100%;
-  width: 100%;
-  -o-object-fit: cover;
-     object-fit: cover;
-  -o-object-position: center;
-     object-position: center;
-  -webkit-user-drag: none;
-}
-.slider #cover-view#cover-view .slide-content-container .slide-content, .slider #item-view#cover-view .slide-content-container .slide-content {
-  height: 230px;
-}
-.slider #cover-view#cover-view .slide-content-container .slide-content ul, .slider #item-view#cover-view .slide-content-container .slide-content ul {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-.slider #cover-view#cover-view .slide-content-container .slide-content ul li::before, .slider #item-view#cover-view .slide-content-container .slide-content ul li::before {
-  content: "·";
-  margin-right: 18px;
 }
 .slider .slider-controls {
   position: absolute;
@@ -150,10 +100,79 @@ header .main-title#tester-name {
   color: rgb(240, 78, 35);
 }
 
+#cover-view, #item-view {
+  display: flex;
+  gap: 45px;
+  padding: 45px;
+  border: 3px solid rgba(240, 78, 35, 0.3);
+  border-radius: 15px;
+}
+#cover-view .slide-content-container, #item-view .slide-content-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  min-width: 0;
+  margin-bottom: -6px;
+}
+#cover-view .slide-content-container .slide-content .label, #item-view .slide-content-container .slide-content .label {
+  margin-bottom: 9px;
+  font-size: 24px;
+  font-weight: 400;
+  color: rgba(240, 78, 35, 0.75);
+}
+#cover-view .slide-content-container .slide-content .content, #item-view .slide-content-container .slide-content .content {
+  font-size: 45px;
+  font-weight: 600;
+  line-height: 54px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#cover-view .img-frame, #item-view .img-frame {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(240, 78, 35, 0.15);
+  height: 100%;
+  aspect-ratio: 3/4;
+}
+#cover-view .img-frame#cover-img-default, #cover-view .img-frame#item-img-default, #item-view .img-frame#cover-img-default, #item-view .img-frame#item-img-default {
+  background-color: rgba(240, 78, 35, 0.05);
+}
+#cover-view .img-frame .default, #item-view .img-frame .default {
+  width: 35%;
+  height: auto;
+  opacity: 0.6;
+  -webkit-user-drag: none;
+}
+#cover-view .img-frame .selected, #item-view .img-frame .selected {
+  height: 100%;
+  width: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+  -o-object-position: center;
+     object-position: center;
+  -webkit-user-drag: none;
+}
+#cover-view#cover-view .slide-content-container .slide-content, #item-view#cover-view .slide-content-container .slide-content {
+  height: 230px;
+}
+#cover-view#cover-view .slide-content-container .slide-content ul, #item-view#cover-view .slide-content-container .slide-content ul {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+#cover-view#cover-view .slide-content-container .slide-content ul li::before, #item-view#cover-view .slide-content-container .slide-content ul li::before {
+  content: "·";
+  margin-right: 18px;
+}
+
 #list-view {
   display: flex;
   flex-direction: column;
   border: 3px solid rgba(240, 78, 35, 0.3);
+  border-radius: 15px;
 }
 #list-view .table-header {
   display: grid;
@@ -211,68 +230,56 @@ header .main-title#tester-name {
   border-right: none;
 }
 
-.edit-table {
+#slider-edit {
   display: flex;
   flex-direction: column;
   border: 3px solid rgba(153, 202, 59, 0.45);
+  /* Webkit 브라우저(Chrome, Safari, Edge)를 위한 커스텀 플로팅 스크롤바 */
 }
-.edit-table .table-header {
+#slider-edit .table-header {
+  display: grid;
+  grid-template-columns: 120px 120px 1fr 255px;
+  padding-right: 9px;
   border-bottom: 2px solid rgba(153, 202, 59, 0.15);
-  border-top-left-radius: 12px;
-  border-top-right-radius: 12px;
   font-size: 18px;
   font-weight: 500;
   background-color: rgba(153, 202, 59, 0.15);
 }
-.edit-table .table-header li {
+#slider-edit .table-header li {
   padding: 15px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-right: 1px solid rgba(0, 0, 0, 0.1);
 }
-.edit-table .table-header li:last-child {
+#slider-edit .table-header li:last-child {
   border-right: none;
 }
-.edit-table .table-container {
+#slider-edit .table-container {
   height: 100%;
-  display: grid;
-  grid-template-rows: repeat(10, 1fr);
+  overflow-y: scroll;
 }
-.edit-table .table-container .table-content {
-  height: 100%;
+#slider-edit .table-container .table-content {
+  display: grid;
+  grid-template-columns: 60px 60px 120px 1fr 255px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   font-size: 16.5px;
   font-weight: 400;
 }
-.edit-table .table-container .table-content li {
+#slider-edit .table-container .table-content li {
   display: flex;
   align-items: center;
   justify-content: center;
   border-right: 1px solid rgba(0, 0, 0, 0.1);
   min-width: 0;
-  padding: 0 15px;
+  padding: 15px;
 }
-.edit-table .table-container .table-content li span {
+#slider-edit .table-container .table-content li span {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.edit-table .table-container .table-content li:last-child {
-  border-right: none;
-}
-.edit-table#slider-edit .table-header {
-  display: grid;
-  grid-template-columns: 75px 1fr 1fr 1fr 195px 225px;
-}
-.edit-table#slider-edit #slider-edit-container .table-content {
-  display: grid;
-  grid-template-columns: 75px 1fr 1fr 1fr 195px 225px;
-}
-.edit-table#slider-edit #slider-edit-container .table-content li:last-child {
-  gap: 18px;
-}
-.edit-table#slider-edit #slider-edit-container .table-content li:last-child .btn-modify, .edit-table#slider-edit #slider-edit-container .table-content li:last-child .btn-delete {
+#slider-edit .table-container .table-content li .btn-modify, #slider-edit .table-container .table-content li .btn-delete {
   cursor: pointer;
   height: 30px;
   width: 81px;
@@ -282,33 +289,27 @@ header .main-title#tester-name {
   font-weight: 400;
   color: rgb(255, 255, 255);
 }
-.edit-table#slider-edit #slider-edit-container .table-content li:last-child .btn-modify {
+#slider-edit .table-container .table-content li .btn-modify {
   background-color: rgb(153, 202, 59);
 }
-.edit-table#slider-edit #slider-edit-container .table-content li:last-child .btn-delete {
+#slider-edit .table-container .table-content li .btn-delete {
   background-color: rgb(240, 78, 35);
 }
-.edit-table#order-edit .table-header {
-  display: grid;
-  grid-template-columns: 60px 125px 1fr 1fr 1fr 195px;
+#slider-edit .table-container .table-content li:last-child {
+  border-right: none;
+  gap: 21px;
 }
-.edit-table#order-edit #order-edit-container .table-content {
-  display: grid;
-  grid-template-columns: 60px 125px 1fr 1fr 1fr 195px;
+#slider-edit .table-container::-webkit-scrollbar {
+  width: 9px; /* 스크롤바의 너비 */
 }
-.edit-table#order-edit #order-edit-container .table-content.selected {
-  outline: 5px solid rgb(153, 202, 59);
-  outline-offset: -3px;
+#slider-edit .table-container::-webkit-scrollbar-track {
+  background-color: rgba(153, 202, 59, 0.15);
 }
-.edit-table#order-edit #order-edit-container .table-content li:first-child {
-  background-color: rgba(153, 202, 59, 0.05);
-}
-.edit-table#order-edit #order-edit-container .table-content li:first-child input {
-  cursor: pointer;
-  height: 30px;
-  width: 30px;
-  margin: 0;
-  padding: 0;
+#slider-edit .table-container::-webkit-scrollbar-thumb {
+  background-color: rgba(153, 202, 59, 0.75);
+  border-radius: 9px; /* 스크롤바 막대의 모서리를 둥글게 */
+  border: 3px solid transparent; /* 막대 주변에 투명한 여백을 주어 떠 있는 효과 생성 */
+  background-clip: content-box; /* border를 제외한 영역에만 배경색 적용 */
 }
 
 form {
@@ -460,9 +461,6 @@ form#cover-edit .input-content .input-group .input-dot::before {
   justify-content: flex-end;
   gap: 30px;
 }
-.btn-group.main-btn-group {
-  width: 430px;
-}
 .btn-group .btn-1, .btn-group .btn-2, .btn-group .btn-3, .btn-group .btn-4 {
   display: flex;
   justify-content: center;
@@ -508,7 +506,14 @@ form#cover-edit .input-content .input-group .input-dot::before {
   background-color: rgb(255, 255, 255);
   color: rgb(153, 202, 59);
 }
-.btn-group .btn-settings, .btn-group .btn-change {
+
+.main-btn-group {
+  display: flex;
+  justify-content: flex-end;
+  gap: 24px;
+  width: 430px;
+}
+.main-btn-group .btn-settings, .main-btn-group .btn-change {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -521,19 +526,45 @@ form#cover-edit .input-content .input-group .input-dot::before {
   padding: 0;
   border-radius: 15px;
 }
-.btn-group .btn-settings img, .btn-group .btn-change img {
+.main-btn-group .btn-settings img, .main-btn-group .btn-change img {
   width: 30px;
   height: 30px;
 }
-.btn-group .btn-settings {
+.main-btn-group .btn-settings {
   border: 0;
   background-color: rgb(153, 202, 59);
 }
-.btn-group .btn-change {
+.main-btn-group .btn-change {
   border: 3px solid rgb(153, 202, 59);
   background-color: rgb(255, 255, 255);
 }
 
+/* index.html의 #items와 view-list.html의 #lists에 공통으로 적용되는 스타일 */
+#items, #lists {
+  display: none; /* 슬라이더에 의해 제어되므로 기본적으로 숨김 */
+}
+
+/* SortableJS */
+.sortable-ghost {
+  opacity: 1 !important;
+  background-color: rgba(153, 202, 59, 0.05) !important;
+  outline: 3px solid rgb(153, 202, 59) !important;
+  outline-offset: -3px;
+}
+
+.sortable-drag {
+  opacity: 0 !important; /* 드래그하는 항목은 보이지 않도록 투명하게 처리 */
+}
+
+.drag-handle {
+  cursor: grab;
+}
+.drag-handle img {
+  height: 21px;
+  width: 21px;
+}
+
+/* End of SortableJS */
 .hide {
   display: none;
 }/*# sourceMappingURL=basic.css.map */

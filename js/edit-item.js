@@ -13,56 +13,9 @@ import { storageManager } from './storage.js';
 import { timerManager } from './edit-timer.js';
 
 document.addEventListener('DOMContentLoaded', () => {
-  const sliderEditContainer = document.querySelector('#slider-edit-container');
+  // 이 파일은 edit-item.html에서만 사용되므로, 해당 페이지의 form만 선택합니다.
   const itemEditForm = document.querySelector('#item-edit');
 
-  // edit.html의 이벤트 처리
-  if (sliderEditContainer) {
-    sliderEditContainer.addEventListener('click', (event) => {
-      const target = event.target;
-
-      // 삭제 버튼 클릭 시
-      if (target.matches('.btn-delete')) {
-        (async () => {
-          const order = target.dataset.order;
-          const dataArray = storageManager.load();
-          const dataToDelete = dataArray.find(d => d.order == order);
-
-          if (dataToDelete && confirm(`'${dataToDelete.testMachine}' 항목을 삭제하시겠습니까?`)) {
-            // 연결된 이미지 파일이 있으면 삭제
-            if (dataToDelete.imagePath) {
-              try {
-                await Filesystem.deleteFile({ path: dataToDelete.imagePath });
-              } catch (error) {
-                console.error('슬라이드 삭제 중 이미지 파일 삭제에 실패했습니다.', error);
-              }
-            }
-
-            storageManager.deleteData(order);
-            // 삭제 후 order 재정렬
-            const remainingData = storageManager.load().sort((a, b) => a.order - b.order);
-            remainingData.forEach((item, index) => {
-              item.order = index + 1;
-            });
-            storageManager.save(remainingData);
-
-            // 목록 뷰 갱신
-            window.location.reload();
-            alert(`'${dataToDelete.testMachine}' 항목이 삭제되었습니다.`);
-          }
-        })();
-      }
-
-      // 수정 버튼 클릭 시
-      if (target.matches('.btn-modify')) {
-        const order = target.dataset.order;
-        // URL 파라미터로 order를 전달하며 edit-slide.html로 이동
-        window.location.href = `edit-item.html?order=${order}`;
-      }
-    });
-  }
-
-  // edit-slide.html의 이벤트 처리
   if (itemEditForm) {
     const itemEditTitle = document.querySelector('#item-edit-title');
     const backButton = document.querySelector('#btn-back');
@@ -256,6 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
           startDate: startDateInput.value,
           endDate: endDateInput.value,
           imagePath: savedImagePath, // 최종 이미지 경로 저장
+          type: 'Item', // 타입을 'item'으로 명시
         };
 
         if (editingOrder) {

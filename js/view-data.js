@@ -14,9 +14,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // cover-view 섹션의 내용을 업데이트하는 함수
   const updateCoverView = () => {
-    // coverData가 null일 경우를 대비해 기본값을 빈 객체로 설정
-    const coverData = storageManager.loadCoverData();
-
+    const allData = storageManager.load();
+    // 타입이 'cover'인 데이터들 중 order가 가장 높은 것을 찾음
+    const coverData = allData
+      .filter(d => d.type === 'cover')
+      .sort((a, b) => b.order - a.order)[0] || { // 커버가 없으면 기본값 사용
+        testerName: '(Tester Name)',
+        imagePath: null,
+        function: ['(Function #1)', '', ''],
+        specifications: ['(Specifications #1)', '', ''],
+      };
+      
     if (coverData && testerNameElement && functionElement && specificationsElement) {
       testerNameElement.textContent = coverData.testerName;
 
@@ -77,42 +85,70 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   };
 
-  // slide-view 섹션의 내용을 업데이트하는 함수 (slider.js에서 이동)
-  const updateSlideView = (data) => {
-    const slideContainer = document.querySelector('#item-view');
-    if (!slideContainer || !data) return;
+  // item-view 섹션의 내용을 업데이트하는 함수
+  const updateItemView = (data) => {
+    const itemViewContainer = document.querySelector('#item-view');
+    const coverViewContainer = document.querySelector('#cover-view');
+    if (!data) return; // itemViewContainer나 coverViewContainer는 페이지에 따라 없을 수 있으므로 data만 체크
 
-    // 날짜 포맷 변경 함수 (YYYY-MM-DD -> yy년 mm월 dd일)
-    const formatFullDate = (dateString) => {
-      if (!dateString) return '';
-      const [fullYear, month, day] = dateString.split('-');
-      const shortYear = fullYear.slice(-2); // 연도의 마지막 두 자리만 추출
-      return `${shortYear}년 ${month}월 ${day}일`;
-    };
+    if (data.type === 'Cover') {
+      // view-list.html에는 itemViewContainer가 없으므로 null 체크
+      if (itemViewContainer) itemViewContainer.style.display = 'none';
+      if (coverViewContainer) coverViewContainer.style.display = 'flex'; // Cover 뷰를 보여줌
 
-    const { testMachine, model, purpose, startDate, endDate, imagePath } = data;
+      // cover-view 내용 업데이트
+      document.querySelector('#tester-name').textContent = data.testerName || '(Tester Name)';
+      const functionEl = document.querySelector('#function');
+      const specificationsEl = document.querySelector('#specifications');
+      if (functionEl) functionEl.innerHTML = (data.function || []).filter(Boolean).map(item => `<li class="content">${item}</li>`).join('');
+      if (specificationsEl) specificationsEl.innerHTML = (data.specifications || []).filter(Boolean).map(item => `<li class="content">${item}</li>`).join('');
 
-    const scheduleText = (startDate || endDate)
-      ? `${formatFullDate(startDate)}&nbsp;~&nbsp;${formatFullDate(endDate)}`
-      : '-';
+      const coverImgSelected = document.querySelector('#cover-img-selected');
+      const coverImgDefault = document.querySelector('#cover-img-default');
+      if (data.imagePath && coverImgSelected && coverImgDefault) {
+        coverImgSelected.querySelector('.selected').src = Capacitor.convertFileSrc(data.imagePath);
+        coverImgSelected.style.display = 'flex';
+        coverImgDefault.style.display = 'none';
+      } else if (coverImgSelected && coverImgDefault) {
+        coverImgSelected.style.display = 'none';
+        coverImgDefault.style.display = 'flex';
+      }
 
-    // 이미지 표시 로직
-    const itemImgSelectedFrame = slideContainer.querySelector('#item-img-selected');
-    const itemImgDefaultFrame = slideContainer.querySelector('#item-img-default');
-    if (imagePath && itemImgSelectedFrame && itemImgDefaultFrame) {
-      itemImgSelectedFrame.querySelector('.selected').src = Capacitor.convertFileSrc(imagePath);
-      itemImgSelectedFrame.style.display = 'flex';
-      itemImgDefaultFrame.style.display = 'none';
-    } else if (itemImgSelectedFrame && itemImgDefaultFrame) {
-      itemImgSelectedFrame.style.display = 'none';
-      itemImgDefaultFrame.style.display = 'flex';
+    } else { // Item 타입일 경우
+      // Item 타입일 경우 item-view를 보여주고 cover-view는 숨김
+      if (itemViewContainer) itemViewContainer.style.display = 'flex';
+      if (coverViewContainer) coverViewContainer.style.display = 'none';
+
+      // item-view 내용 업데이트
+      const formatFullDate = (dateString) => {
+        if (!dateString) return '';
+        const [fullYear, month, day] = dateString.split('-');
+        const shortYear = fullYear.slice(-2);
+        return `${shortYear}년 ${month}월 ${day}일`;
+      };
+
+      const { testMachine, model, purpose, startDate, endDate, imagePath } = data;
+
+      const scheduleText = (startDate || endDate)
+        ? `${formatFullDate(startDate)}&nbsp;~&nbsp;${formatFullDate(endDate)}`
+        : '-';
+
+      const itemImgSelected = itemViewContainer.querySelector('#item-img-selected');
+      const itemImgDefault = itemViewContainer.querySelector('#item-img-default');
+      if (imagePath && itemImgSelected && itemImgDefault) {
+        itemImgSelected.querySelector('.selected').src = Capacitor.convertFileSrc(imagePath);
+        itemImgSelected.style.display = 'flex';
+        itemImgDefault.style.display = 'none';
+      } else if (itemImgSelected && itemImgDefault) {
+        itemImgSelected.style.display = 'none';
+        itemImgDefault.style.display = 'flex';
+      }
+
+      itemViewContainer.querySelector('.test-machine-content').textContent = testMachine || '-';
+      itemViewContainer.querySelector('.model-content').textContent = model || '-';
+      itemViewContainer.querySelector('.purpose-content').textContent = purpose || '-';
+      itemViewContainer.querySelector('.schedule-content').innerHTML = scheduleText;
     }
-
-    // slide-view 내부의 각 p 태그에 내용 채우기
-    slideContainer.querySelector('.test-machine-content').textContent = testMachine || '-';
-    slideContainer.querySelector('.model-content').textContent = model || '-';
-    slideContainer.querySelector('.purpose-content').textContent = purpose || '-';
-    slideContainer.querySelector('.schedule-content').innerHTML = scheduleText;
   };
 
   // edit-slider 섹션의 내용을 업데이트하는 함수
@@ -123,47 +159,113 @@ document.addEventListener('DOMContentLoaded', () => {
     // order가 큰 순서대로 (최신순) 정렬
     const sortedData = dataArray.sort((a, b) => b.order - a.order);
 
-    sortedData.forEach(data => {
-      const { order, testMachine, model, purpose, startDate, endDate } = data;
-
-      const scheduleText = (startDate || endDate)
-        ? `${formatDate(startDate)}&nbsp;~&nbsp;${formatDate(endDate)}`
-        : '-';
+    sortedData.forEach((data, index) => {
+      const { order, testMachine, testerName } = data;
+      // type이 없는 기존 데이터를 위해 기본값을 'Item'으로 설정
+      const type = data.type || 'Item'; 
+      
+      // 타입에 따라 표시할 이름과 수정 페이지 경로 결정
+      const name = type === 'Cover' ? testerName : testMachine;
+      const editUrl = type === 'Cover' ? 'edit-cover.html' : 'edit-item.html';
 
       const tableRow = document.createElement('ul');
       tableRow.className = 'table-content';
       tableRow.dataset.order = order; // 데이터셋에 order 저장
+      tableRow.dataset.type = type; // 데이터셋에 type 저장
       tableRow.innerHTML = `
-        <li><span>${order}</span></li>
-        <li><span>${testMachine || '-'}</span></li>
-        <li><span>${model || '-'}</span></li>
-        <li><span>${purpose || '-'}</span></li>
-        <li><span>${scheduleText}</span></li>
+        <li class="drag-handle"><img src="img/edit-order.svg"></li>
+        <li><span>${sortedData.length - index}</span></li>
+        <li><span>${type}</span></li>
+        <li><span>${name || '-'}</span></li>
         <li>
           <button class="btn-delete" data-order="${order}">Delete</button>
-          <button class="btn-modify" data-order="${order}">Edit</button>
+          <button class="btn-modify" data-order="${order}" data-edit-url="${editUrl}?order=${order}">Edit</button>
         </li>
       `;
       sliderEditContainer.appendChild(tableRow);
     });
   };
 
+  // SortableJS 초기화
+  if (sliderEditContainer) {
+    new window.Sortable(sliderEditContainer, {
+      handle: '.drag-handle', // 드래그 핸들 클래스 지정
+      animation: 100, // 애니메이션 효과
+      scroll: true, // 자동 스크롤 활성화
+      scrollSensitivity: 100, // 스크롤 감도 증가 (기본값 30)
+      scrollSpeed: 100, // 스크롤 속도 증가 (기본값 10)
+      ghostClass: 'sortable-ghost', // 드래그 시 플레이스홀더에 적용될 클래스
+      dragClass: 'sortable-drag',   // 드래그하는 항목에 적용될 클래스
+      onEnd: function (evt) {
+        // 현재 DOM 순서대로 data-order 값을 배열로 만듦
+        const orderedIds = Array.from(sliderEditContainer.querySelectorAll('.table-content'))
+          .map(row => row.dataset.order);
+        // storageManager를 통해 순서 저장
+        storageManager.saveOrder(orderedIds);
+        // 화면의 순번을 다시 매김
+        // 순서 변경 후 전체 뷰를 다시 렌더링하여 data-order 속성과 표시 순번을 모두 업데이트
+        updateSliderEditView(storageManager.load());
+      }
+    });
+  }
+
+  // settings.html의 목록 이벤트 처리 (삭제, 수정)
+  if (sliderEditContainer) {
+    sliderEditContainer.addEventListener('click', (event) => {
+      const target = event.target;
+
+      // 삭제 버튼 클릭 시
+      if (target.matches('.btn-delete')) {
+        (async () => {
+          try {
+            const order = target.dataset.order;
+            const dataArray = storageManager.load();
+            const dataToDelete = dataArray.find(d => d.order == order);
+            if (!dataToDelete) return;
+
+            const name = dataToDelete.type === 'Cover' ? dataToDelete.testerName : dataToDelete.testMachine;
+
+            if (confirm(`'${name}' 항목을 삭제하시겠습니까?`)) {
+              // Capacitor Filesystem API가 있는 경우 이미지 파일 삭제 시도
+              if (dataToDelete.imagePath && window.Capacitor && window.Capacitor.Plugins.Filesystem) {
+                try {
+                  await window.Capacitor.Plugins.Filesystem.deleteFile({ path: dataToDelete.imagePath });
+                } catch (error) {
+                  console.error('항목 삭제 중 이미지 파일 삭제에 실패했습니다.', error);
+                }
+              }
+
+              storageManager.deleteData(order);
+              alert(`'${name}' 항목이 삭제되었습니다.`);
+              window.location.reload(); // 페이지를 새로고침하여 목록 갱신
+            }
+          } catch (e) {
+            console.error('삭제 처리 중 오류가 발생했습니다.', e);
+            alert('항목을 삭제하는 데 실패했습니다.');
+          }
+        })();
+      }
+
+      // 수정 버튼 클릭 시
+      if (target.matches('.btn-modify')) {
+        if (target.dataset.editUrl) window.location.href = target.dataset.editUrl;
+      }
+    });
+  }
+
   // 페이지 로드 시 localStorage에서 데이터 불러오기
   const loadData = () => {
     const slideData = storageManager.load();
-    const coverData = storageManager.loadCoverData();
+    // sliderManager가 init 시점에 updateItemView를 호출할 수 있도록 viewDataManager 객체를 먼저 생성하고 노출합니다.
+    window.viewDataManager = { updateItemView };
 
-    // sliderManager가 init 시점에 updateSlideView를 호출할 수 있도록 viewDataManager 객체를 먼저 생성하고 노출합니다.
-    window.viewDataManager = { updateSlideView };
+    // 현재 페이지에 맞는 슬라이더 컨테이너를 찾아 초기화
+    const sliderContainer = document.querySelector('#items') || document.querySelector('#lists');
+    if (sliderContainer) sliderManager.init(slideData);
 
-    const itemsContainer = document.querySelector('#items');
-    if (itemsContainer) sliderManager.init(slideData, coverData); // coverData 전달
-    if (listViewContainer) updateListView(slideData);
+    if (listViewContainer) updateListView(slideData.filter(d => d.type !== 'Cover'));
     if (sliderEditContainer) updateSliderEditView(slideData);
 
-    // index.html 또는 view-list.html의 cover에 적용
-    const coversContainer = document.querySelector('#covers');
-    if (coversContainer) updateCoverView();
   };
 
   // settings.html 페이지의 타이머 초기화
@@ -176,6 +278,38 @@ document.addEventListener('DOMContentLoaded', () => {
       window.location.href = 'index.html';
     }, timeoutSeconds);
     timerManager.start([elementToMonitor]);
+  }
+
+  // New Cover/Item 버튼 생성 제한 로직
+  const newCoverButton = document.querySelector('a[href="edit-cover.html"]');
+  const newItemButton = document.querySelector('a[href="edit-item.html"]');
+
+  if (newCoverButton) {
+    newCoverButton.addEventListener('click', (event) => {
+      event.preventDefault(); // 기본 링크 이동 방지
+      const allData = storageManager.load();
+      const coverCount = allData.filter(d => d.type === 'Cover').length;
+
+      if (coverCount >= 5) {
+        alert('Cover는 최대 5개까지 생성할 수 있습니다.');
+      } else {
+        window.location.href = newCoverButton.href;
+      }
+    });
+  }
+
+  if (newItemButton) {
+    newItemButton.addEventListener('click', (event) => {
+      event.preventDefault(); // 기본 링크 이동 방지
+      const allData = storageManager.load();
+      const itemCount = allData.filter(d => d.type === 'Item').length;
+
+      if (itemCount >= 10) {
+        alert('Item은 최대 10개까지 생성할 수 있습니다.');
+      } else {
+        window.location.href = newItemButton.href;
+      }
+    });
   }
 
   // 페이지가 처음 로드될 때 저장된 데이터를 불러옴
