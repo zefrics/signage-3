@@ -6,6 +6,7 @@ export const storageManager = {
   // 저장 시 사용할 키(key) 정의
   KEY_SLIDES: 'slideData',
   KEY_TIMERS: 'timerSettings',
+  KEY_PATH: 'path',
 
   /**
    * 슬라이드 데이터 배열을 로컬 스토리지에 저장합니다.

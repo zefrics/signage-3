@@ -335,11 +335,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const path = window.location.pathname.split("/").pop();
   if (path === 'settings.html') {
     const elementToMonitor = document.querySelector('#slider-edit');
+    const homeButton = document.querySelector('#btn-home');
+
+    const previousPath = localStorage.getItem(storageManager.KEY_PATH) || 'slide'; // 기본값 'slide'
+    const homeUrl = previousPath === 'list' ? 'view-list.html' : 'index.html';
+    if (homeButton) homeButton.href = homeUrl;
+
     const timerSettings = storageManager.loadTimerSettings();
     const timeoutSeconds = timerSettings.homeTimer || 90;
-    timerManager.init(() => {
-      window.location.href = 'index.html';
-    }, timeoutSeconds);
+    timerManager.init(() => { window.location.href = homeUrl; }, timeoutSeconds);
     timerManager.start([elementToMonitor]);
   }
 
