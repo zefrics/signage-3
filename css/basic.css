@@ -11,7 +11,7 @@ header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 45px;
+  gap: 60px;
   height: 64.5px;
   margin-bottom: 24px;
 }
@@ -35,9 +35,9 @@ header .logo-container .date {
 header .main-title {
   font-size: 54px;
   font-weight: 800;
+  letter-spacing: -0.01em;
 }
 header .main-title#tester-name {
-  max-width: 840px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -127,6 +127,7 @@ header .main-title#tester-name {
   font-size: 45px;
   font-weight: 600;
   line-height: 54px;
+  letter-spacing: -0.01em;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -167,7 +168,7 @@ header .main-title#tester-name {
 }
 #cover-view#cover-view .slide-content-container .slide-content ul li::before, #item-view#cover-view .slide-content-container .slide-content ul li::before {
   content: "·";
-  margin-right: 18px;
+  margin-right: 12px;
 }
 
 .list-page {
@@ -526,7 +527,7 @@ form#cover-edit .input-content .input-group .input-dot::before {
   display: flex;
   justify-content: flex-end;
   gap: 24px;
-  width: 345px;
+  min-width: 335px;
 }
 .main-btn-group .btn-settings, .main-btn-group .btn-change {
   display: flex;

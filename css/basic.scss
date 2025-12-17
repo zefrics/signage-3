@@ -81,7 +81,7 @@ body {
 }
 
 header {
-  display: flex; align-items: center; justify-content: space-between; gap: 45px;
+  display: flex; align-items: center; justify-content: space-between; gap: 60px;
   height: 64.5px; // font-size: 54px에 맞춘 값
   margin-bottom: 24px;
 
@@ -102,8 +102,8 @@ header {
   .main-title {
     font-size: $fs-main-title;
     font-weight: $fw-main-title;
+    letter-spacing: -0.01em;
     &#tester-name {
-      max-width: 840px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -181,6 +181,7 @@ header {
         font-size: $fs-slide-content;
         font-weight: $fw-slide-content;
         line-height: $lh-slide-content;
+        letter-spacing: -0.01em;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -214,7 +215,7 @@ header {
           display: flex; flex-direction: column; gap: 15px;
           li::before {
             content: "·";
-            margin-right: 18px;
+            margin-right: 12px;
           }
         }
       }
@@ -519,7 +520,7 @@ form {
 
 .main-btn-group {
   display: flex; justify-content: flex-end; gap: 24px;
-  width: 345px;
+  min-width: 335px;
   .btn-settings, .btn-change {
     display: flex; align-items: center; justify-content: center;
     box-sizing: border-box;
