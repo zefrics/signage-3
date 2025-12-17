@@ -8,16 +8,16 @@ $fs-slide-content: 45px; // Slide Content 폰트 사이즈
 $fw-slide-content: 600; // Slide Content 폰트 웨이트
 $lh-slide-content: 54px; // Slide Line Height
 
-$fs-list-title: 18px; // List View Title 폰트 사이즈
+$fs-list-title: 19.5px; // List View Title 폰트 사이즈
 $fw-list-title: 500; // List View Title 폰트 웨이트
 
-$fs-list-content: 24px; // List View Content 폰트 사이즈
+$fs-list-content: 30px; // List View Content 폰트 사이즈
 $fw-list-content: 600; // List View Content 폰트 웨이트
 
-$fs-slider-edit-title: 18px; // Edit Tables Title 폰트 사이즈
+$fs-slider-edit-title: 19.5px; // Edit Tables Title 폰트 사이즈
 $fw-slider-edit-title: 500; // Edit Tables Title 폰트 웨이트
 
-$fs-slider-edit-content: 16.5px; // Edit Tables Content 폰트 사이즈
+$fs-slider-edit-content: 19.5px; // Edit Tables Content 폰트 사이즈
 $fw-slider-edit-content: 400; // Edit Tables Content 폰트 웨이트
 
 $fs-edit-label: 18px; // Input Label 폰트 사이즈
@@ -134,11 +134,12 @@ header {
 .slider {
   position: relative;
   .slider-controls {
-    position: absolute; top: 15px; right: 267px;
-    display: flex; align-items: center; gap: 3px;
+    position: absolute; top: 15px; right: 180px;
+    display: flex; align-items: center; gap: 1.5px;
     opacity: 0.6;
     button {
       cursor: pointer;
+      -webkit-user-drag: none;
       display: flex; align-items: center; justify-content: center;
       height: 36px; width: 36px;
       border: 2px solid $color-r1;
@@ -147,6 +148,7 @@ header {
       color: $color-r1;
       img {
         width: 15px; height: 15px;
+        -webkit-user-drag: none;
       }
     }
     #slide-counter {
@@ -220,19 +222,19 @@ header {
   }
 }
 
-#list-view {
+.list-page {
   display: flex; flex-direction: column;
   border: 3px solid $color-r6;
   border-radius: 15px;
   .table-header {
-    display: grid; grid-template-columns: 1fr 1fr 1fr 270px;
+    display: grid; grid-template-columns: 1fr 1fr 1fr 220px;
     border-bottom: 2px solid $color-r7;
     border-top-left-radius: 12px;
     border-top-right-radius: 12px;
     font-size: $fs-list-title; font-weight: $fw-list-title;
     background-color: $color-r7;
     li {
-      padding: 15px;
+      padding: 12px 0;
       display: flex; align-items: center; justify-content: center;
       border-right: 1px solid $color-k8;
       &:last-child {
@@ -241,11 +243,11 @@ header {
     }
   }
 
-  #list-view-container {
+  .list-view-container {
     display: flex; flex-direction: column;
     height: 100%;
     .table-content {
-      display: grid; grid-template-columns: 1fr 1fr 1fr 270px;
+      display: grid; grid-template-columns: 1fr 1fr 1fr 220px;
       height: 100%;
       border-bottom: 1px solid $color-k8;
       font-size: $fs-list-content; font-weight: $fw-list-content;
@@ -256,11 +258,14 @@ header {
         display: flex; align-items: center; justify-content: center;
         border-right: 1px solid $color-k8;
         min-width: 0; // flex 아이템이 콘텐츠 크기보다 작아질 수 있도록 허용.  이렇게 해야 말줄임표 적용 가능
-        padding: 0 15px;
+        padding: 15px 30px;
         span {
-          white-space: nowrap;
+          display: -webkit-box;
+          -webkit-line-clamp: 2; /* 텍스트를 2줄로 제한 */
+          -webkit-box-orient: vertical;
           overflow: hidden;
           text-overflow: ellipsis;
+          word-break: break-all; /* 단어 단위가 아닌 글자 단위로 줄바꿈하여 공간 활용도 높임 */
         }
         &:first-child {
           background-color: $color-r9;
@@ -277,7 +282,7 @@ header {
   display: flex; flex-direction: column;
   border: 3px solid $color-g5;
   .table-header {
-    display: grid; grid-template-columns: 120px 120px 1fr 255px;
+    display: grid; grid-template-columns: 165px 165px 1fr 345px;
     padding-right: 9px;
     border-bottom: 2px solid $color-g7;
     font-size: $fs-slider-edit-title; font-weight: $fw-slider-edit-title;
@@ -295,7 +300,7 @@ header {
     height: 100%;
     overflow-y: scroll;
     .table-content {
-      display: grid; grid-template-columns: 60px 60px 120px 1fr 255px;
+      display: grid; grid-template-columns: 82.5px 82.5px 165px 1fr 345px;
       border-bottom: 1px solid $color-k8;
       font-size: $fs-slider-edit-content; font-weight: $fw-slider-edit-content;
       li {
@@ -309,17 +314,23 @@ header {
           text-overflow: ellipsis;
         }
         .btn-modify, .btn-delete {
+          display: flex; align-items: center; justify-content: center; gap: 9px;
           cursor: pointer;
-          height: 30px; width: 81px;
-          border: 0; border-radius: 6px;
-          font-size: 18px; font-weight: 400;
+          -webkit-user-drag: none;
+          height: 45px; width: 120px;
+          border: 0; border-radius: 9px;
+          font-size: 19.5px; font-weight: 400;
           color: $color-w1;
+          img {
+            width: 18px; height: auto;
+            -webkit-user-drag: none;
+          }
         }
         .btn-modify { background-color: $color-g1; }
         .btn-delete { background-color: $color-r1; }
         &:last-child {
           border-right: none;
-          gap: 21px;
+          gap: 24px;
         }
       }
     }
@@ -465,7 +476,7 @@ form {
   display: flex; justify-content: flex-end;
   gap: 30px;
   .btn-1, .btn-2, .btn-3, .btn-4 {
-    display: flex; justify-content: center; align-items: center; gap: 12px;
+    display: flex; justify-content: center; align-items: center; gap: 9px;
     box-sizing: border-box;
     cursor: pointer;
     -webkit-user-drag: none;
@@ -476,7 +487,7 @@ form {
     border-radius: 15px;
     font-size: 21px; font-weight: 400;
     img {
-      height: 21px; width: 21px;
+      height: 21px; width: auto;
       -webkit-user-drag: none;
     }
     &:disabled {
@@ -508,7 +519,7 @@ form {
 
 .main-btn-group {
   display: flex; justify-content: flex-end; gap: 24px;
-  width: 430px;
+  width: 345px;
   .btn-settings, .btn-change {
     display: flex; align-items: center; justify-content: center;
     box-sizing: border-box;
@@ -518,23 +529,28 @@ form {
     height: 60px; width: 60px;
     padding: 0;
     border-radius: 15px;
-    img {
-      width: 30px; height: 30px;
-    }
   }
   .btn-settings {
     border: 0;
     background-color: $color-g1;
+    img {
+      -webkit-user-drag: none;
+      width: 30px; height: auto;
+    }
   }
   .btn-change {
     border: 3px solid $color-g1;
     background-color: $color-w1;
+    img {
+      -webkit-user-drag: none;
+      &.view-tables {
+        width: 30px; height: auto;
+      }
+      &.view-all-slides {
+        width: auto; height: 24px;
+      }
+    }
   }
-}
-
-/* index.html의 #items와 view-list.html의 #lists에 공통으로 적용되는 스타일 */
-#items, #lists {
-  display: none; /* 슬라이더에 의해 제어되므로 기본적으로 숨김 */
 }
 
 /* SortableJS */
@@ -552,7 +568,8 @@ form {
 .drag-handle {
   cursor: grab;
   img {
-    height: 21px; width: 21px;
+    height: 24px; width: 24px;
+    -webkit-user-drag: none;
   }
 }
 /* End of SortableJS */

@@ -60,18 +60,50 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // list-view 섹션의 내용을 업데이트하는 함수
   const updateListView = (dataArray) => {
-    if (!listViewContainer) return;
-    listViewContainer.innerHTML = ''; // 기존 목록 초기화
+    const listPagesContainer = document.querySelector('#list-pages-container');
+    if (!listPagesContainer) return;
+    listPagesContainer.innerHTML = ''; // 기존 목록 페이지들 초기화
 
-    // order가 큰 순서대로 (최신순) 정렬
-    const sortedData = dataArray.sort((a, b) => b.order - a.order);
+    // order가 낮은 순서대로 (오래된 순) 정렬
+    const sortedData = dataArray.sort((a, b) => a.order - b.order);
+    const totalItems = sortedData.length;
+    let chunks = [];
 
-    sortedData.forEach(data => {
+    if (totalItems <= 5) {
+      // 5개 이하일 경우, 한 페이지에 모두 표시
+      chunks.push(sortedData);
+    } else {
+      // 6개 이상일 경우, 두 페이지로 균등하게 분배
+      const firstPageCount = Math.ceil(totalItems / 2);
+      chunks.push(sortedData.slice(0, firstPageCount)); // 첫 번째 페이지 (오래된 데이터)
+      chunks.push(sortedData.slice(firstPageCount));    // 두 번째 페이지 (최신 데이터)
+    }
+
+    chunks.forEach((chunk, index) => {
+      const pageIndex = index + 1;
+      // 각 페이지(chunk) 내부에서는 order가 높은 순서(최신순)로 정렬
+      chunk.sort((a, b) => b.order - a.order);
+
+      const listPageElement = createListPage(pageIndex);
+
+      const listViewContainer = listPageElement.querySelector('.list-view-container');
+
+      chunk.forEach(data => {
       const { testMachine, model, purpose, startDate, endDate } = data;
 
-      const scheduleText = (startDate || endDate)
-        ? `${formatDate(startDate)}&nbsp;~&nbsp;${formatDate(endDate)}`
-        : '-';
+      let scheduleText;
+      const formattedStartDate = formatDate(startDate);
+      const formattedEndDate = formatDate(endDate);
+
+      if (formattedStartDate && formattedEndDate) {
+        scheduleText = `${formattedStartDate}<br>~ ${formattedEndDate}`;
+      } else if (formattedStartDate) {
+        scheduleText = `${formattedStartDate} ~`;
+      } else if (formattedEndDate) {
+        scheduleText = `~ ${formattedEndDate}`;
+      } else {
+        scheduleText = '-';
+      }
 
       const tableRow = document.createElement('ul');
       tableRow.className = 'table-content';
@@ -81,8 +113,31 @@ document.addEventListener('DOMContentLoaded', () => {
         <li><span>${purpose || '-'}</span></li>
         <li><span>${scheduleText}</span></li>
       `;
-      listViewContainer.appendChild(tableRow);
+        listViewContainer.appendChild(tableRow);
+      });
+
+      // prepend를 사용하여 페이지 순서를 뒤집어, 최신 데이터가 담긴 페이지가 먼저 오도록 함
+      listPagesContainer.prepend(listPageElement);
     });
+  };
+
+  // 목록 페이지(표)의 기본 구조를 생성하는 함수
+  const createListPage = (pageIndex) => {
+    const listPage = document.createElement('div');
+    listPage.id = `list-view-${pageIndex}`;
+    listPage.className = 'section list-page';
+    listPage.style.display = 'none'; // 기본적으로 숨김
+
+    listPage.innerHTML = `
+      <ul class="table-header">
+        <li>Test Machine</li>
+        <li>Model</li>
+        <li>Purpose</li>
+        <li>Schedule</li>
+      </ul>
+      <div class="list-view-container"></div>
+    `;
+    return listPage;
   };
 
   // item-view 섹션의 내용을 업데이트하는 함수
@@ -178,8 +233,14 @@ document.addEventListener('DOMContentLoaded', () => {
         <li><span>${type}</span></li>
         <li><span>${name || '-'}</span></li>
         <li>
-          <button class="btn-delete" data-order="${order}">Delete</button>
-          <button class="btn-modify" data-order="${order}" data-edit-url="${editUrl}?order=${order}">Edit</button>
+          <button class="btn-delete" data-order="${order}">
+            <img src="img/delete.svg">
+            <div class="text">Delete</div>
+          </button>
+          <button class="btn-modify" data-order="${order}" data-edit-url="${editUrl}?order=${order}">
+            <img src="img/edit.svg">
+            <div class="text">Edit</div>
+          </button>
         </li>
       `;
       sliderEditContainer.appendChild(tableRow);
@@ -193,7 +254,7 @@ document.addEventListener('DOMContentLoaded', () => {
       animation: 100, // 애니메이션 효과
       scroll: true, // 자동 스크롤 활성화
       scrollSensitivity: 100, // 스크롤 감도 증가 (기본값 30)
-      scrollSpeed: 100, // 스크롤 속도 증가 (기본값 10)
+      scrollSpeed: 10, // 스크롤 속도 증가 (기본값 10)
       ghostClass: 'sortable-ghost', // 드래그 시 플레이스홀더에 적용될 클래스
       dragClass: 'sortable-drag',   // 드래그하는 항목에 적용될 클래스
       onEnd: function (evt) {
@@ -212,13 +273,14 @@ document.addEventListener('DOMContentLoaded', () => {
   // settings.html의 목록 이벤트 처리 (삭제, 수정)
   if (sliderEditContainer) {
     sliderEditContainer.addEventListener('click', (event) => {
-      const target = event.target;
+      const deleteButton = event.target.closest('.btn-delete');
+      const modifyButton = event.target.closest('.btn-modify');
 
       // 삭제 버튼 클릭 시
-      if (target.matches('.btn-delete')) {
+      if (deleteButton) {
         (async () => {
           try {
-            const order = target.dataset.order;
+            const order = deleteButton.dataset.order;
             const dataArray = storageManager.load();
             const dataToDelete = dataArray.find(d => d.order == order);
             if (!dataToDelete) return;
@@ -247,8 +309,8 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       // 수정 버튼 클릭 시
-      if (target.matches('.btn-modify')) {
-        if (target.dataset.editUrl) window.location.href = target.dataset.editUrl;
+      if (modifyButton) {
+        if (modifyButton.dataset.editUrl) window.location.href = modifyButton.dataset.editUrl;
       }
     });
   }
@@ -259,12 +321,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // sliderManager가 init 시점에 updateItemView를 호출할 수 있도록 viewDataManager 객체를 먼저 생성하고 노출합니다.
     window.viewDataManager = { updateItemView };
 
+    // 목록 페이지(view-list.html) 또는 슬라이더 편집 목록(settings.html)을 먼저 생성합니다.
+    if (document.querySelector('#list-pages-container')) updateListView(slideData.filter(d => d.type !== 'Cover'));
+    if (sliderEditContainer) updateSliderEditView(slideData);
+
     // 현재 페이지에 맞는 슬라이더 컨테이너를 찾아 초기화
     const sliderContainer = document.querySelector('#items') || document.querySelector('#lists');
     if (sliderContainer) sliderManager.init(slideData);
-
-    if (listViewContainer) updateListView(slideData.filter(d => d.type !== 'Cover'));
-    if (sliderEditContainer) updateSliderEditView(slideData);
 
   };
 
