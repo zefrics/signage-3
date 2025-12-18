@@ -20,6 +20,8 @@ export function initializeImageUploader({
   fileNameDisplay,
   initialData,
 }) {
+  const PLACEHOLDER_TEXT = '5MB 이하의 이미지 파일';
+
   let savedImagePath = initialData.imagePath || null;
   let tempImage = { file: null, name: null };
 
@@ -29,6 +31,8 @@ export function initializeImageUploader({
     fileNameDisplay.classList.add('file-selected');
     imageClearButton.style.display = 'flex';
     imageSelectButton.style.display = 'none';
+  } else {
+    fileNameDisplay.textContent = PLACEHOLDER_TEXT;
   }
 
   // 이미지 선택 버튼 클릭 이벤트
@@ -90,7 +94,7 @@ export function initializeImageUploader({
     // 변수와 화면 UI 초기화
     tempImage = { file: null, name: null };
     savedImagePath = null;
-    fileNameDisplay.textContent = '선택된 파일이 없습니다.';
+    fileNameDisplay.textContent = PLACEHOLDER_TEXT;
     fileNameDisplay.classList.remove('file-selected');
     imageClearButton.style.display = 'none';
     imageSelectButton.style.display = 'flex';
