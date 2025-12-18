@@ -217,10 +217,10 @@ header {
         ul {
           display: flex; flex-direction: column; gap: 15px;
           li {
-            display: flex; align-items: center;
             &::before {
-              content: "·";
-              font-size: 36px;
+              content: '·';
+              display: inline-block;
+              transform: scale(0.75); // dot의 크기를 75%로 축소
               margin-right: 12px;
             }
           }
