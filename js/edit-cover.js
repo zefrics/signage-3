@@ -150,8 +150,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Back 버튼 클릭 이벤트
     backButton.addEventListener('click', () => {
       if (isFormChanged()) {
+        timerManager.stop(); // 확인 창을 띄우기 전에 타이머를 중지
         if (confirm('변경사항이 저장되지 않았습니다. 정말로 페이지를 나가시겠습니까?')) {
           window.location.href = 'settings.html';
+        } else {
+          timerManager.start([coverEditForm]); // 취소 시 타이머를 다시 시작
         }
       } else {
         window.location.href = 'settings.html';
