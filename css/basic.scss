@@ -1,18 +1,21 @@
 $fs-main-title: 54px; // Main Title 폰트 사이즈
 $fw-main-title: 800; // Main Title 폰트 웨이트
+$ls-main-title: -0.02em; // Main Title Letter Spacing
 
 $fs-slide-label: 24px; // Slide Label 폰트 사이즈
 $fw-slide-label: 400; // Slide Label 폰트 웨이트
 
 $fs-slide-content: 45px; // Slide Content 폰트 사이즈
 $fw-slide-content: 600; // Slide Content 폰트 웨이트
-$lh-slide-content: 54px; // Slide Line Height
+$lh-slide-content: 54px; // Slide Content Line Height
+$ls-slide-content: -0.02em; // Slide Content Letter Spacing
 
 $fs-list-title: 19.5px; // List View Title 폰트 사이즈
 $fw-list-title: 500; // List View Title 폰트 웨이트
 
 $fs-list-content: 30px; // List View Content 폰트 사이즈
 $fw-list-content: 600; // List View Content 폰트 웨이트
+$ls-list-content: -0.01em; // List View Content Letter Spacing
 
 $fs-slider-edit-title: 19.5px; // Edit Tables Title 폰트 사이즈
 $fw-slider-edit-title: 500; // Edit Tables Title 폰트 웨이트
@@ -102,7 +105,7 @@ header {
   .main-title {
     font-size: $fs-main-title;
     font-weight: $fw-main-title;
-    letter-spacing: -0.01em;
+    letter-spacing: $ls-main-title;
     &#tester-name {
       white-space: nowrap;
       overflow: hidden;
@@ -181,7 +184,7 @@ header {
         font-size: $fs-slide-content;
         font-weight: $fw-slide-content;
         line-height: $lh-slide-content;
-        letter-spacing: -0.01em;
+        letter-spacing: $ls-slide-content;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -213,12 +216,16 @@ header {
         height: 230px;
         ul {
           display: flex; flex-direction: column; gap: 15px;
-          li::before {
-            content: "·";
-            margin-right: 12px;
+          li {
+            display: flex; align-items: center;
+            &::before {
+              content: "·";
+              font-size: 36px;
+              margin-right: 12px;
+            }
           }
         }
-      }
+     }
     }
   }
 }
@@ -252,6 +259,7 @@ header {
       height: 100%;
       border-bottom: 1px solid $color-k8;
       font-size: $fs-list-content; font-weight: $fw-list-content;
+      // letter-spacing: $ls-list-content;
       &:last-child {
         border-bottom: none;
       }
@@ -262,6 +270,7 @@ header {
         padding: 15px 30px;
         span {
           display: -webkit-box;
+          line-clamp: 2; /* 텍스트를 2줄로 제한 */
           -webkit-line-clamp: 2; /* 텍스트를 2줄로 제한 */
           -webkit-box-orient: vertical;
           overflow: hidden;

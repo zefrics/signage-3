@@ -35,7 +35,7 @@ header .logo-container .date {
 header .main-title {
   font-size: 54px;
   font-weight: 800;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
 }
 header .main-title#tester-name {
   white-space: nowrap;
@@ -127,7 +127,7 @@ header .main-title#tester-name {
   font-size: 45px;
   font-weight: 600;
   line-height: 54px;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -166,8 +166,13 @@ header .main-title#tester-name {
   flex-direction: column;
   gap: 15px;
 }
+#cover-view#cover-view .slide-content-container .slide-content ul li, #item-view#cover-view .slide-content-container .slide-content ul li {
+  display: flex;
+  align-items: center;
+}
 #cover-view#cover-view .slide-content-container .slide-content ul li::before, #item-view#cover-view .slide-content-container .slide-content ul li::before {
   content: "·";
+  font-size: 36px;
   margin-right: 12px;
 }
 
@@ -223,6 +228,7 @@ header .main-title#tester-name {
 }
 .list-page .list-view-container .table-content li span {
   display: -webkit-box;
+  line-clamp: 2; /* 텍스트를 2줄로 제한 */
   -webkit-line-clamp: 2; /* 텍스트를 2줄로 제한 */
   -webkit-box-orient: vertical;
   overflow: hidden;

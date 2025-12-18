@@ -338,12 +338,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const homeButton = document.querySelector('#btn-home');
 
     const previousPath = localStorage.getItem(storageManager.KEY_PATH) || 'slide'; // 기본값 'slide'
-    const homeUrl = previousPath === 'list' ? 'view-list.html' : 'index.html';
+    let homeUrl = previousPath === 'list' ? 'view-list.html' : 'index.html';
+
     if (homeButton) homeButton.href = homeUrl;
 
     const timerSettings = storageManager.loadTimerSettings();
     const timeoutSeconds = timerSettings.homeTimer || 90;
-    timerManager.init(() => { window.location.href = homeUrl; }, timeoutSeconds);
+    timerManager.init(() => {
+      window.location.href = homeUrl;
+    }, timeoutSeconds);
     timerManager.start([elementToMonitor]);
   }
 
