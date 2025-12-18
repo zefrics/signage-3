@@ -20,20 +20,38 @@ export function initializeImageUploader({
   fileNameDisplay,
   initialData,
 }) {
-  const PLACEHOLDER_TEXT = '5MB 이하의 이미지 파일';
+  const PLACEHOLDER_TEXT = '3MB 이하의 이미지 파일';
 
   let savedImagePath = initialData.imagePath || null;
   let tempImage = { file: null, name: null };
 
   // 초기 UI 설정
-  if (savedImagePath) {
-    fileNameDisplay.textContent = initialData.originalImageName || savedImagePath.split('/').pop();
-    fileNameDisplay.classList.add('file-selected');
-    imageClearButton.style.display = 'flex';
-    imageSelectButton.style.display = 'none';
-  } else {
-    fileNameDisplay.textContent = PLACEHOLDER_TEXT;
-  }
+  const initializeDisplay = async () => {
+    if (savedImagePath) {
+      try {
+        // 파일이 실제로 존재하는지 확인
+        await Filesystem.stat({ path: savedImagePath });
+        // 파일이 존재하면 이름 표시
+        fileNameDisplay.textContent = initialData.originalImageName || savedImagePath.split('/').pop();
+        fileNameDisplay.classList.add('file-selected');
+        imageClearButton.style.display = 'flex';
+        imageSelectButton.style.display = 'none';
+      } catch (error) {
+        // 파일이 존재하지 않으면 (예: 삭제되었거나 경로가 잘못된 경우)
+        console.warn(`Image file not found at path: ${savedImagePath}. Displaying placeholder.`, error);
+        savedImagePath = null; // 파일이 없으므로 경로 초기화
+        initialData.imagePath = null; // initialData도 업데이트하여 파일이 없는 상태로 만듦
+        initialData.originalImageName = null;
+        fileNameDisplay.textContent = PLACEHOLDER_TEXT;
+        fileNameDisplay.classList.remove('file-selected');
+        imageClearButton.style.display = 'none';
+        imageSelectButton.style.display = 'flex';
+      }
+    } else {
+      fileNameDisplay.textContent = PLACEHOLDER_TEXT;
+    }
+  };
+  initializeDisplay(); // 페이지 로드 시 초기 디스플레이 설정 실행
 
   // 이미지 선택 버튼 클릭 이벤트
   imageSelectButton.addEventListener('click', () => {
@@ -45,10 +63,10 @@ export function initializeImageUploader({
     const file = event.target.files[0];
     if (!file) return;
 
-    // 파일 크기 검사 로직 (5MB 제한)
-    const MAX_FILE_SIZE = 5 * 1024 * 1024;
+    // 파일 크기 검사 로직 (3MB 제한)
+    const MAX_FILE_SIZE = 3 * 1024 * 1024;
     if (file.size > MAX_FILE_SIZE) {
-      alert('이미지 파일의 크기는 5MB를 초과할 수 없습니다.');
+      alert(`이미지 파일의 크기(${(file.size / (1024 * 1024)).toFixed(2)}MB)는 3MB를 초과할 수 없습니다.`);
       imageFileInput.value = ''; // 파일 입력 필드 초기화
       return; // 함수 종료
     }

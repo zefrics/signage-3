@@ -258,6 +258,9 @@ document.addEventListener('DOMContentLoaded', () => {
                   await window.Capacitor.Plugins.Filesystem.deleteFile({ path: dataToDelete.imagePath });
                 } catch (error) {
                   console.error('항목 삭제 중 이미지 파일 삭제에 실패했습니다.', error);
+                  // 파일 삭제 실패 시 사용자에게 알리고, 데이터 삭제를 중단합니다.
+                  alert('데이터에 연결된 이미지 파일을 삭제하는 데 실패했습니다. 삭제 작업을 다시 진행해주세요.');
+                  return; // 함수 실행을 여기서 중단
                 }
               }
 
@@ -282,8 +285,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // 페이지 로드 시 localStorage에서 데이터 불러오기
   const loadData = () => {
     const slideData = storageManager.load();
-    // sliderManager가 init 시점에 각 뷰 업데이트 함수를 호출할 수 있도록 viewDataManager 객체를 먼저 생성하고 노출합니다.
-    window.viewDataManager = { updateCoverView, updateItemView };
 
     // 목록 페이지(view-list.html) 또는 슬라이더 편집 목록(settings.html)을 먼저 생성합니다.
     if (document.querySelector('#list-pages-container')) updateListView(slideData.filter(d => d.type !== 'Cover'));
@@ -291,7 +292,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 현재 페이지에 맞는 슬라이더 컨테이너를 찾아 초기화
     const sliderContainer = document.querySelector('#items') || document.querySelector('#lists');
-    if (sliderContainer) sliderManager.init(slideData);
+    if (sliderContainer) sliderManager.init(slideData, { updateCoverView, updateItemView });
 
   };
 

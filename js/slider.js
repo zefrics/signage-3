@@ -14,11 +14,17 @@ export const sliderManager = {
   listElement: document.querySelector('#lists'),
   isListPage: document.querySelector('#view-list-page'),
 
+  // 뷰 업데이트 콜백 함수
+  updateCoverViewCallback: null,
+  updateItemViewCallback: null,
+
   // 슬라이더 초기화
-  init(slideData) {
+  init(slideData, { updateCoverView, updateItemView }) {
     this.stop();
 
-    // 슬라이더 초기화 시, 모든 콘텐츠 컨테이너를 먼저 숨겨 FOUC(Flash of Unstyled Content)를 방지
+    this.updateCoverViewCallback = updateCoverView;
+    this.updateItemViewCallback = updateItemView;
+
     if (this.coverElement) this.coverElement.style.display = 'none';
     if (this.itemElement) this.itemElement.style.display = 'none';
     if (this.listElement) this.listElement.style.display = 'none';
@@ -142,9 +148,7 @@ export const sliderManager = {
       if (this.coverElement) this.coverElement.style.display = 'block';
       if (this.itemElement) this.itemElement.style.display = 'none';
       if (this.listElement) this.listElement.style.display = 'none';
-      if (window.viewDataManager?.updateCoverView) {
-        window.viewDataManager.updateCoverView(slideInfo.data);
-      }
+      if (this.updateCoverViewCallback) this.updateCoverViewCallback(slideInfo.data);
     } else if (slideInfo.type === 'list') {
       // List 타입일 경우
       if (this.coverElement) this.coverElement.style.display = 'none';
@@ -162,9 +166,7 @@ export const sliderManager = {
       if (this.coverElement) this.coverElement.style.display = 'none';
       if (this.itemElement) this.itemElement.style.display = 'block';
       if (this.listElement) this.listElement.style.display = 'none';
-      if (window.viewDataManager?.updateItemView) {
-        window.viewDataManager.updateItemView(slideInfo.data);
-      }
+      if (this.updateItemViewCallback) this.updateItemViewCallback(slideInfo.data);
     }
 
     this.updateCounter();

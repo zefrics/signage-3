@@ -1,4 +1,3 @@
-// js/timer.js
 import { storageManager } from './storage.js';
 
 export const timerManager = (() => {
@@ -164,13 +163,17 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       if (confirm("작성하신 내용을 적용하시겠습니까?")) {
-        storageManager.saveTimerSettings({
-          sliderTimer: sliderTimerInput.value,
-          homeTimer: homeTimerInput.value,
-          backTimer: backTimerInput.value,
-        });
-        alert('작성하신 내용이 적용되었습니다.');
-        window.location.href = 'settings.html';
+        try {
+          storageManager.saveTimerSettings({
+            sliderTimer: sliderTimerInput.value,
+            homeTimer: homeTimerInput.value,
+            backTimer: backTimerInput.value,
+          });
+          alert('작성하신 내용이 적용되었습니다.');
+          window.location.href = 'settings.html';
+        } catch (error) {
+          alert('입력하신 내용을 저장하는데 실패했습니다. 입력 형식에 맞게 다시 시도해주시기 바랍니다.');
+        }
       }
     });
 

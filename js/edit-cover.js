@@ -102,32 +102,48 @@ document.addEventListener('DOMContentLoaded', () => {
       if (confirm("작성하신 내용을 적용하시겠습니까?")) {
         isSubmittingRef.current = true; // 제출 시작
 
-        // 이미지 저장 처리
-        const { imagePath, originalImageName } = await imageUploader.saveImage();
+        try {
+          // 이미지 저장 처리
+          let isDataSaved = false;
+          const { imagePath, originalImageName } = await imageUploader.saveImage();
 
-        // Function과 Specifications 값을 배열로 수집 (빈 값은 제외)
-        const functionValues = Array.from(functionInputs).map(input => input.value.trim());
-        const specificationsValues = Array.from(specificationsInputs).map(input => input.value.trim());
+          // Function과 Specifications 값을 배열로 수집 (빈 값은 제외)
+          const functionValues = Array.from(functionInputs).map(input => input.value.trim());
+          const specificationsValues = Array.from(specificationsInputs).map(input => input.value.trim());
 
-        const coverData = {
-          testerName: testerNameInput.value.trim(),
-          imagePath,
-          originalImageName,
-          function: functionValues,
-          specifications: specificationsValues,
-          type: 'Cover', // 타입을 'Cover'로 명시
-        };
+          const coverData = {
+            testerName: testerNameInput.value.trim(),
+            imagePath,
+            originalImageName,
+            function: functionValues,
+            specifications: specificationsValues,
+            type: 'Cover', // 타입을 'Cover'로 명시
+          };
 
-        if (editingOrder) {
-          // 데이터 수정
-          storageManager.updateData(editingOrder, coverData);
-        } else {
-          // 새 데이터 추가
-          storageManager.addData(coverData);
+          if (editingOrder) {
+            // 데이터 수정
+            storageManager.updateData(editingOrder, coverData); // updateData는 현재 실패 케이스가 없으므로 성공으로 간주
+            isDataSaved = true;
+          } else {
+            // 새 데이터 추가
+            isDataSaved = storageManager.addData(coverData);
+          }
+          
+          if (isDataSaved) {
+            alert('작성하신 내용이 적용되었습니다.');
+            window.location.href = 'settings.html'; // 저장 후 settings.html로 이동
+          } else {
+            // 데이터 저장 실패 시, 저장했던 이미지 파일을 다시 삭제 (롤백)
+            if (imagePath) {
+              await window.Capacitor.Plugins.Filesystem.deleteFile({ path: imagePath });
+            }
+            isSubmittingRef.current = false; // 제출 상태 초기화
+            alert('입력하신 내용을 저장하는데 실패했습니다. 입력 형식에 맞게 다시 시도해주시기 바랍니다.');
+          }
+        } catch (error) {
+          alert('이미지 파일 저장에 실패하여 작성하신 내용을 적용할 수 없습니다. 파일 형식을 확인하거나 다른 파일을 선택해주세요.');
+          isSubmittingRef.current = false; // 제출 상태 초기화
         }
-        
-        alert('작성하신 내용이 적용되었습니다.');
-        window.location.href = 'settings.html'; // 저장 후 settings.html로 이동
       }
     });
 
