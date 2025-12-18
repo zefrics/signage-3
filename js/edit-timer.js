@@ -132,13 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 타이머 초기화 및 시작
     const timerSettings = storageManager.loadTimerSettings();
     const timeoutSeconds = timerSettings.backTimer || 90;
-    timerManager.init(() => {
-      if (isFormChanged()) {
-        // 변경사항이 있으면 settings.html로 이동하기 전에 확인 메시지를 표시하지 않음
-      } else {
-        window.location.href = 'settings.html';
-      }
-    }, timeoutSeconds);
+    timerManager.init(() => { window.location.href = 'settings.html'; }, timeoutSeconds);
     timerManager.start([form]);
 
     const isFormChanged = () => {
