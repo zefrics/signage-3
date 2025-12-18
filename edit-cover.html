@@ -34,13 +34,14 @@
             <input type="text" autocomplete="off" id="input-tester-name" placeholder="필수 입력 항목입니다." maxlength="30" required> 
           </div>
           <div class="input-content">
-            <h2 class="label">Cover Image</h2>
+            <h2 class="label">Image</h2>
             <div class="file-input-wrapper">
               <div class="file-name-wrapper">
-                <span id="file-name-display">선택된 파일이 없습니다.</span>
+                <span id="file-name-display">5MB 이하의 이미지 파일</span>
               </div>
+              <input type="file" id="input-image-file" accept=".jpg, .jpeg, .png, .gif, .tiff, .bmp, .webp, .svg, .mbx" style="display: none;">
               <button type="button" id="btn-clear-image" style="display: none;">Delete</button>
-              <button type="button" id="btn-select-image" disabled>Select</button>
+              <button type="button" id="btn-select-image">Select</button>
             </div>
           </div>
           <div class="input-content">
