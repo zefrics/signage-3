@@ -17,12 +17,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const allData = storageManager.load();
     // 타입이 'cover'인 데이터들 중 order가 가장 높은 것을 찾음
     const coverData = allData
-      .filter(d => d.type === 'cover')
+      .filter(d => d.type === 'Cover')
       .sort((a, b) => b.order - a.order)[0] || { // 커버가 없으면 기본값 사용
-        testerName: '(Tester Name)',
+        testerName: '',
         imagePath: null,
-        function: ['(Function #1)', '', ''],
-        specifications: ['(Specifications #1)', '', ''],
+        function: ['', '', '', ''],
+        specifications: ['', '', '', ''],
       };
       
     if (coverData && testerNameElement && functionElement && specificationsElement) {
@@ -88,26 +88,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const listViewContainer = listPageElement.querySelector('.list-view-container');
 
-      chunk.forEach(data => {
-      const { testMachine, model, purpose, startDate, endDate } = data;
+      chunk.forEach((data, itemIndex) => {
+        const { testMachine, model, purpose, startDate, endDate } = data;
+        const chunkLength = chunk.length;
 
-      let scheduleText;
-      const formattedStartDate = formatDate(startDate);
-      const formattedEndDate = formatDate(endDate);
+        let scheduleText;
+        const formattedStartDate = formatDate(startDate);
+        const formattedEndDate = formatDate(endDate);
 
-      if (formattedStartDate && formattedEndDate) {
-        scheduleText = `${formattedStartDate}<br>~ ${formattedEndDate}`;
-      } else if (formattedStartDate) {
-        scheduleText = `${formattedStartDate} ~`;
-      } else if (formattedEndDate) {
-        scheduleText = `~ ${formattedEndDate}`;
-      } else {
-        scheduleText = '-';
-      }
+        if (formattedStartDate && formattedEndDate) {
+          scheduleText = `${formattedStartDate}<br>~ ${formattedEndDate}`;
+        } else if (formattedStartDate) {
+          scheduleText = `${formattedStartDate} ~`;
+        } else if (formattedEndDate) {
+          scheduleText = `~ ${formattedEndDate}`;
+        } else {
+          scheduleText = '-';
+        }
 
-      const tableRow = document.createElement('ul');
-      tableRow.className = 'table-content';
-      tableRow.innerHTML = `
+        const tableRow = document.createElement('ul');
+        tableRow.className = 'table-content';
+
+        // 하이라이트 로직을 짝수 번째 행을 확인하는 방식으로 단순화
+        if (itemIndex % 2 !== 0) {
+          tableRow.classList.add('highlight');
+        }
+
+        tableRow.innerHTML = `
         <li><span>${testMachine || '-'}</span></li>
         <li><span>${model || '-'}</span></li>
         <li><span>${purpose || '-'}</span></li>
@@ -115,7 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
       `;
         listViewContainer.appendChild(tableRow);
       });
-
+      
       // prepend를 사용하여 페이지 순서를 뒤집어, 최신 데이터가 담긴 페이지가 먼저 오도록 함
       listPagesContainer.prepend(listPageElement);
     });
@@ -152,7 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (coverViewContainer) coverViewContainer.style.display = 'flex'; // Cover 뷰를 보여줌
 
       // cover-view 내용 업데이트
-      document.querySelector('#tester-name').textContent = data.testerName || '(Tester Name)';
+      document.querySelector('#tester-name').textContent = data.testerName || '';
       const functionEl = document.querySelector('#function');
       const specificationsEl = document.querySelector('#specifications');
       if (functionEl) functionEl.innerHTML = (data.function || []).filter(Boolean).map(item => `<li class="content">${item}</li>`).join('');
@@ -227,6 +234,11 @@ document.addEventListener('DOMContentLoaded', () => {
       tableRow.className = 'table-content';
       tableRow.dataset.order = order; // 데이터셋에 order 저장
       tableRow.dataset.type = type; // 데이터셋에 type 저장
+
+      // 짝수 번째 행에 하이라이트 클래스 추가 (index는 0부터 시작하므로 홀수 index가 짝수 번째)
+      if (index % 2 !== 0) {
+        tableRow.classList.add('highlight');
+      }
       tableRow.innerHTML = `
         <li class="drag-handle"><img src="img/edit-order.svg"></li>
         <li><span>${sortedData.length - index}</span></li>

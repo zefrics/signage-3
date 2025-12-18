@@ -56,8 +56,8 @@ document.addEventListener('DOMContentLoaded', () => {
       initialData = {
         testerName: '',
         imagePath: null,
-        function: ['', '', ''],
-        specifications: ['', '', ''],
+        function: ['', '', '', ''],
+        specifications: ['', '', '', ''],
       };
     }
 

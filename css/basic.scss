@@ -34,7 +34,7 @@ $fw-date: 400; // Date 폰트 웨이트
 $lh-date: 24px; // Date Line Height
 
 
-$main-height: calc(100svh - 197.5px);
+$main-height: calc(100svh - 148.5px);
 
 
 $color-k1: rgba(0, 0, 0, 1);
@@ -72,14 +72,14 @@ $color-g2: rgba(153, 202, 59, 0.9);
 $color-g3: rgba(153, 202, 59, 0.75);
 $color-g4: rgba(153, 202, 59, 0.6);
 $color-g5: rgba(153, 202, 59, 0.45);
-$color-g6: rgba(153, 202, 59, 0.3);
+$color-g6: rgba(153, 202, 59, 0.25);
 $color-g7: rgba(153, 202, 59, 0.15);
 $color-g8: rgba(153, 202, 59, 0.1);
 $color-g9: rgba(153, 202, 59, 0.05);
 
 body {
   font-family: 'Pretendard', sans-serif;
-  padding: 54px 30px;
+  padding: 30px;
   user-select: none;
 }
 
@@ -164,14 +164,14 @@ header {
 }
 
 #cover-view, #item-view {
-  display: flex; gap: 45px;
-  padding: 45px;
+  display: flex;
   border: 3px solid $color-r6;
   border-radius: 15px;
   .slide-content-container { // #cover-view, #item-view 공통
     display: flex; flex-direction: column; justify-content: space-between;
     width: 100%;
     min-width: 0; // flex 아이템이 할당된 공간보다 작아질 수 있도록 허용
+    padding: 45px;
     margin-bottom: -6px;
     .slide-content {
       .label {
@@ -194,38 +194,43 @@ header {
   .img-frame { // #cover-view, #item-view 공통
     display: flex; align-items: center; justify-content: center;
     border: 1px solid $color-r7;
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
     height: 100%;
     aspect-ratio: 3 / 4;
     &#cover-img-default, &#item-img-default { // #cover-view, #item-view 공통
       background-color: $color-r9;
-    }
-    .default {
-      width: 35%; height: auto;
-      opacity: 0.6;
-      -webkit-user-drag: none;
+      .default {
+        width: 35%; height: auto;
+        opacity: 0.6;
+        -webkit-user-drag: none;
+      }
     }
     .selected {
       height: 100%; width: 100%;
+      border-top-right-radius: 12px;
+      border-bottom-right-radius: 12px;
       object-fit: cover; object-position: center;
       -webkit-user-drag: none;
     }
   }
-  &#cover-view { // #cover-view 전용
-    .slide-content-container {
-      .slide-content {
-        height: 230px;
-        ul {
-          display: flex; flex-direction: column; gap: 15px;
-          li {
-            &::before {
-              content: '·';
-              display: inline-block;
-              transform: scale(0.75); // dot의 크기를 75%로 축소
-              margin-right: 12px;
-            }
+}
+
+#cover-view {
+  .slide-content-container {
+    .slide-content {
+      height: 272px;
+      ul {
+        display: flex; flex-direction: column; gap: 6px;
+        li {
+          &::before {
+            content: '·';
+            display: inline-block;
+            transform: scale(0.75); // dot의 크기를 75%로 축소
+            margin-right: 12px;
           }
         }
-     }
+      }
     }
   }
 }
@@ -242,7 +247,7 @@ header {
     font-size: $fs-list-title; font-weight: $fw-list-title;
     background-color: $color-r7;
     li {
-      padding: 12px 0;
+      padding: 15px;
       display: flex; align-items: center; justify-content: center;
       border-right: 1px solid $color-k8;
       &:last-child {
@@ -260,6 +265,9 @@ header {
       border-bottom: 1px solid $color-k8;
       font-size: $fs-list-content; font-weight: $fw-list-content;
       // letter-spacing: $ls-list-content;
+      &.highlight {
+        background-color: $color-r9;
+      }
       &:last-child {
         border-bottom: none;
       }
@@ -277,9 +285,6 @@ header {
           text-overflow: ellipsis;
           word-break: break-all; /* 단어 단위가 아닌 글자 단위로 줄바꿈하여 공간 활용도 높임 */
         }
-        &:first-child {
-          background-color: $color-r9;
-        }
         &:last-child {
           border-right: none;
         }
@@ -294,9 +299,9 @@ header {
   .table-header {
     display: grid; grid-template-columns: 165px 165px 1fr 345px;
     padding-right: 9px;
-    border-bottom: 2px solid $color-g7;
+    border-bottom: 2px solid $color-g6;
     font-size: $fs-slider-edit-title; font-weight: $fw-slider-edit-title;
-    background-color: $color-g7;
+    background-color: $color-g6;
     li {
       padding: 15px;
       display: flex; align-items: center; justify-content: center;
@@ -311,6 +316,9 @@ header {
     overflow-y: scroll;
     .table-content {
       display: grid; grid-template-columns: 82.5px 82.5px 165px 1fr 345px;
+      &.highlight {
+        background-color: $color-g9;
+      }
       border-bottom: 1px solid $color-k8;
       font-size: $fs-slider-edit-content; font-weight: $fw-slider-edit-content;
       li {
@@ -365,7 +373,13 @@ form {
   border: 3px solid $color-g5;
   .input-content-group {
     display: grid; grid-template-columns: repeat(3, 1fr);
-    column-gap: 60px; row-gap: 45px;
+    column-gap: 60px;
+    &#input-cover {
+      row-gap: 105px;
+    }
+    &#input-item {
+      row-gap: 45px;
+    }
     .input-content {
       min-width: 0;
       .label {
