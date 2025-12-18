@@ -405,19 +405,22 @@ form {
       .file-input-wrapper {
         display: flex; align-items: center; gap: 15px;
         .file-name-wrapper {
-          display: flex; align-items: center;
           box-sizing: border-box;
-          padding: 0 12px;
           height: 45px;
           width: 100%;
           border: 1px solid $color-k6;
           border-radius: 6px;
           min-width: 0; /* 콘텐츠 크기보다 작아질 수 있도록 허용 */
           #file-name-display {
+            display: flex; align-items: center;
+            height: 100%; padding: 0 12px; // 스크롤을 더 잘 할 수 있도록 터치 영역을 늘리기 위해 설정
             font-size: $fs-edit-input;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            white-space: nowrap; // 텍스트 줄바꿈 방지
+            overflow-x: auto; // 가로 스크롤 허용
+            // 스크롤바 숨기기 (기능은 유지)
+            &::-webkit-scrollbar {
+              display: none;
+            }
             color: $color-k6; // 기본 색상 (선택된 파일 없음)
             &.file-selected {
               color: $color-k1; // 파일 선택 시 색상

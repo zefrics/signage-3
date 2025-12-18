@@ -389,10 +389,7 @@ form .input-content-group .input-content .file-input-wrapper {
   gap: 15px;
 }
 form .input-content-group .input-content .file-input-wrapper .file-name-wrapper {
-  display: flex;
-  align-items: center;
   box-sizing: border-box;
-  padding: 0 12px;
   height: 45px;
   width: 100%;
   border: 1px solid rgba(0, 0, 0, 0.3);
@@ -400,11 +397,17 @@ form .input-content-group .input-content .file-input-wrapper .file-name-wrapper 
   min-width: 0; /* 콘텐츠 크기보다 작아질 수 있도록 허용 */
 }
 form .input-content-group .input-content .file-input-wrapper .file-name-wrapper #file-name-display {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding: 0 12px;
   font-size: 18px;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  overflow-x: auto;
   color: rgba(0, 0, 0, 0.3);
+}
+form .input-content-group .input-content .file-input-wrapper .file-name-wrapper #file-name-display::-webkit-scrollbar {
+  display: none;
 }
 form .input-content-group .input-content .file-input-wrapper .file-name-wrapper #file-name-display.file-selected {
   color: rgb(0, 0, 0);
