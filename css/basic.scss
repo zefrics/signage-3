@@ -171,7 +171,7 @@ header {
     display: flex; flex-direction: column; justify-content: space-between;
     width: 100%;
     min-width: 0; // flex 아이템이 할당된 공간보다 작아질 수 있도록 허용
-    padding: 45px;
+    padding: 36px 60px 36px 36px;
     margin-bottom: -6px;
     .slide-content {
       .label {
@@ -193,20 +193,20 @@ header {
   }
   .img-frame { // #cover-view, #item-view 공통
     display: flex; align-items: center; justify-content: center;
-    border: 1px solid $color-r7;
+    border-left: 1px solid $color-r7;
     border-top-right-radius: 12px;
     border-bottom-right-radius: 12px;
     height: 100%;
-    aspect-ratio: 3 / 4;
+    aspect-ratio: 2 / 3;
     &#cover-img-default, &#item-img-default { // #cover-view, #item-view 공통
       background-color: $color-r9;
-      .default {
+      img.default {
         width: 35%; height: auto;
         opacity: 0.6;
         -webkit-user-drag: none;
       }
     }
-    .selected {
+    img.selected {
       height: 100%; width: 100%;
       border-top-right-radius: 12px;
       border-bottom-right-radius: 12px;
@@ -219,9 +219,9 @@ header {
 #cover-view {
   .slide-content-container {
     .slide-content {
-      height: 272px;
+      height: 263px;
       ul {
-        display: flex; flex-direction: column; gap: 6px;
+        display: flex; flex-direction: column; gap: 3px;
         li {
           &::before {
             content: '·';
@@ -369,7 +369,7 @@ header {
 }
 
 form {
-  padding: 45px;
+  padding: 36px;
   border: 3px solid $color-g5;
   .input-content-group {
     display: grid; grid-template-columns: repeat(3, 1fr);

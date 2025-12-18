@@ -113,7 +113,7 @@ header .main-title#tester-name {
   justify-content: space-between;
   width: 100%;
   min-width: 0;
-  padding: 45px;
+  padding: 36px 60px 36px 36px;
   margin-bottom: -6px;
 }
 #cover-view .slide-content-container .slide-content .label, #item-view .slide-content-container .slide-content .label {
@@ -135,22 +135,22 @@ header .main-title#tester-name {
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid rgba(240, 78, 35, 0.15);
+  border-left: 1px solid rgba(240, 78, 35, 0.15);
   border-top-right-radius: 12px;
   border-bottom-right-radius: 12px;
   height: 100%;
-  aspect-ratio: 3/4;
+  aspect-ratio: 2/3;
 }
 #cover-view .img-frame#cover-img-default, #cover-view .img-frame#item-img-default, #item-view .img-frame#cover-img-default, #item-view .img-frame#item-img-default {
   background-color: rgba(240, 78, 35, 0.05);
 }
-#cover-view .img-frame#cover-img-default .default, #cover-view .img-frame#item-img-default .default, #item-view .img-frame#cover-img-default .default, #item-view .img-frame#item-img-default .default {
+#cover-view .img-frame#cover-img-default img.default, #cover-view .img-frame#item-img-default img.default, #item-view .img-frame#cover-img-default img.default, #item-view .img-frame#item-img-default img.default {
   width: 35%;
   height: auto;
   opacity: 0.6;
   -webkit-user-drag: none;
 }
-#cover-view .img-frame .selected, #item-view .img-frame .selected {
+#cover-view .img-frame img.selected, #item-view .img-frame img.selected {
   height: 100%;
   width: 100%;
   border-top-right-radius: 12px;
@@ -163,12 +163,12 @@ header .main-title#tester-name {
 }
 
 #cover-view .slide-content-container .slide-content {
-  height: 272px;
+  height: 263px;
 }
 #cover-view .slide-content-container .slide-content ul {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 3px;
 }
 #cover-view .slide-content-container .slide-content ul li::before {
   content: "·";
@@ -339,7 +339,7 @@ header .main-title#tester-name {
 }
 
 form {
-  padding: 45px;
+  padding: 36px;
   border: 3px solid rgba(153, 202, 59, 0.45);
 }
 form .input-content-group {
