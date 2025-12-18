@@ -12,6 +12,7 @@ export const sliderManager = {
   coverElement: document.querySelector('#covers'),
   itemElement: document.querySelector('#items'),
   listElement: document.querySelector('#lists'),
+  isListPage: document.querySelector('#view-list-page'),
 
   // 슬라이더 초기화
   init(slideData) {
@@ -45,11 +46,10 @@ export const sliderManager = {
       return; // 슬라이더 시작하지 않고 종료
     }
 
-    const isListPage = document.querySelector('#view-list-page');
     const hasItems = slideData.some(d => d.type === 'Item');
 
     // index.html이고 Item이 없을 경우, Change View 버튼 비활성화
-    if (!isListPage && !hasItems) {
+    if (!this.isListPage && !hasItems) {
       const changeViewButtons = document.querySelectorAll('.btn-change');
       changeViewButtons.forEach(button => {
         button.style.pointerEvents = 'none';
@@ -68,7 +68,7 @@ export const sliderManager = {
       });
     }
 
-    if (isListPage) {
+    if (this.isListPage) {
       // view-list.html의 경우: [커버, 목록] 2개의 슬라이드로 구성
       this.addEventListeners();
 
@@ -137,16 +137,13 @@ export const sliderManager = {
     // 슬라이드 정보가 없으면 아무것도 하지 않음
     if (!slideInfo) return;
 
-    const isListPage = document.querySelector('#view-list-page');
-
     if (slideInfo.type === 'cover') {
       // Cover 타입일 경우: coverElement를 보여주고 다른 컨테이너는 숨김
-      this.coverElement.style.display = 'block';
+      if (this.coverElement) this.coverElement.style.display = 'block';
       if (this.itemElement) this.itemElement.style.display = 'none';
       if (this.listElement) this.listElement.style.display = 'none';
-
-      if (window.viewDataManager?.updateItemView) {
-        window.viewDataManager.updateItemView(slideInfo.data); // 모든 cover 표시는 updateItemView에 위임
+      if (window.viewDataManager?.updateCoverView) {
+        window.viewDataManager.updateCoverView(slideInfo.data);
       }
     } else if (slideInfo.type === 'list') {
       // List 타입일 경우
@@ -161,13 +158,13 @@ export const sliderManager = {
       if (currentPage) currentPage.style.display = 'flex';
 
     } else { // 'slide' (Item) 타입일 경우
-      this.coverElement.style.display = 'none';
+      // Item 타입일 경우
+      if (this.coverElement) this.coverElement.style.display = 'none';
       if (this.itemElement) this.itemElement.style.display = 'block';
       if (this.listElement) this.listElement.style.display = 'none';
-    }
-    // view-data.js에 데이터 표시 위임 (cover, item 모두)
-    if (slideInfo.type !== 'list' && window.viewDataManager?.updateItemView) {
-      window.viewDataManager.updateItemView(slideInfo.data);
+      if (window.viewDataManager?.updateItemView) {
+        window.viewDataManager.updateItemView(slideInfo.data);
+      }
     }
 
     this.updateCounter();

@@ -5,58 +5,7 @@ import { sliderManager } from './slider.js';
 import { timerManager } from './edit-timer.js';
 
 document.addEventListener('DOMContentLoaded', () => {
-  const testerNameElement = document.querySelector('#tester-name');
-  const functionElement = document.querySelector('#function');
-  const specificationsElement = document.querySelector('#specifications');
-
-  const listViewContainer = document.querySelector('#list-view-container');
   const sliderEditContainer = document.querySelector('#slider-edit-container');
-
-  // cover-view 섹션의 내용을 업데이트하는 함수
-  const updateCoverView = () => {
-    const allData = storageManager.load();
-    // 타입이 'cover'인 데이터들 중 order가 가장 높은 것을 찾음
-    const coverData = allData
-      .filter(d => d.type === 'Cover')
-      .sort((a, b) => b.order - a.order)[0] || { // 커버가 없으면 기본값 사용
-        testerName: '',
-        imagePath: null,
-        function: ['', '', '', ''],
-        specifications: ['', '', '', ''],
-      };
-      
-    if (coverData && testerNameElement && functionElement && specificationsElement) {
-      testerNameElement.textContent = coverData.testerName;
-
-      // 이미지 표시 로직 추가
-      const coverImgSelectedFrame = document.querySelector('#cover-img-selected');
-      const coverImgDefaultFrame = document.querySelector('#cover-img-default');
-      if (coverData.imagePath && coverImgSelectedFrame && coverImgDefaultFrame) {
-        // 저장된 경로를 웹뷰가 사용할 수 있는 URL로 변환
-        coverImgSelectedFrame.querySelector('.selected').src = Capacitor.convertFileSrc(coverData.imagePath);
-        coverImgSelectedFrame.style.display = 'flex';
-        coverImgDefaultFrame.style.display = 'none';
-      } else if (coverImgSelectedFrame && coverImgDefaultFrame) {
-        // 이미지가 없을 경우
-        coverImgSelectedFrame.style.display = 'none';
-        coverImgDefaultFrame.style.display = 'flex';
-      }
-
-      // Function 데이터를 li 형태로 변환하여 기존 ul에 삽입
-      if (coverData.function && coverData.function.length > 0) {
-        functionElement.innerHTML = coverData.function.filter(Boolean).map(item => `<li class="content">${item}</li>`).join('');
-      } else {
-        functionElement.innerHTML = '';
-      }
-
-      // Specifications 데이터를 li 형태로 변환하여 기존 ul에 삽입
-      if (coverData.specifications && coverData.specifications.length > 0) {
-        specificationsElement.innerHTML = coverData.specifications.filter(Boolean).map(item => `<li class="content">${item}</li>`).join('');
-      } else {
-        specificationsElement.innerHTML = '';
-      }
-    }
-  };
 
   // list-view 섹션의 내용을 업데이트하는 함수
   const updateListView = (dataArray) => {
@@ -90,7 +39,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
       chunk.forEach((data, itemIndex) => {
         const { testMachine, model, purpose, startDate, endDate } = data;
-        const chunkLength = chunk.length;
 
         let scheduleText;
         const formattedStartDate = formatDate(startDate);
@@ -147,70 +95,74 @@ document.addEventListener('DOMContentLoaded', () => {
     return listPage;
   };
 
+  // cover-view 섹션의 내용을 업데이트하는 함수
+  const updateCoverView = (data) => {
+    const itemViewContainer = document.querySelector('#item-view');
+    const coverViewContainer = document.querySelector('#cover-view');
+    if (!data || !coverViewContainer) return;
+
+    // Cover 뷰를 보여주고 Item 뷰는 숨김
+    if (itemViewContainer) itemViewContainer.style.display = 'none';
+    coverViewContainer.style.display = 'flex';
+
+    // cover-view 내용 업데이트
+    document.querySelector('#tester-name').textContent = data.testerName || '';
+    const functionEl = document.querySelector('#function');
+    const specificationsEl = document.querySelector('#specifications');
+    if (functionEl) functionEl.innerHTML = (data.function || []).filter(Boolean).map(item => `<li class="content">${item}</li>`).join('');
+    if (specificationsEl) specificationsEl.innerHTML = (data.specifications || []).filter(Boolean).map(item => `<li class="content">${item}</li>`).join('');
+
+    const coverImgSelected = document.querySelector('#cover-img-selected');
+    const coverImgDefault = document.querySelector('#cover-img-default');
+    if (data.imagePath && coverImgSelected && coverImgDefault) {
+      coverImgSelected.querySelector('.selected').src = Capacitor.convertFileSrc(data.imagePath);
+      coverImgSelected.style.display = 'flex';
+      coverImgDefault.style.display = 'none';
+    } else if (coverImgSelected && coverImgDefault) {
+      coverImgSelected.style.display = 'none';
+      coverImgDefault.style.display = 'flex';
+    }
+  };
+
   // item-view 섹션의 내용을 업데이트하는 함수
   const updateItemView = (data) => {
     const itemViewContainer = document.querySelector('#item-view');
     const coverViewContainer = document.querySelector('#cover-view');
-    if (!data) return; // itemViewContainer나 coverViewContainer는 페이지에 따라 없을 수 있으므로 data만 체크
+    if (!data || !itemViewContainer) return;
 
-    if (data.type === 'Cover') {
-      // view-list.html에는 itemViewContainer가 없으므로 null 체크
-      if (itemViewContainer) itemViewContainer.style.display = 'none';
-      if (coverViewContainer) coverViewContainer.style.display = 'flex'; // Cover 뷰를 보여줌
+    // Item 뷰를 보여주고 Cover 뷰는 숨김
+    if (coverViewContainer) coverViewContainer.style.display = 'none';
+    itemViewContainer.style.display = 'flex';
 
-      // cover-view 내용 업데이트
-      document.querySelector('#tester-name').textContent = data.testerName || '';
-      const functionEl = document.querySelector('#function');
-      const specificationsEl = document.querySelector('#specifications');
-      if (functionEl) functionEl.innerHTML = (data.function || []).filter(Boolean).map(item => `<li class="content">${item}</li>`).join('');
-      if (specificationsEl) specificationsEl.innerHTML = (data.specifications || []).filter(Boolean).map(item => `<li class="content">${item}</li>`).join('');
+    // item-view 내용 업데이트
+    const formatFullDate = (dateString) => {
+      if (!dateString) return '';
+      const [fullYear, month, day] = dateString.split('-');
+      const shortYear = fullYear.slice(-2);
+      return `${shortYear}년 ${month}월 ${day}일`;
+    };
 
-      const coverImgSelected = document.querySelector('#cover-img-selected');
-      const coverImgDefault = document.querySelector('#cover-img-default');
-      if (data.imagePath && coverImgSelected && coverImgDefault) {
-        coverImgSelected.querySelector('.selected').src = Capacitor.convertFileSrc(data.imagePath);
-        coverImgSelected.style.display = 'flex';
-        coverImgDefault.style.display = 'none';
-      } else if (coverImgSelected && coverImgDefault) {
-        coverImgSelected.style.display = 'none';
-        coverImgDefault.style.display = 'flex';
-      }
+    const { testMachine, model, purpose, startDate, endDate, imagePath } = data;
 
-    } else { // Item 타입일 경우
-      // Item 타입일 경우 item-view를 보여주고 cover-view는 숨김
-      if (itemViewContainer) itemViewContainer.style.display = 'flex';
-      if (coverViewContainer) coverViewContainer.style.display = 'none';
+    const scheduleText = (startDate || endDate)
+      ? `${formatFullDate(startDate)}&nbsp;~&nbsp;${formatFullDate(endDate)}`
+      : '-';
 
-      // item-view 내용 업데이트
-      const formatFullDate = (dateString) => {
-        if (!dateString) return '';
-        const [fullYear, month, day] = dateString.split('-');
-        const shortYear = fullYear.slice(-2);
-        return `${shortYear}년 ${month}월 ${day}일`;
-      };
-
-      const { testMachine, model, purpose, startDate, endDate, imagePath } = data;
-
-      const scheduleText = (startDate || endDate)
-        ? `${formatFullDate(startDate)}&nbsp;~&nbsp;${formatFullDate(endDate)}`
-        : '-';
-
-      const itemImgSelected = itemViewContainer.querySelector('#item-img-selected');
-      const itemImgDefault = itemViewContainer.querySelector('#item-img-default');
-      if (imagePath && itemImgSelected && itemImgDefault) {
-        itemImgSelected.querySelector('.selected').src = Capacitor.convertFileSrc(imagePath);
-        itemImgSelected.style.display = 'flex';
-        itemImgDefault.style.display = 'none';
-      } else if (itemImgSelected && itemImgDefault) {
-        itemImgSelected.style.display = 'none';
-        itemImgDefault.style.display = 'flex';
-      }
-
-      itemViewContainer.querySelector('.test-machine-content').textContent = testMachine || '-';
-      itemViewContainer.querySelector('.model-content').textContent = model || '-';
-      itemViewContainer.querySelector('.purpose-content').textContent = purpose || '-';
-      itemViewContainer.querySelector('.schedule-content').innerHTML = scheduleText;
+    const itemImgSelected = itemViewContainer.querySelector('#item-img-selected');
+    const itemImgDefault = itemViewContainer.querySelector('#item-img-default');
+    if (imagePath && itemImgSelected && itemImgDefault) {
+      itemImgSelected.querySelector('.selected').src = Capacitor.convertFileSrc(imagePath);
+      itemImgSelected.style.display = 'flex';
+      itemImgDefault.style.display = 'none';
+    } else if (itemImgSelected && itemImgDefault) {
+      itemImgSelected.style.display = 'none';
+      itemImgDefault.style.display = 'flex';
     }
+
+    itemViewContainer.querySelector('.test-machine-content').textContent = testMachine || '-';
+    itemViewContainer.querySelector('.model-content').textContent = model || '-';
+    itemViewContainer.querySelector('.purpose-content').textContent = purpose || '-';
+    itemViewContainer.querySelector('.schedule-content').innerHTML = scheduleText;
   };
 
   // edit-slider 섹션의 내용을 업데이트하는 함수
@@ -330,8 +282,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // 페이지 로드 시 localStorage에서 데이터 불러오기
   const loadData = () => {
     const slideData = storageManager.load();
-    // sliderManager가 init 시점에 updateItemView를 호출할 수 있도록 viewDataManager 객체를 먼저 생성하고 노출합니다.
-    window.viewDataManager = { updateItemView };
+    // sliderManager가 init 시점에 각 뷰 업데이트 함수를 호출할 수 있도록 viewDataManager 객체를 먼저 생성하고 노출합니다.
+    window.viewDataManager = { updateCoverView, updateItemView };
 
     // 목록 페이지(view-list.html) 또는 슬라이더 편집 목록(settings.html)을 먼저 생성합니다.
     if (document.querySelector('#list-pages-container')) updateListView(slideData.filter(d => d.type !== 'Cover'));

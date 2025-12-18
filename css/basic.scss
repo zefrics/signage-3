@@ -171,7 +171,7 @@ header {
     display: flex; flex-direction: column; justify-content: space-between;
     width: 100%;
     min-width: 0; // flex 아이템이 할당된 공간보다 작아질 수 있도록 허용
-    padding: 36px 60px 36px 36px;
+    padding: 36px 45px 36px 36px;
     margin-bottom: -6px;
     .slide-content {
       .label {

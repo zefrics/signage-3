@@ -1,14 +1,8 @@
-// const { Camera, Filesystem } = window.Capacitor.Plugins;
-// // Capacitor 플러그인 Enum을 상수로 정의
-// const CameraResultType = {
-//   Uri: 'uri',
-// };
-// const CameraSource = {
-//   Photos: 'PHOTOS',
-// };
-// const Directory = {
-//   Data: 'Data',
-// };
+// const { Filesystem } = window.Capacitor.Plugins;
+// Capacitor 플러그인 Enum을 상수로 정의
+const Directory = {
+  Data: 'Data',
+};
 import { storageManager } from './storage.js';
 import { timerManager } from './edit-timer.js';
 
@@ -26,10 +20,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const endDateInput = document.querySelector('#input-end-date');
     const imageSelectButton = document.querySelector('#btn-select-image');
     const imageClearButton = document.querySelector('#btn-clear-image');
+    const imageFileInput = document.querySelector('#input-image-file');
     const fileNameDisplay = document.querySelector('#file-name-display');
 
     let savedImagePath = null; // 선택된 이미지의 내부 경로를 저장할 변수
-    let tempImage = { path: null, name: null }; // 임시로 선택된 이미지 정보를 저장할 객체
+    let tempImage = { file: null, name: null }; // 임시로 선택된 이미지 정보를 저장할 객체
     let initialData = {}; // 초기 데이터를 저장할 객체
 
     // URL 파라미터에서 'order' 값을 가져옴
@@ -100,74 +95,82 @@ document.addEventListener('DOMContentLoaded', () => {
         initialData.testMachine !== testMachineInput.value.trim() ||
         initialData.model !== modelInput.value.trim() ||
         initialData.purpose !== purposeInput.value.trim() ||
-        (tempImage.path !== null || initialData.imagePath !== savedImagePath) || // 이미지 변경 감지
+        (tempImage.file !== null || initialData.imagePath !== savedImagePath) || // 이미지 변경 감지
         initialData.startDate !== startDateInput.value ||
         initialData.endDate !== endDateInput.value
       );
     };
 
     // 이미지 선택 버튼 클릭 이벤트
-    // imageSelectButton.addEventListener('click', async () => {
-    //   try {
-    //     const image = await Camera.getPhoto({
-    //       quality: 90,
-    //       allowEditing: false,
-    //       resultType: CameraResultType.Uri,
-    //       source: CameraSource.Photos
-    //     });
+    imageSelectButton.addEventListener('click', () => {
+      imageFileInput.click(); // 숨겨진 input[type=file]을 클릭
+    });
 
-    //     // YYYYMMDDHHMMSS 형식의 타임스탬프 생성
-    //     const now = new Date();
-    //     const timestamp = `${now.getFullYear()}` +
-    //                       `${String(now.getMonth() + 1).padStart(2, '0')}` +
-    //                       `${String(now.getDate()).padStart(2, '0')}` +
-    //                       `${String(now.getHours()).padStart(2, '0')}` +
-    //                       `${String(now.getMinutes()).padStart(2, '0')}` +
-    //                       `${String(now.getSeconds()).padStart(2, '0')}`;
-        
-    //     const fileName = `${timestamp}.${image.format}`;
+    // 파일 입력(input) 변경 이벤트
+    imageFileInput.addEventListener('change', (event) => {
+      const file = event.target.files[0];
+      if (!file) return;
 
-    //     // 파일을 바로 복사하지 않고, 임시 경로와 생성될 파일명만 저장
-    //     tempImage = { path: image.webPath, name: fileName };
+      // YYYYMMDDHHMMSS 형식의 타임스탬프 생성
+      const now = new Date();
+      const timestamp = `${now.getFullYear()}` +
+                        `${String(now.getMonth() + 1).padStart(2, '0')}` +
+                        `${String(now.getDate()).padStart(2, '0')}` +
+                        `${String(now.getHours()).padStart(2, '0')}` +
+                        `${String(now.getMinutes()).padStart(2, '0')}` +
+                        `${String(now.getSeconds()).padStart(2, '0')}`;
+      
+      const extension = file.name.split('.').pop();
+      const newFileName = `${timestamp}.${extension}`;
 
-    //     fileNameDisplay.textContent = fileName;
-    //     fileNameDisplay.classList.add('file-selected');
-    //     // Delete 버튼은 보이고, Select 버튼은 숨김
-    //     imageClearButton.style.display = 'flex';
-    //     imageSelectButton.style.display = 'none';
+      // 파일을 바로 복사하지 않고, 임시 File 객체와 생성될 파일명만 저장
+      tempImage = { file: file, name: newFileName };
 
-    //   } catch (error) {
-    //     console.error('이미지를 선택하는 데 실패했습니다.', error);
-    //     if (error.message !== "User cancelled photos app") {
-    //       alert('이미지를 불러오는 데 실패했습니다.');
-    //     }
-    //   }
-    // });
+      // 화면에 파일명 표시
+      fileNameDisplay.textContent = file.name; // 원본 파일명 표시
+      fileNameDisplay.classList.add('file-selected');
+      // Delete 버튼은 보이고, Select 버튼은 숨김
+      imageClearButton.style.display = 'flex';
+      imageSelectButton.style.display = 'none';
+
+      // 같은 파일을 다시 선택할 수 있도록 입력값 초기화
+      imageFileInput.value = '';
+    });
 
     // 이미지 삭제 버튼 클릭 이벤트
-    // imageClearButton.addEventListener('click', async () => {
-    //   const pathToDelete = savedImagePath; // 1. 삭제할 경로를 미리 저장
+    imageClearButton.addEventListener('click', async () => {
+      const pathToDelete = savedImagePath; // 1. 삭제할 경로를 미리 저장
 
-    //   // 2. 변수와 화면 UI를 먼저 초기화
-    //   tempImage = { path: null, name: null };
-    //   savedImagePath = null;
-    //   fileNameDisplay.textContent = '선택된 파일 없음';
-    //   fileNameDisplay.classList.remove('file-selected');
-    //   imageClearButton.style.display = 'none';
-    //   imageSelectButton.style.display = 'flex';
+      // 2. 변수와 화면 UI를 먼저 초기화
+      tempImage = { file: null, name: null };
+      savedImagePath = null;
+      fileNameDisplay.textContent = '선택된 파일이 없습니다.';
+      fileNameDisplay.classList.remove('file-selected');
+      imageClearButton.style.display = 'none';
+      imageSelectButton.style.display = 'flex';
 
-    //   // 3. 삭제할 경로가 있으면 실제 파일 삭제 시도
-    //   if (pathToDelete) {
-    //     try {
-    //       await Filesystem.deleteFile({ path: pathToDelete });
-    //     } catch (error) {
-    //       console.error('파일 삭제에 실패했습니다.', error);
-    //       // PC 환경에서는 Filesystem API가 없으므로 오류가 발생하지만, 기능 흐름상 정상입니다.
-    //       // 사용자에게 불필요한 경고창을 띄우지 않기 위해 alert는 주석 처리하거나 제거할 수 있습니다.
-    //       // alert('파일을 삭제하는 데 실패했습니다.');
-    //     }
-    //   }
-    // });
+      // 3. 삭제할 경로가 있으면 실제 파일 삭제 시도
+      if (pathToDelete) {
+        try {
+          await Filesystem.deleteFile({ path: pathToDelete });
+        } catch (error) {
+          console.error('파일 삭제에 실패했습니다.', error);
+          // PC 환경에서는 Filesystem API가 없으므로 오류가 발생하지만, 기능 흐름상 정상입니다.
+          // 사용자에게 불필요한 경고창을 띄우지 않기 위해 alert는 주석 처리하거나 제거할 수 있습니다.
+          // alert('파일을 삭제하는 데 실패했습니다.');
+        }
+      }
+    });
+
+    // FileReader를 사용하여 파일을 Base64로 읽는 헬퍼 함수
+    const readFileAsBase64 = (file) => {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result.split(',')[1]); // 'data:mime/type;base64,' 부분 제거
+        reader.onerror = error => reject(error);
+        reader.readAsDataURL(file);
+      });
+    };
 
     const isSubmittingRef = { current: false }; // 페이지 이탈 방지 로직을 위한 참조 객체
 
@@ -184,23 +187,24 @@ document.addEventListener('DOMContentLoaded', () => {
         isSubmittingRef.current = true; // 제출 시작
 
         // 새로운 이미지가 선택된 경우에만 파일 복사 및 경로 업데이트
-        // if (tempImage.path && tempImage.name) {
-        //   // 만약 기존 이미지가 있었다면 삭제 (교체 시)
-        //   if (initialData.imagePath) {
-        //     try {
-        //       await Filesystem.deleteFile({ path: initialData.imagePath });
-        //     } catch (e) {
-        //       console.error("기존 이미지 파일 삭제 실패", e);
-        //     }
-        //   }
-        //   // 새 파일 복사
-        //   const savedFile = await Filesystem.copy({
-        //     from: tempImage.path,
-        //     to: tempImage.name,
-        //     directory: Directory.Data
-        //   });
-        //   savedImagePath = savedFile.uri;
-        // }
+        if (tempImage.file && tempImage.name) {
+          // 만약 기존 이미지가 있었다면 삭제 (교체 시)
+          if (initialData.imagePath) {
+            try {
+              await Filesystem.deleteFile({ path: initialData.imagePath });
+            } catch (e) {
+              console.error("기존 이미지 파일 삭제 실패", e);
+            }
+          }
+          // 새 파일 복사
+          const base64Data = await readFileAsBase64(tempImage.file);
+          const savedFile = await Filesystem.writeFile({
+            path: tempImage.name,
+            data: base64Data,
+            directory: Directory.Data,
+          });
+          savedImagePath = savedFile.uri;
+        }
 
         const slideData = {
           testMachine: testMachineInput.value.trim(),
