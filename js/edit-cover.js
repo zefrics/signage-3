@@ -37,7 +37,6 @@ document.addEventListener('DOMContentLoaded', () => {
         initialData = {
           testerName: dataToEdit.testerName || '',
           imagePath: dataToEdit.imagePath || null,
-          originalImageName: dataToEdit.originalImageName || null,
           function: Array.from(functionInputs).map(input => input.value),
           specifications: Array.from(specificationsInputs).map(input => input.value),
         };
@@ -48,7 +47,6 @@ document.addEventListener('DOMContentLoaded', () => {
       initialData = {
         testerName: '',
         imagePath: null,
-        originalImageName: null,
         function: ['', '', '', ''],
         specifications: ['', '', '', ''],
       };
@@ -105,7 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
           // 이미지 저장 처리
           let isDataSaved = false;
-          const { imagePath, originalImageName } = await imageUploader.saveImage();
+          const { imagePath } = await imageUploader.saveImage();
 
           // Function과 Specifications 값을 배열로 수집 (빈 값은 제외)
           const functionValues = Array.from(functionInputs).map(input => input.value.trim());
@@ -114,7 +112,6 @@ document.addEventListener('DOMContentLoaded', () => {
           const coverData = {
             testerName: testerNameInput.value.trim(),
             imagePath,
-            originalImageName,
             function: functionValues,
             specifications: specificationsValues,
             type: 'Cover', // 타입을 'Cover'로 명시
@@ -135,7 +132,8 @@ document.addEventListener('DOMContentLoaded', () => {
           } else {
             // 데이터 저장 실패 시, 저장했던 이미지 파일을 다시 삭제 (롤백)
             if (imagePath) {
-              await window.Capacitor.Plugins.Filesystem.deleteFile({ path: imagePath });
+              const folderToDelete = imagePath.split('/')[0];
+              await window.Capacitor.Plugins.Filesystem.rmdir({ path: folderToDelete, directory: 'Data', recursive: true });
             }
             isSubmittingRef.current = false; // 제출 상태 초기화
             alert('입력하신 내용을 저장하는데 실패했습니다. 입력 형식에 맞게 다시 시도해주시기 바랍니다.');

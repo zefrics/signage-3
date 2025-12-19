@@ -115,7 +115,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const coverImgSelected = document.querySelector('#cover-img-selected');
     const coverImgDefault = document.querySelector('#cover-img-default');
     if (data.imagePath && coverImgSelected && coverImgDefault) {
-      coverImgSelected.querySelector('.selected').src = Capacitor.convertFileSrc(data.imagePath);
+      // 상대 경로를 전체 URI로 변환하여 표시
+      window.Capacitor.Plugins.Filesystem.getUri({ path: data.imagePath, directory: 'Data' })
+        .then(({ uri }) => { coverImgSelected.querySelector('.selected').src = Capacitor.convertFileSrc(uri); })
+        .catch(err => console.error('이미지 로드 실패:', err));
       coverImgSelected.style.display = 'flex';
       coverImgDefault.style.display = 'none';
     } else if (coverImgSelected && coverImgDefault) {
@@ -151,7 +154,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const itemImgSelected = itemViewContainer.querySelector('#item-img-selected');
     const itemImgDefault = itemViewContainer.querySelector('#item-img-default');
     if (imagePath && itemImgSelected && itemImgDefault) {
-      itemImgSelected.querySelector('.selected').src = Capacitor.convertFileSrc(imagePath);
+      window.Capacitor.Plugins.Filesystem.getUri({ path: imagePath, directory: 'Data' })
+        .then(({ uri }) => { itemImgSelected.querySelector('.selected').src = Capacitor.convertFileSrc(uri); })
+        .catch(err => console.error('이미지 로드 실패:', err));
       itemImgSelected.style.display = 'flex';
       itemImgDefault.style.display = 'none';
     } else if (itemImgSelected && itemImgDefault) {
@@ -255,7 +260,8 @@ document.addEventListener('DOMContentLoaded', () => {
               // Capacitor Filesystem API가 있는 경우 이미지 파일 삭제 시도
               if (dataToDelete.imagePath && window.Capacitor && window.Capacitor.Plugins.Filesystem) {
                 try {
-                  await window.Capacitor.Plugins.Filesystem.deleteFile({ path: dataToDelete.imagePath });
+                  const folderToDelete = dataToDelete.imagePath.split('/')[0];
+                  await window.Capacitor.Plugins.Filesystem.rmdir({ path: folderToDelete, directory: 'Data', recursive: true });
                 } catch (error) {
                   console.error('항목 삭제 중 이미지 파일 삭제에 실패했습니다.', error);
                   // 파일 삭제 실패 시 사용자에게 알리고, 데이터 삭제를 중단합니다.

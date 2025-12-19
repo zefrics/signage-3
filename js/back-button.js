@@ -1,4 +1,6 @@
 (function() {
+  const EXIT_TIME_THRESHOLD = 2000; // 2초 (뒤로가기 종료 대기 시간 및 토스트 메시지 표시 시간)
+
   const initBackButton = () => {
     // Capacitor 환경이 아니거나 플러그인이 없으면 중단
     if (!window.Capacitor || !window.Capacitor.Plugins || !window.Capacitor.Plugins.App) {
@@ -8,7 +10,6 @@
 
     const { App } = window.Capacitor.Plugins;
     let lastBackPressTime = 0;
-    const EXIT_TIME_THRESHOLD = 2000; // 2초
 
     // 백버튼 리스너 등록
     App.addListener('backButton', () => {
@@ -18,7 +19,7 @@
         App.exitApp();
       } else {
         lastBackPressTime = currentTime;
-        showToast("'뒤로가기'버튼을 한 번 더 누르면 종료됩니다.");
+        showToast("'뒤로가기' 버튼을 한 번 더 누르면 프로그램이 종료됩니다.");
       }
     });
   };
@@ -44,15 +45,16 @@
     // 스타일 설정
     Object.assign(toast.style, {
       position: 'fixed',
-      bottom: '50px',
+      bottom: '115px',
       left: '50%',
       transform: 'translateX(-50%)',
-      backgroundColor: 'rgba(0, 0, 0, 0.7)',
-      color: '#fff',
-      padding: '10px 20px',
-      borderRadius: '20px',
+      backgroundColor: 'rgba(240, 78, 35, 1)',
+      color: 'rgba(255, 255, 255, 1)',
+      padding: '15px 24px',
+      borderRadius: '30px',
       zIndex: '99999',
-      fontSize: '14px',
+      fontSize: '18px',
+      fontWeight: '500',
       pointerEvents: 'none',
       opacity: '0',
       transition: 'opacity 0.3s ease'
@@ -65,7 +67,7 @@
       toast.style.opacity = '1';
     });
 
-    // 2초 후 제거 (Fade Out)
+    // 3초 후 제거 (Fade Out)
     setTimeout(() => {
       toast.style.opacity = '0';
       setTimeout(() => {
@@ -73,6 +75,6 @@
           toast.remove();
         }
       }, 300);
-    }, 2000);
+    }, EXIT_TIME_THRESHOLD);
   }
 })();

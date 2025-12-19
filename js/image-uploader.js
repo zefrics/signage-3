@@ -30,9 +30,9 @@ export function initializeImageUploader({
     if (savedImagePath) {
       try {
         // 파일이 실제로 존재하는지 확인
-        await Filesystem.stat({ path: savedImagePath });
+        await Filesystem.stat({ path: savedImagePath, directory: Directory.Data });
         // 파일이 존재하면 이름 표시
-        fileNameDisplay.textContent = initialData.originalImageName || savedImagePath.split('/').pop();
+        fileNameDisplay.textContent = savedImagePath.split('/').pop();
         fileNameDisplay.classList.add('file-selected');
         imageClearButton.style.display = 'flex';
         imageSelectButton.style.display = 'none';
@@ -41,7 +41,6 @@ export function initializeImageUploader({
         console.warn(`Image file not found at path: ${savedImagePath}. Displaying placeholder.`, error);
         savedImagePath = null; // 파일이 없으므로 경로 초기화
         initialData.imagePath = null; // initialData도 업데이트하여 파일이 없는 상태로 만듦
-        initialData.originalImageName = null;
         fileNameDisplay.textContent = PLACEHOLDER_TEXT;
         fileNameDisplay.classList.remove('file-selected');
         imageClearButton.style.display = 'none';
@@ -120,7 +119,9 @@ export function initializeImageUploader({
     // 실제 파일 삭제
     if (pathToDelete) {
       try {
-        await Filesystem.deleteFile({ path: pathToDelete });
+        // 저장된 경로(폴더/파일명)에서 폴더명만 추출 (예: "20231219/image.jpg" -> "20231219")
+        const folderToDelete = pathToDelete.split('/')[0];
+        await Filesystem.rmdir({ path: folderToDelete, directory: Directory.Data, recursive: true });
       } catch (error) {
         console.error('파일 삭제에 실패했습니다.', error);
       }
@@ -144,29 +145,35 @@ export function initializeImageUploader({
         // 만약 기존 이미지가 있었다면 삭제 (교체 시)
         if (initialData.imagePath) {
           try {
-            await Filesystem.deleteFile({ path: initialData.imagePath });
+            const oldFolder = initialData.imagePath.split('/')[0];
+            await Filesystem.rmdir({ path: oldFolder, directory: Directory.Data, recursive: true });
           } catch (e) {
             console.error("기존 이미지 파일 삭제 실패", e);
           }
         }
+
+        // 타임스탬프를 이름으로 하는 폴더 생성 (예: "20231219123000")
+        const folderName = tempImage.name.split('.')[0]; // 파일명(타임스탬프)을 폴더명으로 사용
+        await Filesystem.mkdir({ path: folderName, directory: Directory.Data });
+
         // 새 파일 복사
         const base64Data = await readFileAsBase64(tempImage.file);
-        const savedFile = await Filesystem.writeFile({
-          path: tempImage.name,
+        // 폴더 안에 원본 파일명으로 저장 (예: "20231219123000/my_photo.jpg")
+        const relativePath = `${folderName}/${tempImage.file.name}`;
+        await Filesystem.writeFile({
+          path: relativePath,
           data: base64Data,
           directory: Directory.Data,
         });
         
         return {
-          imagePath: savedFile.uri,
-          originalImageName: tempImage.file.name
+          imagePath: relativePath, // 상대 경로 반환
         };
       }
       
       // 이미지가 변경되지 않은 경우
       return {
         imagePath: savedImagePath,
-        originalImageName: initialData.originalImageName
       };
     }
   };
