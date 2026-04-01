@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (itemEditForm) {
     const itemEditTitle = document.querySelector('#item-edit-title');
     const backButton = document.querySelector('#btn-back');
-    const testMachineInput = document.querySelector('#input-test-machine');
+    const testMachineInput1 = document.querySelector('#input-test-machine-1');
     const modelInput = document.querySelector('#input-model');
     const purposeInput = document.querySelector('#input-purpose');
     const startDateInput = document.querySelector('#input-start-date');
@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const imageClearButton = document.querySelector('#btn-clear-image');
     const imageFileInput = document.querySelector('#input-image-file');
     const fileNameDisplay = document.querySelector('#file-name-display');
+    const nextInput = document.querySelector('#input-next');
 
     let initialData = {}; // 초기 데이터를 저장할 객체
 
@@ -31,20 +32,22 @@ document.addEventListener('DOMContentLoaded', () => {
       const dataArray = storageManager.load();
       const dataToEdit = dataArray.find(d => d.order == editingOrder);
       if (dataToEdit) {
-        testMachineInput.value = dataToEdit.testMachine || '';
+        testMachineInput1.value = dataToEdit.testMachine1 || '';
         modelInput.value = dataToEdit.model || '';
         purposeInput.value = dataToEdit.purpose || '';
         startDateInput.value = dataToEdit.startDate || '';
         endDateInput.value = dataToEdit.endDate || '';
+        nextInput.value = dataToEdit.next || '';
 
         // 초기 데이터 저장
         initialData = {
-          testMachine: dataToEdit.testMachine || '',
+          testMachine1: dataToEdit.testMachine1 || '',
           model: dataToEdit.model || '',
           purpose: dataToEdit.purpose || '',
           startDate: dataToEdit.startDate || '',
           endDate: dataToEdit.endDate || '',
           imagePath: dataToEdit.imagePath || null,
+          next: dataToEdit.next || '',
         };
       }
     } else {
@@ -52,12 +55,13 @@ document.addEventListener('DOMContentLoaded', () => {
       itemEditTitle.textContent = 'New Item';
       // 생성 모드의 초기 데이터는 비어있음
       initialData = {
-        testMachine: '',
+        testMachine1: '',
         model: '',
         purpose: '',
         startDate: '',
         endDate: '',
         imagePath: null,
+        next: '',
       };
     }
 
@@ -85,10 +89,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // 폼의 변경 여부를 확인하는 함수
     const isFormChanged = () => {
       return (
-        initialData.testMachine !== testMachineInput.value.trim() ||
+        initialData.testMachine1 !== testMachineInput1.value.trim() ||
         initialData.model !== modelInput.value.trim() ||
         initialData.purpose !== purposeInput.value.trim() ||
         imageUploader.isImageChanged() || // 이미지 변경 감지
+        initialData.next !== nextInput.value.trim() ||
         initialData.startDate !== startDateInput.value ||
         initialData.endDate !== endDateInput.value
       );
@@ -105,6 +110,17 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
+      // [추가] 저장 전 개수 제한 우선 확인 (URL 직접 접근 대응)
+      if (!editingOrder) {
+        const allData = storageManager.load();
+        const itemCount = allData.filter(d => d.type === 'Item').length;
+        if (itemCount >= storageManager.LIMITS.Item) {
+          alert(`Item은 최대 ${storageManager.LIMITS.Item}개까지 생성할 수 있습니다.`);
+          window.location.href = 'settings-cover-item.html';
+          return;
+        }
+      }
+
       if (confirm("작성하신 내용을 적용하시겠습니까?")) {
         isSubmittingRef.current = true; // 제출 시작
 
@@ -114,9 +130,10 @@ document.addEventListener('DOMContentLoaded', () => {
           const { imagePath } = await imageUploader.saveImage();
 
           const slideData = {
-            testMachine: testMachineInput.value.trim(),
+            testMachine1: testMachineInput1.value.trim(),
             model: modelInput.value.trim(),
             purpose: purposeInput.value.trim(),
+            next: nextInput.value.trim(),
             startDate: startDateInput.value,
             endDate: endDateInput.value,
             imagePath,
@@ -134,7 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
           if (isDataSaved) {
             alert('작성하신 내용이 적용되었습니다.');
-            window.location.href = 'settings.html'; // 저장 후 settings.html로 이동
+            window.location.href = 'settings-cover-item.html'; // 저장 후 settings-cover-item.html로 이동
           } else {
             // 데이터 저장 실패 시, 저장했던 이미지 파일을 다시 삭제 (롤백)
             if (imagePath) {
@@ -156,12 +173,12 @@ document.addEventListener('DOMContentLoaded', () => {
       if (isFormChanged()) {
         timerManager.stop(); // 확인 창을 띄우기 전에 타이머를 중지
         if (confirm('변경사항이 저장되지 않았습니다. 정말로 페이지를 나가시겠습니까?')) {
-          window.location.href = 'settings.html';
+          window.location.href = 'settings-cover-item.html';
         } else {
           timerManager.start([itemEditForm]); // 취소 시 타이머를 다시 시작
         }
       } else {
-        window.location.href = 'settings.html';
+        window.location.href = 'settings-cover-item.html';
       }
     });
 
@@ -169,7 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const timerSettings = storageManager.loadTimerSettings();
     const timeoutSeconds = timerSettings.backTimer || 90;
     timerManager.init(() => {
-      window.location.href = 'settings.html';
+      window.location.href = 'settings-cover-item.html';
     }, timeoutSeconds);
     timerManager.start([itemEditForm]);
   }

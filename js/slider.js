@@ -12,6 +12,7 @@ export const sliderManager = {
   coverElement: document.querySelector('#covers'),
   itemElement: document.querySelector('#items'),
   listElement: document.querySelector('#lists'),
+  statusElement: document.querySelector('#status'),
   isListPage: document.querySelector('#view-list-page'),
 
   // 뷰 업데이트 콜백 함수
@@ -28,6 +29,7 @@ export const sliderManager = {
     if (this.coverElement) this.coverElement.style.display = 'none';
     if (this.itemElement) this.itemElement.style.display = 'none';
     if (this.listElement) this.listElement.style.display = 'none';
+    if (this.statusElement) this.statusElement.style.display = 'none';
     
     // 로컬 스토리지에서 타이머 설정을 불러옴
     const timerSettings = storageManager.loadTimerSettings();
@@ -78,25 +80,37 @@ export const sliderManager = {
       // view-list.html의 경우: [커버, 목록] 2개의 슬라이드로 구성
       this.addEventListeners();
 
-      // 1. 목록 페이지(들)을 슬라이드로 추가
-      const listPages = document.querySelectorAll('.list-page');
-      const listSlides = Array.from(listPages).map((page, index) => ({ type: 'list', pageIndex: index + 1 }));
-
-      // 2. 'Cover' 타입의 데이터들을 order 순으로 정렬
+      // 1. 'Cover' 타입의 데이터들을 order 순으로 정렬
       const coverSlides = slideData
         .filter(d => d.type === 'Cover')
         .sort((a, b) => a.order - b.order)
         .map(cover => ({ type: 'cover', data: cover }));
 
-      // 3. 첫 페이지는 항상 list, 그 뒤로 cover들을 추가
-      this.totalSlides = [...listSlides, ...coverSlides];
+      // 2. Item 목록 페이지(들)을 슬라이드로 추가
+      const itemPages = document.querySelector('#list-pages-container')?.querySelectorAll('.list-page') || [];
+      const itemSlides = Array.from(itemPages).map((_, index) => ({ type: 'list', pageIndex: index + 1 }));
+
+      // 3. Status 목록 페이지(들)을 슬라이드로 추가
+      const statusData = storageManager.loadStatus();
+      // 데이터가 실제 렌더링 된 후에 페이지 요소를 찾아야 함
+      const statusPages = document.querySelector('#status-pages-container')?.querySelectorAll('.list-page') || [];
+      const statusSlides = Array.from(statusPages).map((_, index) => ({ type: 'status-list', pageIndex: index + 1 }));
+
+      // 4. 순서 결정: Cover -> Item Lists -> Status Lists
+      this.totalSlides = [...coverSlides, ...itemSlides, ...statusSlides];
     } else {
       // index.html의 경우: 저장된 모든 데이터를 order 순서대로 슬라이드로 구성
       this.addEventListeners();
-      this.totalSlides = [...slideData].sort((a, b) => a.order - b.order).map(d => {
+      const mainSlides = [...slideData].sort((a, b) => a.order - b.order).map(d => {
         // 데이터 타입에 따라 슬라이드 타입을 결정
         return { type: d.type === 'Cover' ? 'cover' : 'slide', data: d };
       });
+
+      // Status 목록 페이지(들)을 슬라이드로 추가
+      const statusPages = document.querySelector('#status-pages-container')?.querySelectorAll('.list-page') || [];
+      const statusSlides = Array.from(statusPages).map((_, index) => ({ type: 'status-list', pageIndex: index + 1 }));
+
+      this.totalSlides = [...mainSlides, ...statusSlides];
     }
 
     // 첫 번째 슬라이드부터 시작
@@ -148,17 +162,31 @@ export const sliderManager = {
       if (this.coverElement) this.coverElement.style.display = 'block';
       if (this.itemElement) this.itemElement.style.display = 'none';
       if (this.listElement) this.listElement.style.display = 'none';
+      if (this.statusElement) this.statusElement.style.display = 'none'; // Status 컨테이너 숨기기 추가
       if (this.updateCoverViewCallback) this.updateCoverViewCallback(slideInfo.data);
     } else if (slideInfo.type === 'list') {
       // List 타입일 경우
       if (this.coverElement) this.coverElement.style.display = 'none';
       if (this.itemElement) this.itemElement.style.display = 'none';
       if (this.listElement) this.listElement.style.display = 'block'; // #lists 컨테이너 보이기
+      if (this.statusElement) this.statusElement.style.display = 'none';
 
       // 모든 list-page를 숨긴 후, 현재 인덱스에 맞는 페이지만 표시
-      const allListPages = document.querySelectorAll('.list-page');
+      const allListPages = document.querySelectorAll('#list-pages-container .list-page');
       allListPages.forEach(page => page.style.display = 'none');
       const currentPage = document.querySelector(`#list-view-${slideInfo.pageIndex}`);
+      if (currentPage) currentPage.style.display = 'flex';
+
+    } else if (slideInfo.type === 'status-list') {
+      // Status List 타입일 경우
+      if (this.coverElement) this.coverElement.style.display = 'none';
+      if (this.itemElement) this.itemElement.style.display = 'none';
+      if (this.listElement) this.listElement.style.display = 'none';
+      if (this.statusElement) this.statusElement.style.display = 'block'; // #status 컨테이너 보이기
+
+      const allStatusPages = document.querySelectorAll('#status-pages-container .list-page');
+      allStatusPages.forEach(page => page.style.display = 'none');
+      const currentPage = document.querySelector(`#status-view-${slideInfo.pageIndex}`);
       if (currentPage) currentPage.style.display = 'flex';
 
     } else { // 'slide' (Item) 타입일 경우
@@ -166,6 +194,8 @@ export const sliderManager = {
       if (this.coverElement) this.coverElement.style.display = 'none';
       if (this.itemElement) this.itemElement.style.display = 'block';
       if (this.listElement) this.listElement.style.display = 'none';
+      if (this.statusElement) this.statusElement.style.display = 'none';
+      if (this.statusElement) this.statusElement.style.display = 'none'; // Status 컨테이너 숨기기 추가
       if (this.updateItemViewCallback) this.updateItemViewCallback(slideInfo.data);
     }
 

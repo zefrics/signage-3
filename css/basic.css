@@ -183,9 +183,12 @@ header .main-title#tester-name {
   border: 3px solid rgba(240, 78, 35, 0.3);
   border-radius: 15px;
 }
+.list-page.status-list .table-header, .list-page.status-list .list-view-container .table-content {
+  grid-template-columns: 1fr 1fr 1fr;
+}
 .list-page .table-header {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 220px;
+  grid-template-columns: 1fr 1fr 1fr 225px 1fr;
   border-bottom: 2px solid rgba(240, 78, 35, 0.15);
   border-top-left-radius: 12px;
   border-top-right-radius: 12px;
@@ -210,7 +213,7 @@ header .main-title#tester-name {
 }
 .list-page .list-view-container .table-content {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 220px;
+  grid-template-columns: 1fr 1fr 1fr 225px 1fr;
   height: 100%;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   font-size: 30px;
@@ -243,46 +246,57 @@ header .main-title#tester-name {
   border-right: none;
 }
 
-#slider-edit {
+.edit-table#slider-order-edit .table-header {
+  display: grid;
+  grid-template-columns: 165px 165px 1fr 345px;
+}
+.edit-table#slider-order-edit .table-container .table-content {
+  display: grid;
+  grid-template-columns: 82.5px 82.5px 165px 1fr 345px;
+}
+.edit-table#status-order-edit .table-header {
+  display: grid;
+  grid-template-columns: 165px 1fr 135px 1fr 345px;
+}
+.edit-table#status-order-edit .table-container .table-content {
+  display: grid;
+  grid-template-columns: 82.5px 82.5px 1fr 135px 1fr 345px;
+}
+.edit-table {
   display: flex;
   flex-direction: column;
   border: 3px solid rgba(153, 202, 59, 0.45);
-  /* Webkit 브라우저(Chrome, Safari, Edge)를 위한 커스텀 플로팅 스크롤바 */
 }
-#slider-edit .table-header {
-  display: grid;
-  grid-template-columns: 165px 165px 1fr 345px;
+.edit-table .table-header {
   padding-right: 9px;
   border-bottom: 2px solid rgba(153, 202, 59, 0.25);
   font-size: 19.5px;
   font-weight: 500;
   background-color: rgba(153, 202, 59, 0.25);
 }
-#slider-edit .table-header li {
+.edit-table .table-header li {
   padding: 15px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-right: 1px solid rgba(0, 0, 0, 0.1);
 }
-#slider-edit .table-header li:last-child {
+.edit-table .table-header li:last-child {
   border-right: none;
 }
-#slider-edit .table-container {
+.edit-table .table-container {
   height: 100%;
   overflow-y: scroll;
 }
-#slider-edit .table-container .table-content {
-  display: grid;
-  grid-template-columns: 82.5px 82.5px 165px 1fr 345px;
+.edit-table .table-container .table-content.highlight {
+  background-color: rgba(153, 202, 59, 0.05);
+}
+.edit-table .table-container .table-content {
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   font-size: 19.5px;
   font-weight: 400;
 }
-#slider-edit .table-container .table-content.highlight {
-  background-color: rgba(153, 202, 59, 0.05);
-}
-#slider-edit .table-container .table-content li {
+.edit-table .table-container .table-content li {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -290,12 +304,12 @@ header .main-title#tester-name {
   min-width: 0;
   padding: 15px;
 }
-#slider-edit .table-container .table-content li span {
+.edit-table .table-container .table-content li span {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-#slider-edit .table-container .table-content li .btn-modify, #slider-edit .table-container .table-content li .btn-delete {
+.edit-table .table-container .table-content li .btn-modify, .edit-table .table-container .table-content li .btn-delete {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -310,32 +324,39 @@ header .main-title#tester-name {
   font-weight: 400;
   color: rgb(255, 255, 255);
 }
-#slider-edit .table-container .table-content li .btn-modify img, #slider-edit .table-container .table-content li .btn-delete img {
+.edit-table .table-container .table-content li .btn-modify img, .edit-table .table-container .table-content li .btn-delete img {
   width: 18px;
   height: auto;
   -webkit-user-drag: none;
 }
-#slider-edit .table-container .table-content li .btn-modify {
+.edit-table .table-container .table-content li .btn-modify {
   background-color: rgb(153, 202, 59);
 }
-#slider-edit .table-container .table-content li .btn-delete {
+.edit-table .table-container .table-content li .btn-delete {
   background-color: rgb(240, 78, 35);
 }
-#slider-edit .table-container .table-content li:last-child {
+.edit-table .table-container .table-content li:last-child {
   border-right: none;
   gap: 24px;
 }
-#slider-edit .table-container::-webkit-scrollbar {
+.edit-table {
+  /* Webkit 브라우저(Chrome, Safari, Edge)를 위한 커스텀 플로팅 스크롤바 */
+}
+.edit-table .table-container::-webkit-scrollbar {
   width: 9px; /* 스크롤바의 너비 */
 }
-#slider-edit .table-container::-webkit-scrollbar-track {
+.edit-table .table-container::-webkit-scrollbar-track {
   background-color: rgba(153, 202, 59, 0.15);
 }
-#slider-edit .table-container::-webkit-scrollbar-thumb {
+.edit-table .table-container::-webkit-scrollbar-thumb {
   background-color: rgba(153, 202, 59, 0.75);
   border-radius: 9px; /* 스크롤바 막대의 모서리를 둥글게 */
   border: 3px solid transparent; /* 막대 주변에 투명한 여백을 주어 떠 있는 효과 생성 */
   background-clip: content-box; /* border를 제외한 영역에만 배경색 적용 */
+}
+
+#settings-button-container {
+  border: 1px solid red;
 }
 
 form {
@@ -404,10 +425,12 @@ form .input-content-group .input-content .file-input-wrapper .file-name-wrapper 
   font-size: 18px;
   white-space: nowrap;
   overflow-x: auto;
-  color: rgba(0, 0, 0, 0.3);
 }
 form .input-content-group .input-content .file-input-wrapper .file-name-wrapper #file-name-display::-webkit-scrollbar {
   display: none;
+}
+form .input-content-group .input-content .file-input-wrapper .file-name-wrapper #file-name-display {
+  color: rgba(0, 0, 0, 0.3);
 }
 form .input-content-group .input-content .file-input-wrapper .file-name-wrapper #file-name-display.file-selected {
   color: rgb(0, 0, 0);
@@ -488,6 +511,17 @@ form#cover-edit .input-content .input-group .input-dot::before {
   content: "·";
   margin-right: 18px;
   font-size: 30px;
+}
+form#item-edit .input-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+form#item-edit .input-group span {
+  font-size: 21px;
+}
+form#status-edit .input-group {
+  border: 1px solid red;
 }
 
 .btn-group {

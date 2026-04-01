@@ -3,9 +3,10 @@ import { formatDate } from './date.js';
 import { storageManager } from './storage.js';
 import { sliderManager } from './slider.js';
 import { timerManager } from './edit-timer.js';
-
+ 
 document.addEventListener('DOMContentLoaded', () => {
-  const sliderEditContainer = document.querySelector('#slider-edit-container');
+  const orderEditContainer = document.querySelector('#slider-order-edit-container');
+  const statusOrderEditContainer = document.querySelector('#status-order-edit-container');
 
   // list-view 섹션의 내용을 업데이트하는 함수
   const updateListView = (dataArray) => {
@@ -33,12 +34,12 @@ document.addEventListener('DOMContentLoaded', () => {
       // 각 페이지(chunk) 내부에서는 order가 높은 순서(최신순)로 정렬
       chunk.sort((a, b) => b.order - a.order);
 
-      const listPageElement = createListPage(pageIndex);
+      const listPageElement = createListPage(pageIndex, 'item');
 
       const listViewContainer = listPageElement.querySelector('.list-view-container');
 
       chunk.forEach((data, itemIndex) => {
-        const { testMachine, model, purpose, startDate, endDate } = data;
+        const { testMachine1, model, purpose, next, startDate, endDate } = data;
 
         let scheduleText;
         const formattedStartDate = formatDate(startDate);
@@ -63,10 +64,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         tableRow.innerHTML = `
-        <li><span>${testMachine || '-'}</span></li>
+        <li><span>${testMachine1 || '-'}</span></li>
         <li><span>${model || '-'}</span></li>
         <li><span>${purpose || '-'}</span></li>
         <li><span>${scheduleText}</span></li>
+        <li><span>${next || '-'}</span></li>
       `;
         listViewContainer.appendChild(tableRow);
       });
@@ -76,20 +78,80 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   };
 
+  // status-view 섹션의 내용을 업데이트하는 함수
+  const updateStatusView = (dataArray) => {
+    const statusPagesContainer = document.querySelector('#status-pages-container');
+    if (!statusPagesContainer) return;
+    statusPagesContainer.innerHTML = '';
+
+    // statusOrder가 낮은 순서대로 정렬 (chunking을 위해)
+    const sortedData = dataArray.sort((a, b) => a.statusOrder - b.statusOrder);
+    const totalItems = sortedData.length;
+    let chunks = [];
+
+    if (totalItems <= 5) {
+      chunks.push(sortedData);
+    } else {
+      const firstPageCount = Math.ceil(totalItems / 2);
+      chunks.push(sortedData.slice(0, firstPageCount));
+      chunks.push(sortedData.slice(firstPageCount));
+    }
+
+    chunks.forEach((chunk, index) => {
+      const pageIndex = index + 1;
+      // 각 페이지 내부에서는 statusOrder가 높은 순서(최신순)로 정렬
+      chunk.sort((a, b) => b.statusOrder - a.statusOrder);
+
+      const listPageElement = createListPage(pageIndex, 'status');
+      const listViewContainer = listPageElement.querySelector('.list-view-container');
+
+      chunk.forEach((data, itemIndex) => {
+        const { testMachine2, status, remark } = data;
+
+        const tableRow = document.createElement('ul');
+        tableRow.className = 'table-content';
+
+        if (itemIndex % 2 !== 0) {
+          tableRow.classList.add('highlight');
+        }
+
+        tableRow.innerHTML = `
+          <li><span>${testMachine2 || '-'}</span></li>
+          <li><span>${status || '-'}</span></li>
+          <li><span>${remark || '-'}</span></li>
+        `;
+        listViewContainer.appendChild(tableRow);
+      });
+      
+      statusPagesContainer.prepend(listPageElement);
+    });
+  };
+
   // 목록 페이지(표)의 기본 구조를 생성하는 함수
-  const createListPage = (pageIndex) => {
+  const createListPage = (pageIndex, type = 'item') => {
     const listPage = document.createElement('div');
-    listPage.id = `list-view-${pageIndex}`;
-    listPage.className = 'section list-page';
+    const isStatus = type === 'status';
+    
+    listPage.id = isStatus ? `status-view-${pageIndex}` : `list-view-${pageIndex}`;
+    listPage.className = `section list-page ${isStatus ? 'status-list' : 'item-list'}`;
     listPage.style.display = 'none'; // 기본적으로 숨김
 
-    listPage.innerHTML = `
-      <ul class="table-header">
+    const header = isStatus 
+      ? `
+        <li>Test Machine</li>
+        <li>Status</li>
+        <li>Remark</li>
+      `
+      : `
         <li>Test Machine</li>
         <li>Model</li>
         <li>Purpose</li>
         <li>Schedule</li>
-      </ul>
+        <li>Next</li>
+      `;
+
+    listPage.innerHTML = `
+      <ul class="table-header">${header}</ul>
       <div class="list-view-container"></div>
     `;
     return listPage;
@@ -145,7 +207,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return `${shortYear}년 ${month}월 ${day}일`;
     };
 
-    const { testMachine, model, purpose, startDate, endDate, imagePath } = data;
+    const { testMachine1, model, purpose, next, startDate, endDate, imagePath } = data;
 
     const scheduleText = (startDate || endDate)
       ? `${formatFullDate(startDate)}&nbsp;~&nbsp;${formatFullDate(endDate)}`
@@ -164,84 +226,127 @@ document.addEventListener('DOMContentLoaded', () => {
       itemImgDefault.style.display = 'flex';
     }
 
-    itemViewContainer.querySelector('.test-machine-content').textContent = testMachine || '-';
+    itemViewContainer.querySelector('.test-machine-1-content').textContent = testMachine1 || '-';
     itemViewContainer.querySelector('.model-content').textContent = model || '-';
     itemViewContainer.querySelector('.purpose-content').textContent = purpose || '-';
+    itemViewContainer.querySelector('.next-content').textContent = next || '-';
     itemViewContainer.querySelector('.schedule-content').innerHTML = scheduleText;
   };
 
-  // edit-slider 섹션의 내용을 업데이트하는 함수
-  const updateSliderEditView = (dataArray) => {
-    if (!sliderEditContainer) return;
-    sliderEditContainer.innerHTML = ''; // 기존 목록 초기화
+  // order-edit 섹션의 내용을 업데이트하는 함수
+  const updateOrderEditView = (dataArray) => {
+    const targetContainer = orderEditContainer || statusOrderEditContainer;
+    if (!targetContainer) return;
+    targetContainer.innerHTML = ''; // 기존 목록 초기화
 
-    // order가 큰 순서대로 (최신순) 정렬
-    const sortedData = dataArray.sort((a, b) => b.order - a.order);
+    const isStatusPage = path === 'settings-status.html';
+
+    // 각 데이터의 order 키에 맞춰 정렬 (최신순)
+    const sortedData = dataArray.sort((a, b) => {
+      const orderA = isStatusPage ? a.statusOrder : a.order;
+      const orderB = isStatusPage ? b.statusOrder : b.order;
+      return orderB - orderA;
+    });
 
     sortedData.forEach((data, index) => {
-      const { order, testMachine, testerName } = data;
-      // type이 없는 기존 데이터를 위해 기본값을 'Item'으로 설정
-      const type = data.type || 'Item'; 
+      const currentOrder = isStatusPage ? data.statusOrder : data.order;
+      const type = isStatusPage ? 'Status' : (data.type || 'Item'); 
       
-      // 타입에 따라 표시할 이름과 수정 페이지 경로 결정
-      const name = type === 'Cover' ? testerName : testMachine;
-      const editUrl = type === 'Cover' ? 'edit-cover.html' : 'edit-item.html';
+      // 페이지 타입에 따른 컬럼 구성
+      let columnsHtml = '';
+      let editUrl = '';
+
+      if (isStatusPage) {
+        editUrl = `edit-status.html?order=${currentOrder}`;
+        columnsHtml = `
+          <li><span>${data.testMachine2 || '-'}</span></li>
+          <li><span>${data.status || '-'}</span></li>
+          <li><span>${data.remark || '-'}</span></li>
+        `;
+      } else {
+        const name = type === 'Cover' ? data.testerName : data.testMachine1;
+        editUrl = (type === 'Cover' ? 'edit-cover.html' : 'edit-item.html') + `?order=${currentOrder}`;
+        columnsHtml = `
+          <li><span>${type}</span></li>
+          <li><span>${name || '-'}</span></li>
+        `;
+      }
 
       const tableRow = document.createElement('ul');
       tableRow.className = 'table-content';
-      tableRow.dataset.order = order; // 데이터셋에 order 저장
+      tableRow.dataset.order = currentOrder;
       tableRow.dataset.type = type; // 데이터셋에 type 저장
 
       // 짝수 번째 행에 하이라이트 클래스 추가 (index는 0부터 시작하므로 홀수 index가 짝수 번째)
       if (index % 2 !== 0) {
         tableRow.classList.add('highlight');
       }
+
       tableRow.innerHTML = `
         <li class="drag-handle"><img src="img/edit-order.svg"></li>
         <li><span>${sortedData.length - index}</span></li>
-        <li><span>${type}</span></li>
-        <li><span>${name || '-'}</span></li>
+        ${columnsHtml}
         <li>
-          <button class="btn-delete" data-order="${order}">
+          <button class="btn-delete" data-order="${currentOrder}">
             <img src="img/delete.svg">
             <div class="text">Delete</div>
           </button>
-          <button class="btn-modify" data-order="${order}" data-edit-url="${editUrl}?order=${order}">
+          <button class="btn-modify" data-order="${currentOrder}" data-edit-url="${editUrl}">
             <img src="img/edit.svg">
             <div class="text">Edit</div>
           </button>
         </li>
       `;
-      sliderEditContainer.appendChild(tableRow);
+      targetContainer.appendChild(tableRow);
     });
   };
 
   // SortableJS 초기화
-  if (sliderEditContainer) {
-    new window.Sortable(sliderEditContainer, {
-      handle: '.drag-handle', // 드래그 핸들 클래스 지정
-      animation: 100, // 애니메이션 효과
-      scroll: true, // 자동 스크롤 활성화
-      scrollSensitivity: 100, // 스크롤 감도 증가 (기본값 30)
-      scrollSpeed: 10, // 스크롤 속도 증가 (기본값 10)
-      ghostClass: 'sortable-ghost', // 드래그 시 플레이스홀더에 적용될 클래스
-      dragClass: 'sortable-drag',   // 드래그하는 항목에 적용될 클래스
+  if (orderEditContainer) {
+    new window.Sortable(orderEditContainer, {
+      handle: '.drag-handle',
+      animation: 100,
+      scroll: true,
+      scrollSensitivity: 100,
+      scrollSpeed: 10,
+      ghostClass: 'sortable-ghost',
+      dragClass: 'sortable-drag',
       onEnd: function (evt) {
         // 현재 DOM 순서대로 data-order 값을 배열로 만듦
-        const orderedIds = Array.from(sliderEditContainer.querySelectorAll('.table-content'))
+        const orderedIds = Array.from(orderEditContainer.querySelectorAll('.table-content'))
           .map(row => row.dataset.order);
         // storageManager를 통해 순서 저장
         storageManager.saveOrder(orderedIds);
         // 화면의 순번을 다시 매김
         // 순서 변경 후 전체 뷰를 다시 렌더링하여 data-order 속성과 표시 순번을 모두 업데이트
-        updateSliderEditView(storageManager.load());
+        updateOrderEditView(storageManager.load());
       }
     });
   }
 
-  // settings.html의 목록 이벤트 처리 (삭제, 수정)
-  if (sliderEditContainer) {
-    sliderEditContainer.addEventListener('click', (event) => {
+  // Status SortableJS 초기화
+  if (statusOrderEditContainer) {
+    new window.Sortable(statusOrderEditContainer, {
+      handle: '.drag-handle',
+      animation: 100,
+      scroll: true,
+      scrollSensitivity: 100,
+      scrollSpeed: 10,
+      ghostClass: 'sortable-ghost',
+      dragClass: 'sortable-drag',
+      onEnd: function (evt) {
+        const orderedIds = Array.from(statusOrderEditContainer.querySelectorAll('.table-content'))
+          .map(row => row.dataset.order);
+        storageManager.saveStatusOrder(orderedIds);
+        updateOrderEditView(storageManager.loadStatus());
+      }
+    });
+  }
+
+  // settings-cover-item.html의 목록 이벤트 처리 (삭제, 수정)
+  const editTableSection = orderEditContainer || statusOrderEditContainer;
+  if (editTableSection) {
+    editTableSection.addEventListener('click', (event) => {
       const deleteButton = event.target.closest('.btn-delete');
       const modifyButton = event.target.closest('.btn-modify');
 
@@ -250,11 +355,14 @@ document.addEventListener('DOMContentLoaded', () => {
         (async () => {
           try {
             const order = deleteButton.dataset.order;
-            const dataArray = storageManager.load();
-            const dataToDelete = dataArray.find(d => d.order == order);
+            const isStatusPage = path === 'settings-status.html';
+            const dataArray = isStatusPage ? storageManager.loadStatus() : storageManager.load();
+            const dataToDelete = dataArray.find(d => (isStatusPage ? d.statusOrder : d.order) == order);
             if (!dataToDelete) return;
 
-            const name = dataToDelete.type === 'Cover' ? dataToDelete.testerName : dataToDelete.testMachine;
+            const name = isStatusPage 
+              ? `${dataToDelete.testMachine2} (${dataToDelete.status})`
+              : (dataToDelete.type === 'Cover' ? dataToDelete.testerName : dataToDelete.testMachine1);
 
             if (confirm(`'${name}' 항목을 삭제하시겠습니까?`)) {
               // Capacitor Filesystem API가 있는 경우 이미지 파일 삭제 시도
@@ -270,7 +378,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
               }
 
-              storageManager.deleteData(order);
+              if (isStatusPage) {
+                storageManager.deleteStatus(order);
+              } else {
+                storageManager.deleteData(order);
+              }
               alert(`'${name}' 항목이 삭제되었습니다.`);
               window.location.reload(); // 페이지를 새로고침하여 목록 갱신
             }
@@ -294,7 +406,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 목록 페이지(view-list.html) 또는 슬라이더 편집 목록(settings.html)을 먼저 생성합니다.
     if (document.querySelector('#list-pages-container')) updateListView(slideData.filter(d => d.type !== 'Cover'));
-    if (sliderEditContainer) updateSliderEditView(slideData);
+    // Status 표를 생성합니다.
+    if (document.querySelector('#status-pages-container')) updateStatusView(storageManager.loadStatus());
+    
+    if (path === 'settings-status.html') {
+      updateOrderEditView(storageManager.loadStatus());
+    } else if (orderEditContainer) {
+      updateOrderEditView(slideData);
+    }
 
     // 현재 페이지에 맞는 슬라이더 컨테이너를 찾아 초기화
     const sliderContainer = document.querySelector('#items') || document.querySelector('#lists');
@@ -305,7 +424,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // settings.html 페이지의 타이머 초기화
   const path = window.location.pathname.split("/").pop();
   if (path === 'settings.html') {
-    const elementToMonitor = document.querySelector('#slider-edit');
+    const elementToMonitor = document.querySelector('#settings-button-container');
     const homeButton = document.querySelector('#btn-home');
 
     const previousPath = localStorage.getItem(storageManager.KEY_PATH) || 'slide'; // 기본값 'slide'
@@ -321,6 +440,29 @@ document.addEventListener('DOMContentLoaded', () => {
     timerManager.start([elementToMonitor]);
   }
 
+  // settings-cover-item.html 페이지의 타이머 초기화
+  if (path === 'settings-cover-item.html') {
+    const elementToMonitor = document.querySelector('#slider-order-edit');
+    const timerSettings = storageManager.loadTimerSettings();
+    const timeoutSeconds = timerSettings.backTimer || 90;
+    timerManager.init(() => {
+      window.location.href = 'settings.html';
+    }, timeoutSeconds);
+    timerManager.start([elementToMonitor]);
+  }
+
+  // settings-status.html 페이지의 타이머 초기화
+  if (path === 'settings-status.html') {
+    // 페이지의 주요 컨테이너를 모니터링 요소로 지정합니다.
+    const elementToMonitor = document.querySelector('#slider-order-edit');
+    const timerSettings = storageManager.loadTimerSettings();
+    const timeoutSeconds = timerSettings.backTimer || 90;
+    timerManager.init(() => {
+      window.location.href = 'settings.html';
+    }, timeoutSeconds);
+    timerManager.start([elementToMonitor]);
+  }
+
   // New Cover/Item 버튼 생성 제한 로직
   const newCoverButton = document.querySelector('a[href="edit-cover.html"]');
   const newItemButton = document.querySelector('a[href="edit-item.html"]');
@@ -331,8 +473,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const allData = storageManager.load();
       const coverCount = allData.filter(d => d.type === 'Cover').length;
 
-      if (coverCount >= 5) {
-        alert('Cover는 최대 5개까지 생성할 수 있습니다.');
+      if (coverCount >= storageManager.LIMITS.Cover) {
+        alert(`Cover는 최대 ${storageManager.LIMITS.Cover}개까지 생성할 수 있습니다.`);
       } else {
         window.location.href = newCoverButton.href;
       }
@@ -345,10 +487,25 @@ document.addEventListener('DOMContentLoaded', () => {
       const allData = storageManager.load();
       const itemCount = allData.filter(d => d.type === 'Item').length;
 
-      if (itemCount >= 10) {
-        alert('Item은 최대 10개까지 생성할 수 있습니다.');
+      if (itemCount >= storageManager.LIMITS.Item) {
+        alert(`Item은 최대 ${storageManager.LIMITS.Item}개까지 생성할 수 있습니다.`);
       } else {
         window.location.href = newItemButton.href;
+      }
+    });
+  }
+
+  const newStatusButton = document.querySelector('a[href="edit-status.html"]');
+
+  if (newStatusButton) {
+    newStatusButton.addEventListener('click', (event) => {
+      event.preventDefault(); // 기본 링크 이동 방지
+      const statusData = storageManager.loadStatus();
+
+      if (statusData.length >= storageManager.LIMITS.Status) {
+        alert(`Status는 최대 ${storageManager.LIMITS.Status}개까지 생성할 수 있습니다.`);
+      } else {
+        window.location.href = newStatusButton.href;
       }
     });
   }

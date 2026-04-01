@@ -239,8 +239,15 @@ header {
   display: flex; flex-direction: column;
   border: 3px solid $color-r6;
   border-radius: 15px;
+
+  &.status-list {
+    .table-header, .list-view-container .table-content {
+      grid-template-columns: 1fr 1fr 1fr;
+    }
+  }
+
   .table-header {
-    display: grid; grid-template-columns: 1fr 1fr 1fr 220px;
+    display: grid; grid-template-columns: 1fr 1fr 1fr 225px 1fr;
     border-bottom: 2px solid $color-r7;
     border-top-left-radius: 12px;
     border-top-right-radius: 12px;
@@ -260,7 +267,7 @@ header {
     display: flex; flex-direction: column;
     height: 100%;
     .table-content {
-      display: grid; grid-template-columns: 1fr 1fr 1fr 220px;
+      display: grid; grid-template-columns: 1fr 1fr 1fr 225px 1fr;
       height: 100%;
       border-bottom: 1px solid $color-k8;
       font-size: $fs-list-content; font-weight: $fw-list-content;
@@ -293,11 +300,30 @@ header {
   }
 }
 
-#slider-edit {
+.edit-table {
+  &#slider-order-edit {
+    .table-header {
+      display: grid; grid-template-columns: 165px 165px 1fr 345px;
+    }
+    .table-container {
+      .table-content {
+        display: grid; grid-template-columns: 82.5px 82.5px 165px 1fr 345px;
+      }
+    }
+  }
+  &#status-order-edit {
+    .table-header {
+      display: grid; grid-template-columns: 165px 1fr 135px 1fr 345px;
+    }
+    .table-container {
+      .table-content {
+        display: grid; grid-template-columns: 82.5px 82.5px 1fr 135px 1fr 345px;
+      }
+    }
+  }
   display: flex; flex-direction: column;
   border: 3px solid $color-g5;
   .table-header {
-    display: grid; grid-template-columns: 165px 165px 1fr 345px;
     padding-right: 9px;
     border-bottom: 2px solid $color-g6;
     font-size: $fs-slider-edit-title; font-weight: $fw-slider-edit-title;
@@ -315,7 +341,6 @@ header {
     height: 100%;
     overflow-y: scroll;
     .table-content {
-      display: grid; grid-template-columns: 82.5px 82.5px 165px 1fr 345px;
       &.highlight {
         background-color: $color-g9;
       }
@@ -366,6 +391,10 @@ header {
     border: 3px solid transparent; /* 막대 주변에 투명한 여백을 주어 떠 있는 효과 생성 */
     background-clip: content-box; /* border를 제외한 영역에만 배경색 적용 */
   }
+}
+
+#settings-button-container {
+  border: 1px solid red;
 }
 
 form {
@@ -495,6 +524,19 @@ form {
           }
         }
       }
+    }
+  }
+  &#item-edit {
+    .input-group {
+      display: flex; align-items: center; gap: 12px;
+      span {
+        font-size: 21px;
+      }
+    }
+  }
+  &#status-edit {
+    .input-group {
+      border: 1px solid red;
     }
   }
 }

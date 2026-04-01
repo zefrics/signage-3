@@ -5,8 +5,16 @@
 export const storageManager = {
   // 저장 시 사용할 키(key) 정의
   KEY_SLIDES: 'slideData',
+  KEY_STATUS: 'statusData',
   KEY_TIMERS: 'timerSettings',
   KEY_PATH: 'path',
+
+  // 생성 제한 개수 중앙 관리
+  LIMITS: {
+    Cover: 5,
+    Item: 10,
+    Status: 10
+  },
 
   /**
    * 슬라이드 데이터 배열을 로컬 스토리지에 저장합니다.
@@ -32,7 +40,7 @@ export const storageManager = {
   addData(newData) {
     const dataArray = this.load();
     const type = newData.type;
-    const limit = type === 'Cover' ? 5 : 10; // 타입별 제한 개수 설정 (Cover는 5개, Item은 10개)
+    const limit = this.LIMITS[type]; 
 
     const currentCount = dataArray.filter(d => d.type === type).length;
 
@@ -106,6 +114,61 @@ export const storageManager = {
       return item;
     });
     this.save(reorderedArray);
+  },
+
+  /**
+   * 상태 데이터 관련 메서드
+   */
+  saveStatus(dataArray) {
+    localStorage.setItem(this.KEY_STATUS, JSON.stringify(dataArray));
+  },
+
+  loadStatus() {
+    const data = localStorage.getItem(this.KEY_STATUS);
+    return data ? JSON.parse(data) : [];
+  },
+
+  addStatus(newData) {
+    const dataArray = this.loadStatus();
+    if (dataArray.length >= this.LIMITS.Status) {
+      alert(`Status는 최대 ${this.LIMITS.Status}개까지 생성할 수 있습니다.`);
+      return false;
+    }
+
+    // statusOrder 값 계산
+    const maxOrder = dataArray.length > 0 ? Math.max(...dataArray.map(d => d.statusOrder)) : 0;
+    newData.statusOrder = maxOrder + 1;
+    dataArray.push(newData);
+    this.saveStatus(dataArray);
+    return true;
+  },
+
+  updateStatus(statusOrder, updatedData) {
+    let dataArray = this.loadStatus();
+    const dataIndex = dataArray.findIndex(d => d.statusOrder == statusOrder);
+    if (dataIndex > -1) {
+      dataArray[dataIndex] = { ...dataArray[dataIndex], ...updatedData };
+      this.saveStatus(dataArray);
+    }
+  },
+
+  deleteStatus(statusOrder) {
+    const dataArray = this.loadStatus();
+    const remainingData = dataArray.filter(d => d.statusOrder != statusOrder);
+    remainingData.sort((a, b) => a.statusOrder - b.statusOrder);
+    const reorderedData = remainingData.map((item, index) => ({ ...item, statusOrder: index + 1 }));
+    this.saveStatus(reorderedData);
+  },
+
+  saveStatusOrder(orderedIds) {
+    let dataArray = this.loadStatus();
+    const maxOrder = dataArray.length;
+    const reorderedArray = dataArray.map(item => {
+      const newIndex = orderedIds.indexOf(String(item.statusOrder));
+      item.statusOrder = maxOrder - newIndex;
+      return item;
+    });
+    this.saveStatus(reorderedArray);
   },
 
   /**

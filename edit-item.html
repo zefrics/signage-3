@@ -31,7 +31,7 @@
         <div class="input-content-group" id="input-item">
           <div class="input-content">
             <h2 class="label">Test Machine</h2>
-            <input type="text" autocomplete="off" id="input-test-machine" placeholder="필수 입력 항목입니다." maxlength="30" required>
+            <input type="text" autocomplete="off" id="input-test-machine-1" placeholder="필수 입력 항목입니다." maxlength="30" required>
           </div>
           <div class="input-content">
             <h2 class="label">Model</h2>
@@ -53,12 +53,16 @@
             </div>
           </div>
           <div class="input-content">
-            <h2 class="label">Start Date</h2>
-            <input type="date" autocomplete="off" id="input-start-date">
+            <h2 class="label">Schedule</h2>
+            <div class="input-group">
+              <input type="date" autocomplete="off" id="input-start-date">
+              <span>~</span>
+              <input type="date" autocomplete="off" id="input-end-date">
+            </div>
           </div>
           <div class="input-content">
-            <h2 class="label">End Date</h2>
-            <input type="date" autocomplete="off" id="input-end-date">
+            <h2 class="label">Next</h2>
+            <input type="text" autocomplete="off" id="input-next" placeholder="선택 입력 항목입니다." maxlength="30">
           </div>
         </div>
       </form>

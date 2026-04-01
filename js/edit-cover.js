@@ -97,6 +97,17 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
+      // [추가] 저장 전 개수 제한 우선 확인 (URL 직접 접근 대응)
+      if (!editingOrder) {
+        const allData = storageManager.load();
+        const coverCount = allData.filter(d => d.type === 'Cover').length;
+        if (coverCount >= storageManager.LIMITS.Cover) {
+          alert(`Cover는 최대 ${storageManager.LIMITS.Cover}개까지 생성할 수 있습니다.`);
+          window.location.href = 'settings-cover-item.html';
+          return;
+        }
+      }
+
       if (confirm("작성하신 내용을 적용하시겠습니까?")) {
         isSubmittingRef.current = true; // 제출 시작
 
@@ -128,7 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
           
           if (isDataSaved) {
             alert('작성하신 내용이 적용되었습니다.');
-            window.location.href = 'settings.html'; // 저장 후 settings.html로 이동
+            window.location.href = 'settings-cover-item.html'; // 저장 후 settings-cover-item.html로 이동
           } else {
             // 데이터 저장 실패 시, 저장했던 이미지 파일을 다시 삭제 (롤백)
             if (imagePath) {
@@ -150,12 +161,12 @@ document.addEventListener('DOMContentLoaded', () => {
       if (isFormChanged()) {
         timerManager.stop(); // 확인 창을 띄우기 전에 타이머를 중지
         if (confirm('변경사항이 저장되지 않았습니다. 정말로 페이지를 나가시겠습니까?')) {
-          window.location.href = 'settings.html';
+          window.location.href = 'settings-cover-item.html';
         } else {
           timerManager.start([coverEditForm]); // 취소 시 타이머를 다시 시작
         }
       } else {
-        window.location.href = 'settings.html';
+        window.location.href = 'settings-cover-item.html';
       }
     });
 
@@ -163,7 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const timerSettings = storageManager.loadTimerSettings();
     const timeoutSeconds = timerSettings.backTimer || 90;
     timerManager.init(() => {
-      window.location.href = 'settings.html';
+      window.location.href = 'settings-cover-item.html';
     }, timeoutSeconds);
     timerManager.start([coverEditForm]);
   }

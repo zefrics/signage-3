@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
+      <link rel="stylesheet" href="css/reset.css">
+      <link rel="stylesheet" href="css/basic.css">
+      <link rel="stylesheet" href="css/pretendard-subset.css">
+      <title>Digital Signage</title>
+  </head>
+  <body>
+    <header>
+      <div id="status-edit-title" class="main-title">
+        
+      </div>
+      <div class="btn-group">
+        <button type="button" id="btn-back" class="btn-1">
+          <img src="img/back.svg" alt="back">
+          <div class="text">
+            Back (<span class="countdown"></span>)
+          </div>
+        </button>
+        <button type="submit" id="btn-apply-status" form="status-edit" class="btn-2">
+          <img src="img/check.svg" alt="apply">
+          <div class="text">Apply</div>
+        </button>
+      </div>
+    </header>
+
+    <main>
+      <form id="status-edit" class="section">
+        <div class="input-content-group" id="input-item">
+          <div class="input-content">
+            <h2 class="label">Test Machine</h2>
+            <input type="text" autocomplete="off" id="input-test-machine-2" placeholder="필수 입력 항목입니다." maxlength="30" required>
+          </div>
+          <div class="input-content">
+            <h2 class="label">Status</h2>
+            <input type="text" autocomplete="off" id="input-status" placeholder="필수 입력 항목입니다." maxlength="30" required>
+          </div>
+          <div class="input-content">
+            <h2 class="label">Remark</h2>
+            <input type="text" autocomplete="off" id="input-remark" placeholder="선택 입력 항목입니다." maxlength="50">
+          </div>
+        </div>
+      </form>
+    </main>
+  </body>
+  <script type="module" src="js/date.js"></script>
+  <script type="module" src="js/storage.js"></script>
+  <script type="module" src="js/edit-timer.js"></script> 
+  <script type="module" src="js/edit-status.js"></script>
+  <script type="module" src="js/back-button.js"></script>
+</html>
