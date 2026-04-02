@@ -1,4 +1,4 @@
-// const { Filesystem } = window.Capacitor.Plugins;
+// const { Filesystem } = window.Capacitor.Plugins; // PC 테스트시에는 이 부분 주석처리
 const Directory = {
   Data: 'Data',
 };

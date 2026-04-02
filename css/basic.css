@@ -152,10 +152,10 @@ header .main-title#tester-name {
 #cover-view .slide-content-container {
   display: flex;
   flex-direction: column;
-  gap: 75px;
+  gap: 60px;
 }
 #cover-view .slide-content-container .slide-content .label {
-  margin-bottom: 9px;
+  margin-bottom: 7.5px;
   font-size: 24px;
   font-weight: 400;
 }
@@ -183,7 +183,7 @@ header .main-title#tester-name {
   justify-content: space-between;
 }
 #item-view .slide-content-container .slide-content .label {
-  margin-bottom: 7.5px;
+  margin-bottom: 6px;
   font-size: 21px;
   font-weight: 400;
 }
