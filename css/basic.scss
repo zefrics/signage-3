@@ -2,13 +2,19 @@ $fs-main-title: 54px; // Main Title 폰트 사이즈
 $fw-main-title: 800; // Main Title 폰트 웨이트
 $ls-main-title: -0.02em; // Main Title Letter Spacing
 
-$fs-slide-label: 24px; // Slide Label 폰트 사이즈
-$fw-slide-label: 400; // Slide Label 폰트 웨이트
+$fs-cover-label: 24px; // Cover Label 폰트 사이즈
+$fw-cover-label: 400; // Cover Label 폰트 웨이트
+$fs-cover-content: 45px; // Cover Content 폰트 사이즈
+$fw-cover-content: 600; // Cover Content 폰트 웨이트
+$lh-cover-content: 54px; // Cover Content Line Height
+$ls-cover-content: -0.02em; // Cover Content Letter Spacing
 
-$fs-slide-content: 45px; // Slide Content 폰트 사이즈
-$fw-slide-content: 600; // Slide Content 폰트 웨이트
-$lh-slide-content: 54px; // Slide Content Line Height
-$ls-slide-content: -0.02em; // Slide Content Letter Spacing
+$fs-item-label: 21px; // Item Label 폰트 사이즈
+$fw-item-label: 400; // Item Label 폰트 웨이트
+$fs-item-content: 42px; // Item Content 폰트 사이즈
+$fw-item-content: 600; // Item Content 폰트 웨이트
+$lh-item-content: 50px; // Item Content Line Height
+$ls-item-content: -0.02em; // Item Content Letter Spacing
 
 $fs-list-title: 19.5px; // List View Title 폰트 사이즈
 $fw-list-title: 500; // List View Title 폰트 웨이트
@@ -80,14 +86,13 @@ $color-g9: rgba(153, 202, 59, 0.05);
 body {
   font-family: 'Pretendard', sans-serif;
   padding: 30px;
-  user-select: none;
+  // user-select: none;
 }
 
 header {
   display: flex; align-items: center; justify-content: space-between; gap: 60px;
   height: 64.5px; // font-size: 54px에 맞춘 값
   margin-bottom: 24px;
-
   .logo-container {
     display: flex; align-items: center; gap: 45px;
     .logo {
@@ -168,23 +173,15 @@ header {
   border: 3px solid $color-r6;
   border-radius: 15px;
   .slide-content-container { // #cover-view, #item-view 공통
-    display: flex; flex-direction: column; justify-content: space-between;
     width: 100%;
     min-width: 0; // flex 아이템이 할당된 공간보다 작아질 수 있도록 허용
     padding: 36px 45px 36px 36px;
     margin-bottom: -6px;
     .slide-content {
       .label {
-        margin-bottom: 9px;
-        font-size: $fs-slide-label;
-        font-weight: $fw-slide-label;
         color: $color-r3;
       }
       .content {
-        font-size: $fs-slide-content;
-        font-weight: $fw-slide-content;
-        line-height: $lh-slide-content;
-        letter-spacing: $ls-slide-content;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -218,8 +215,19 @@ header {
 
 #cover-view {
   .slide-content-container {
+    display: flex; flex-direction: column; gap: 75px;
     .slide-content {
-      height: 263px;
+      .label {
+        margin-bottom: 9px;
+        font-size: $fs-cover-label;
+        font-weight: $fw-cover-label;
+      }
+      .content {
+        font-size: $fs-cover-content;
+        font-weight: $fw-cover-content;
+        line-height: $lh-cover-content;
+        letter-spacing: $ls-cover-content;
+      }
       ul {
         display: flex; flex-direction: column; gap: 3px;
         li {
@@ -235,6 +243,25 @@ header {
   }
 }
 
+#item-view {
+  .slide-content-container {
+    display: flex; flex-direction: column; justify-content: space-between;
+    .slide-content {
+      .label {
+        margin-bottom: 7.5px;
+        font-size: $fs-item-label;
+        font-weight: $fw-item-label;
+      }
+      .content {
+        font-size: $fs-item-content;
+        font-weight: $fw-item-content;
+        line-height: $lh-item-content;
+        letter-spacing: $ls-item-content;
+      }
+    }
+  }
+}
+
 .list-page {
   display: flex; flex-direction: column;
   border: 3px solid $color-r6;
@@ -242,7 +269,7 @@ header {
 
   &.status-list {
     .table-header, .list-view-container .table-content {
-      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-columns: 1fr 300px 1fr;
     }
   }
 
@@ -346,6 +373,7 @@ header {
       }
       border-bottom: 1px solid $color-k8;
       font-size: $fs-slider-edit-content; font-weight: $fw-slider-edit-content;
+
       li {
         display: flex; align-items: center; justify-content: center;
         border-right: 1px solid $color-k8;
@@ -394,12 +422,15 @@ header {
 }
 
 #settings-button-container {
-  border: 1px solid red;
+  border: 3px solid $color-g5;
+  border-radius: 15px;
+  display: flex; align-items: center; justify-content: center;
 }
 
 form {
   padding: 36px;
   border: 3px solid $color-g5;
+  border-radius: 15px;
   .input-content-group {
     display: grid; grid-template-columns: repeat(3, 1fr);
     column-gap: 60px;
@@ -417,7 +448,7 @@ form {
         font-weight: $fw-edit-label;
         color: $color-k1;
       }
-      input {
+      input, select {
         box-sizing: border-box;
         font-family: 'Pretendard', sans-serif;
         height: 45px; width: 100%;
@@ -427,8 +458,18 @@ form {
         font-size: $fs-edit-input;
         font-weight: $fw-edit-input;
         background-color: $color-w1;
+        color: $color-k1;
+        &.status-placeholder { // select를 위한 것
+          color: $color-k6;
+        }
         &::placeholder {
           color: $color-k6;
+        }
+        option {
+          margin: 30px;
+          &:disabled {
+            color: $color-k6;
+          }
         }
       }
       .file-input-wrapper {
@@ -534,11 +575,6 @@ form {
       }
     }
   }
-  &#status-edit {
-    .input-group {
-      border: 1px solid red;
-    }
-  }
 }
 
 .btn-group {
@@ -547,7 +583,7 @@ form {
   .btn-1, .btn-2, .btn-3, .btn-4 {
     display: flex; justify-content: center; align-items: center; gap: 9px;
     box-sizing: border-box;
-    cursor: pointer;
+    cursor: pointer !important;
     -webkit-user-drag: none;
     text-decoration: none;
     height: 60px;
@@ -561,7 +597,7 @@ form {
     }
     &:disabled {
       opacity: 0.4;
-      cursor: not-allowed;
+      // cursor: not-allowed;
     }
   }
   .btn-1 {
@@ -622,6 +658,40 @@ form {
   }
 }
 
+.settings-btn-group {
+  display: flex; align-items: center; justify-content: center; gap: 90px;
+  .btn-test {
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 18px;
+    color: $color-w1;
+    background-color: $color-g2;
+    box-sizing: border-box;
+    cursor: pointer;
+    -webkit-user-drag: none;
+    text-decoration: none;
+    height: 275px; width: 275px;
+    border: 3px solid $color-g1;
+    border-radius: 30px;
+    font-size: 33px; font-weight: 400;
+    img {
+      height: 42px; width: auto;
+    }
+  }
+}
+
+/* Status 색상 표시를 위한 클래스 */
+.status-cell {
+  &.green { 
+    background-color: #00b050; color: transparent; 
+  }
+  &.yellow { 
+    background-color: #ffc000; color: transparent; 
+  }
+  &.red { 
+    background-color: #ff0000; color: transparent; 
+  }
+}
+
 /* SortableJS */
 .sortable-ghost {
   opacity: 1 !important;
@@ -629,11 +699,9 @@ form {
   outline: 3px solid $color-g1 !important;
   outline-offset: -3px;
 }
-
 .sortable-drag {
   opacity: 0 !important; /* 드래그하는 항목은 보이지 않도록 투명하게 처리 */
 }
-
 .drag-handle {
   cursor: grab;
   img {
@@ -641,7 +709,6 @@ form {
     -webkit-user-drag: none;
   }
 }
-/* End of SortableJS */
 
 .hide {
   display: none;

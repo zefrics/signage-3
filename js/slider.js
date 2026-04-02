@@ -20,54 +20,82 @@ export const sliderManager = {
   updateItemViewCallback: null,
 
   // 슬라이더 초기화
-  init(slideData, { updateCoverView, updateItemView }) {
+  init(slideData, statusData, { updateCoverView, updateItemView }) { // statusData 파라미터 추가
     this.stop();
 
     this.updateCoverViewCallback = updateCoverView;
     this.updateItemViewCallback = updateItemView;
+
+    // DOM 요소 재참조 (초기 로드 시 실패 대비)
+    this.prevButton = document.querySelector('#btn-slide-prev');
+    this.nextButton = document.querySelector('#btn-slide-next');
+    this.counterElement = document.querySelector('#slide-counter');
+    this.isListPage = document.querySelector('#view-list-page');
 
     if (this.coverElement) this.coverElement.style.display = 'none';
     if (this.itemElement) this.itemElement.style.display = 'none';
     if (this.listElement) this.listElement.style.display = 'none';
     if (this.statusElement) this.statusElement.style.display = 'none';
     
-    // 로컬 스토리지에서 타이머 설정을 불러옴
-    const timerSettings = storageManager.loadTimerSettings();
-    // sliderTimer 값이 있으면 해당 값을 초 단위로 변환하여 사용하고, 없으면 5초(5000ms)를 기본값으로 사용
+    // 타이머 설정 불러오기
+    const timerSettings = storageManager.load('timer'); // Use generic load for timers
     this.slideDuration = timerSettings && timerSettings.sliderTimer ? parseInt(timerSettings.sliderTimer, 10) * 1000 : 5000;
     
-    // 데이터가 없는 경우, #no-data를 표시하고 슬라이더를 숨김
-    if (!slideData || slideData.length === 0) {
+    // totalSlides 배열 구성
+    let tempTotalSlides = [];
+
+    if (this.isListPage) { // view-list.html의 경우
+      // 1. 'Cover' 타입의 데이터들을 order 순으로 정렬하여 슬라이드로 추가
+      const coverSlides = slideData
+        .filter(d => d.type === 'Cover')
+        .sort((a, b) => a.order - b.order)
+        .map(cover => ({ type: 'cover', data: cover }));
+      tempTotalSlides.push(...coverSlides);
+
+      // 2. Item 목록 페이지(들)을 슬라이드로 추가
+      const itemPages = document.querySelector('#list-pages-container')?.querySelectorAll('.list-page') || [];
+      const itemSlides = Array.from(itemPages).map((_, index) => ({ type: 'list', pageIndex: index + 1 }));
+      tempTotalSlides.push(...itemSlides);
+
+      // 3. Status 목록 페이지(들)을 슬라이드로 추가
+      const statusPages = document.querySelector('#status-pages-container')?.querySelectorAll('.list-page') || [];
+      const statusSlides = Array.from(statusPages).map((_, index) => ({ type: 'status-list', pageIndex: index + 1 }));
+      tempTotalSlides.push(...statusSlides);
+
+    } else { // index.html의 경우
+      // 1. 저장된 모든 Cover 및 Item 데이터를 order 순서대로 슬라이드로 구성
+      const mainSlides = [...slideData].sort((a, b) => a.order - b.order).map(d => {
+        return { type: d.type === 'Cover' ? 'cover' : 'slide', data: d };
+      });
+      tempTotalSlides.push(...mainSlides);
+
+      // 2. Status 목록 페이지(들)을 슬라이드로 추가
+      const statusPages = document.querySelector('#status-pages-container')?.querySelectorAll('.list-page') || [];
+      const statusSlides = Array.from(statusPages).map((_, index) => ({ type: 'status-list', pageIndex: index + 1 }));
+      tempTotalSlides.push(...statusSlides);
+    }
+
+    this.totalSlides = tempTotalSlides;
+
+    // Change View 버튼 상태
+    this.updateViewChangeButtonState(slideData);
+
+    // 이벤트 리스너 등록 (버튼 작동 해결)
+    this.addEventListeners();
+
+    // 모든 슬라이드 데이터가 없는 경우, #no-data를 표시하고 슬라이더를 숨김
+    if (this.totalSlides.length === 0) {
       const sliderElement = document.querySelector('.slider');
       const noDataElement = document.querySelector('#no-data');
 
       if (sliderElement) sliderElement.style.display = 'none';
-      if (noDataElement) {
-        noDataElement.style.display = 'block';
-        // #no-data 내부의 Change View 버튼은 Item이 없으므로 비활성화
-        const changeViewButton = noDataElement.querySelector('.btn-change');
-        if(changeViewButton) {
-          changeViewButton.style.pointerEvents = 'none';
-          changeViewButton.style.opacity = '0.4';
-        }
-      }
+      if (noDataElement) noDataElement.style.display = 'block';
       return; // 슬라이더 시작하지 않고 종료
     }
 
-    const hasItems = slideData.some(d => d.type === 'Item');
-
-    // index.html이고 Item이 없을 경우, Change View 버튼 비활성화
-    if (!this.isListPage && !hasItems) {
-      const changeViewButtons = document.querySelectorAll('.btn-change');
-      changeViewButtons.forEach(button => {
-        button.style.pointerEvents = 'none';
-        button.style.opacity = '0.4';
-      });
-    }
-
-    // 데이터가 1개 이하일 경우 컨트롤 비활성화
+    // 슬라이드 컨트롤 비활성화 (전체 슬라이드 개수 기준)
     const controls = document.querySelector('.slider-controls');
-    if (slideData.length <= 1 && controls) {
+    if (this.totalSlides.length <= 1 && controls) {
       controls.style.opacity = '0.4';
       const buttons = controls.querySelectorAll('button');
       buttons.forEach(button => {
@@ -75,45 +103,6 @@ export const sliderManager = {
         button.style.cursor = 'default';
       });
     }
-
-    if (this.isListPage) {
-      // view-list.html의 경우: [커버, 목록] 2개의 슬라이드로 구성
-      this.addEventListeners();
-
-      // 1. 'Cover' 타입의 데이터들을 order 순으로 정렬
-      const coverSlides = slideData
-        .filter(d => d.type === 'Cover')
-        .sort((a, b) => a.order - b.order)
-        .map(cover => ({ type: 'cover', data: cover }));
-
-      // 2. Item 목록 페이지(들)을 슬라이드로 추가
-      const itemPages = document.querySelector('#list-pages-container')?.querySelectorAll('.list-page') || [];
-      const itemSlides = Array.from(itemPages).map((_, index) => ({ type: 'list', pageIndex: index + 1 }));
-
-      // 3. Status 목록 페이지(들)을 슬라이드로 추가
-      const statusData = storageManager.loadStatus();
-      // 데이터가 실제 렌더링 된 후에 페이지 요소를 찾아야 함
-      const statusPages = document.querySelector('#status-pages-container')?.querySelectorAll('.list-page') || [];
-      const statusSlides = Array.from(statusPages).map((_, index) => ({ type: 'status-list', pageIndex: index + 1 }));
-
-      // 4. 순서 결정: Cover -> Item Lists -> Status Lists
-      this.totalSlides = [...coverSlides, ...itemSlides, ...statusSlides];
-    } else {
-      // index.html의 경우: 저장된 모든 데이터를 order 순서대로 슬라이드로 구성
-      this.addEventListeners();
-      const mainSlides = [...slideData].sort((a, b) => a.order - b.order).map(d => {
-        // 데이터 타입에 따라 슬라이드 타입을 결정
-        return { type: d.type === 'Cover' ? 'cover' : 'slide', data: d };
-      });
-
-      // Status 목록 페이지(들)을 슬라이드로 추가
-      const statusPages = document.querySelector('#status-pages-container')?.querySelectorAll('.list-page') || [];
-      const statusSlides = Array.from(statusPages).map((_, index) => ({ type: 'status-list', pageIndex: index + 1 }));
-
-      this.totalSlides = [...mainSlides, ...statusSlides];
-    }
-
-    // 첫 번째 슬라이드부터 시작
     this.currentIndex = 0;
 
     this.showSlide(this.currentIndex);
@@ -126,6 +115,21 @@ export const sliderManager = {
     if (this.totalSlides.length > 1) {
       this.intervalId = setInterval(() => this.nextSlide(), this.slideDuration);
     }
+  },
+
+  // Item 데이터가 없을 경우 Change View 버튼을 비활성화
+  updateViewChangeButtonState(slideData) {
+    const hasItems = slideData && slideData.some(d => d.type === 'Item');
+    const changeViewButtons = document.querySelectorAll('.btn-change');
+    changeViewButtons.forEach(button => {
+      if (!hasItems) {
+        button.style.pointerEvents = 'none';
+        button.style.opacity = '0.4';
+      } else {
+        button.style.pointerEvents = 'auto';
+        button.style.opacity = '1';
+      }
+    });
   },
 
   // 자동 슬라이드 타이머 리셋
@@ -162,7 +166,7 @@ export const sliderManager = {
       if (this.coverElement) this.coverElement.style.display = 'block';
       if (this.itemElement) this.itemElement.style.display = 'none';
       if (this.listElement) this.listElement.style.display = 'none';
-      if (this.statusElement) this.statusElement.style.display = 'none'; // Status 컨테이너 숨기기 추가
+      if (this.statusElement) this.statusElement.style.display = 'none';
       if (this.updateCoverViewCallback) this.updateCoverViewCallback(slideInfo.data);
     } else if (slideInfo.type === 'list') {
       // List 타입일 경우
@@ -195,7 +199,6 @@ export const sliderManager = {
       if (this.itemElement) this.itemElement.style.display = 'block';
       if (this.listElement) this.listElement.style.display = 'none';
       if (this.statusElement) this.statusElement.style.display = 'none';
-      if (this.statusElement) this.statusElement.style.display = 'none'; // Status 컨테이너 숨기기 추가
       if (this.updateItemViewCallback) this.updateItemViewCallback(slideInfo.data);
     }
 
@@ -218,10 +221,10 @@ export const sliderManager = {
   // 이전/다음 버튼 이벤트 리스너 추가
   addEventListeners() {
     if (this.prevButton) {
-      this.prevButton.onclick = () => { this.prevSlide(); this.resetTimer(); };
+      this.prevButton.onclick = (e) => { e.preventDefault(); this.prevSlide(); this.resetTimer(); };
     }
     if (this.nextButton) {
-      this.nextButton.onclick = () => { this.nextSlide(); this.resetTimer(); };
+      this.nextButton.onclick = (e) => { e.preventDefault(); this.nextSlide(); this.resetTimer(); };
     }
   }
 };

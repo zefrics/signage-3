@@ -91,6 +91,35 @@ export const timerManager = (() => {
 document.addEventListener('DOMContentLoaded', () => {
   const path = window.location.pathname.split("/").pop();
   
+  // settings.html 페이지 로직
+  if (path === 'settings.html') {
+    const elementToMonitor = document.querySelector('#settings-button-container');
+    const homeButton = document.querySelector('#btn-home');
+
+    const previousPath = localStorage.getItem(storageManager.KEY_PATH) || 'slide';
+    let homeUrl = previousPath === 'list' ? 'view-list.html' : 'index.html';
+
+    if (homeButton) homeButton.href = homeUrl;
+
+    const timerSettings = storageManager.loadTimerSettings();
+    const timeoutSeconds = timerSettings.homeTimer || 90;
+    timerManager.init(() => {
+      window.location.href = homeUrl;
+    }, timeoutSeconds);
+    timerManager.start([elementToMonitor]);
+  }
+
+  // settings-cover-item.html 및 settings-status.html 페이지 로직
+  if (path === 'settings-cover-item.html' || path === 'settings-status.html') {
+    const elementToMonitor = document.querySelector('#slider-order-edit') || document.querySelector('#status-order-edit');
+    const timerSettings = storageManager.loadTimerSettings();
+    const timeoutSeconds = timerSettings.backTimer || 90;
+    timerManager.init(() => {
+      window.location.href = 'settings.html';
+    }, timeoutSeconds);
+    timerManager.start([elementToMonitor]);
+  }
+
   // edit-timer.html 페이지의 로직만 남김
   if (path === 'edit-timer.html') {
     const form = document.querySelector('#timer-edit');
@@ -111,7 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     
     // 저장된 값 불러와서 표시
-    const defaultTimers = { sliderTimer: '5', homeTimer: '90', backTimer: '90' };
+    const defaultTimers = { sliderTimer: '5', homeTimer: '90', backTimer: '90' }; // Default values as strings
     const savedTimers = storageManager.loadTimerSettings();
     
     // 기본값과 저장된 값을 병합하여 최종값 결정 (저장된 값이 우선)
@@ -120,7 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 최종값으로 입력 필드 채우기 및 스토리지 업데이트
     sliderTimerInput.value = finalTimers.sliderTimer;
     homeTimerInput.value = finalTimers.homeTimer;
-    backTimerInput.value = finalTimers.backTimer;
+    backTimerInput.value = finalTimers.backTimer; // Ensure backTimer is also displayed
     storageManager.saveTimerSettings(finalTimers);
 
     const initialTimers = {
@@ -158,7 +187,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (confirm("작성하신 내용을 적용하시겠습니까?")) {
         try {
-          storageManager.saveTimerSettings({
+          storageManager.saveTimerSettings({ // Use the specific method
             sliderTimer: sliderTimerInput.value,
             homeTimer: homeTimerInput.value,
             backTimer: backTimerInput.value,

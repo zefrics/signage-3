@@ -11,6 +11,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const statusInput = document.querySelector('#input-status');
     const remarkInput = document.querySelector('#input-remark');
 
+    // select의 선택 여부에 따라 색상 클래스를 토글하는 함수
+    const updateStatusColor = () => {
+      if (statusInput.value === "") {
+        statusInput.classList.add('status-placeholder');
+      } else {
+        statusInput.classList.remove('status-placeholder');
+      }
+    };
+
     let initialData = {};
 
     const urlParams = new URLSearchParams(window.location.search);
@@ -18,12 +27,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (editingOrder) {
       statusEditTitle.textContent = 'Edit Status';
-      const dataArray = storageManager.loadStatus();
+      const dataArray = storageManager.load('status');
       const dataToEdit = dataArray.find(d => d.statusOrder == editingOrder);
       if (dataToEdit) {
         testMachineInput2.value = dataToEdit.testMachine2 || '';
         statusInput.value = dataToEdit.status || '';
         remarkInput.value = dataToEdit.remark || '';
+        updateStatusColor();
 
         initialData = {
           testMachine2: dataToEdit.testMachine2 || '',
@@ -38,7 +48,11 @@ document.addEventListener('DOMContentLoaded', () => {
         status: '',
         remark: '',
       };
+      updateStatusColor();
     }
+
+    // 사용자가 값을 변경할 때마다 색상 업데이트
+    statusInput.addEventListener('change', updateStatusColor);
 
     // 한글 입력 시 maxlength 방지 로직
     const inputsWithMaxLength = statusEditForm.querySelectorAll('input[maxlength]');
@@ -69,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // [추가] 저장 전 개수 제한 우선 확인 (URL 직접 접근 대응)
       if (!editingOrder) {
-        const statusData = storageManager.loadStatus();
+        const statusData = storageManager.load('status');
         if (statusData.length >= storageManager.LIMITS.Status) {
           alert(`Status는 최대 ${storageManager.LIMITS.Status}개까지 생성할 수 있습니다.`);
           window.location.href = 'settings-status.html';
@@ -86,10 +100,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let isSaved = false;
         if (editingOrder) {
-          storageManager.updateStatus(editingOrder, statusData);
+          storageManager.updateData(editingOrder, statusData, 'status');
           isSaved = true;
         } else {
-          isSaved = storageManager.addStatus(statusData);
+          isSaved = storageManager.addData(statusData, 'status');
         }
 
         if (isSaved) {
@@ -113,7 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // 타이머 초기화 및 시작
-    const timerSettings = storageManager.loadTimerSettings();
+    const timerSettings = storageManager.load('timer'); // Use generic load for timers
     const timeoutSeconds = timerSettings.backTimer || 90;
     timerManager.init(() => {
       window.location.href = 'settings-status.html';

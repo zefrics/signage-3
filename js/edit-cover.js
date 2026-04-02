@@ -17,6 +17,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const imageFileInput = document.querySelector('#input-image-file');
     const fileNameDisplay = document.querySelector('#file-name-display');
     
+    // Helper function to compress an array of values, moving non-empty strings to the front
+    // (e.g., ["A", "", "B", ""] becomes ["A", "B", "", ""])
+    const getCompressedValues = (rawValues, length = 4) => {
+      const filtered = rawValues.filter(val => val.trim() !== "");
+      const compressed = [];
+      for (let i = 0; i < length; i++) {
+        compressed.push(filtered[i] || ""); // Fill with filtered values, then empty strings
+      }
+      return compressed;
+    };
+
     let initialData = {}; // 초기 데이터를 저장할 객체
     
     // URL 파라미터에서 'order' 값을 가져옴
@@ -26,19 +37,20 @@ document.addEventListener('DOMContentLoaded', () => {
     if (editingOrder) {
       // 수정 모드
       coverEditTitle.textContent = 'Edit Cover';
-      const dataArray = storageManager.load();
+      const dataArray = storageManager.load('item');
       const dataToEdit = dataArray.find(d => d.order == editingOrder);
       if (dataToEdit) {
         testerNameInput.value = dataToEdit.testerName || '';
         (dataToEdit.function || []).forEach((val, i) => functionInputs[i] && (functionInputs[i].value = val));
         (dataToEdit.specifications || []).forEach((val, i) => specificationsInputs[i] && (specificationsInputs[i].value = val));
 
-        // 초기 데이터 저장
+        // 초기 데이터 저장 시, 저장될 때의 형태(압축된 형태)로 저장하여 isFormChanged 비교 시 일관성을 유지합니다.
+        // 이렇게 하면 사용자가 빈 칸을 건너뛰어 입력한 경우에도, 저장될 형태와 비교하여 실제 변경이 없으면 변경되지 않은 것으로 간주합니다.
         initialData = {
           testerName: dataToEdit.testerName || '',
           imagePath: dataToEdit.imagePath || null,
-          function: Array.from(functionInputs).map(input => input.value),
-          specifications: Array.from(specificationsInputs).map(input => input.value),
+          function: getCompressedValues(dataToEdit.function || []),
+          specifications: getCompressedValues(dataToEdit.specifications || []),
         };
       }
     } else {
@@ -75,14 +87,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 폼의 변경 여부를 확인하는 함수
     const isFormChanged = () => {
-      const currentFunctionValues = Array.from(functionInputs).map(input => input.value);
-      const currentSpecificationsValues = Array.from(specificationsInputs).map(input => input.value);
+      const currentFunctionRawValues = Array.from(functionInputs).map(input => input.value.trim());
+      const currentSpecificationsRawValues = Array.from(specificationsInputs).map(input => input.value.trim());
+
+      // 현재 폼의 값도 저장될 형태(압축된 형태)로 변환하여 initialData와 비교합니다.
+      const currentFunctionCompressedValues = getCompressedValues(currentFunctionRawValues);
+      const currentSpecificationsCompressedValues = getCompressedValues(currentSpecificationsRawValues);
 
       return (
         initialData.testerName !== testerNameInput.value.trim() ||
         imageUploader.isImageChanged() || // 이미지 변경 감지
-        JSON.stringify(initialData.function) !== JSON.stringify(currentFunctionValues) ||
-        JSON.stringify(initialData.specifications) !== JSON.stringify(currentSpecificationsValues)
+        JSON.stringify(initialData.function) !== JSON.stringify(currentFunctionCompressedValues) ||
+        JSON.stringify(initialData.specifications) !== JSON.stringify(currentSpecificationsCompressedValues)
       );
     };
 
@@ -99,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // [추가] 저장 전 개수 제한 우선 확인 (URL 직접 접근 대응)
       if (!editingOrder) {
-        const allData = storageManager.load();
+        const allData = storageManager.load('item');
         const coverCount = allData.filter(d => d.type === 'Cover').length;
         if (coverCount >= storageManager.LIMITS.Cover) {
           alert(`Cover는 최대 ${storageManager.LIMITS.Cover}개까지 생성할 수 있습니다.`);
@@ -117,24 +133,24 @@ document.addEventListener('DOMContentLoaded', () => {
           const { imagePath } = await imageUploader.saveImage();
 
           // Function과 Specifications 값을 배열로 수집 (빈 값은 제외)
-          const functionValues = Array.from(functionInputs).map(input => input.value.trim());
-          const specificationsValues = Array.from(specificationsInputs).map(input => input.value.trim());
+          const functionRawValues = Array.from(functionInputs).map(input => input.value.trim());
+          const specificationsRawValues = Array.from(specificationsInputs).map(input => input.value.trim());
 
           const coverData = {
             testerName: testerNameInput.value.trim(),
             imagePath,
-            function: functionValues,
-            specifications: specificationsValues,
+            function: getCompressedValues(functionRawValues), // 압축된 값 사용
+            specifications: getCompressedValues(specificationsRawValues), // 압축된 값 사용
             type: 'Cover', // 타입을 'Cover'로 명시
           };
 
           if (editingOrder) {
             // 데이터 수정
-            storageManager.updateData(editingOrder, coverData); // updateData는 현재 실패 케이스가 없으므로 성공으로 간주
+            storageManager.updateData(editingOrder, coverData, 'item');
             isDataSaved = true;
           } else {
             // 새 데이터 추가
-            isDataSaved = storageManager.addData(coverData);
+            isDataSaved = storageManager.addData(coverData, 'item');
           }
           
           if (isDataSaved) {

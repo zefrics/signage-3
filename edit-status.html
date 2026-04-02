@@ -30,12 +30,17 @@
       <form id="status-edit" class="section">
         <div class="input-content-group" id="input-item">
           <div class="input-content">
-            <h2 class="label">Test Machine</h2>
+            <h2 class="label">Test Machine *</h2>
             <input type="text" autocomplete="off" id="input-test-machine-2" placeholder="필수 입력 항목입니다." maxlength="30" required>
           </div>
           <div class="input-content">
-            <h2 class="label">Status</h2>
-            <input type="text" autocomplete="off" id="input-status" placeholder="필수 입력 항목입니다." maxlength="30" required>
+            <h2 class="label">Status *</h2>
+            <select id="input-status" class="status-placeholder" required>
+              <option value="" disabled selected>필수 입력 항목입니다.</option>
+              <option value="green">Green</option>
+              <option value="yellow">Yellow</option>
+              <option value="red">Red</option>
+            </select>
           </div>
           <div class="input-content">
             <h2 class="label">Remark</h2>

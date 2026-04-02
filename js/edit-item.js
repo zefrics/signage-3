@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (editingOrder) {
       // 수정 모드
       itemEditTitle.textContent = 'Edit Item';
-      const dataArray = storageManager.load();
+      const dataArray = storageManager.load('item');
       const dataToEdit = dataArray.find(d => d.order == editingOrder);
       if (dataToEdit) {
         testMachineInput1.value = dataToEdit.testMachine1 || '';
@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // [추가] 저장 전 개수 제한 우선 확인 (URL 직접 접근 대응)
       if (!editingOrder) {
-        const allData = storageManager.load();
+        const allData = storageManager.load('item');
         const itemCount = allData.filter(d => d.type === 'Item').length;
         if (itemCount >= storageManager.LIMITS.Item) {
           alert(`Item은 최대 ${storageManager.LIMITS.Item}개까지 생성할 수 있습니다.`);
@@ -142,11 +142,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
           if (editingOrder) {
             // 데이터 수정
-            storageManager.updateData(editingOrder, slideData);
+            storageManager.updateData(editingOrder, slideData, 'item');
             isDataSaved = true;
           } else {
             // 새 데이터 추가
-            isDataSaved = storageManager.addData(slideData);
+            isDataSaved = storageManager.addData(slideData, 'item');
           }
 
           if (isDataSaved) {

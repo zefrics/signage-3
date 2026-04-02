@@ -2,9 +2,6 @@
 body {
   font-family: "Pretendard", sans-serif;
   padding: 30px;
-  -webkit-user-select: none;
-     -moz-user-select: none;
-          user-select: none;
 }
 
 header {
@@ -108,25 +105,15 @@ header .main-title#tester-name {
   border-radius: 15px;
 }
 #cover-view .slide-content-container, #item-view .slide-content-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
   width: 100%;
   min-width: 0;
   padding: 36px 45px 36px 36px;
   margin-bottom: -6px;
 }
 #cover-view .slide-content-container .slide-content .label, #item-view .slide-content-container .slide-content .label {
-  margin-bottom: 9px;
-  font-size: 24px;
-  font-weight: 400;
   color: rgba(240, 78, 35, 0.75);
 }
 #cover-view .slide-content-container .slide-content .content, #item-view .slide-content-container .slide-content .content {
-  font-size: 45px;
-  font-weight: 600;
-  line-height: 54px;
-  letter-spacing: -0.02em;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -162,8 +149,21 @@ header .main-title#tester-name {
   -webkit-user-drag: none;
 }
 
-#cover-view .slide-content-container .slide-content {
-  height: 263px;
+#cover-view .slide-content-container {
+  display: flex;
+  flex-direction: column;
+  gap: 75px;
+}
+#cover-view .slide-content-container .slide-content .label {
+  margin-bottom: 9px;
+  font-size: 24px;
+  font-weight: 400;
+}
+#cover-view .slide-content-container .slide-content .content {
+  font-size: 45px;
+  font-weight: 600;
+  line-height: 54px;
+  letter-spacing: -0.02em;
 }
 #cover-view .slide-content-container .slide-content ul {
   display: flex;
@@ -177,6 +177,23 @@ header .main-title#tester-name {
   margin-right: 12px;
 }
 
+#item-view .slide-content-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+#item-view .slide-content-container .slide-content .label {
+  margin-bottom: 7.5px;
+  font-size: 21px;
+  font-weight: 400;
+}
+#item-view .slide-content-container .slide-content .content {
+  font-size: 42px;
+  font-weight: 600;
+  line-height: 50px;
+  letter-spacing: -0.02em;
+}
+
 .list-page {
   display: flex;
   flex-direction: column;
@@ -184,7 +201,7 @@ header .main-title#tester-name {
   border-radius: 15px;
 }
 .list-page.status-list .table-header, .list-page.status-list .list-view-container .table-content {
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 300px 1fr;
 }
 .list-page .table-header {
   display: grid;
@@ -356,12 +373,17 @@ header .main-title#tester-name {
 }
 
 #settings-button-container {
-  border: 1px solid red;
+  border: 3px solid rgba(153, 202, 59, 0.45);
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 form {
   padding: 36px;
   border: 3px solid rgba(153, 202, 59, 0.45);
+  border-radius: 15px;
 }
 form .input-content-group {
   display: grid;
@@ -385,7 +407,7 @@ form .input-content-group .input-content .label {
   font-weight: 500;
   color: rgb(0, 0, 0);
 }
-form .input-content-group .input-content input {
+form .input-content-group .input-content input, form .input-content-group .input-content select {
   box-sizing: border-box;
   font-family: "Pretendard", sans-serif;
   height: 45px;
@@ -397,11 +419,21 @@ form .input-content-group .input-content input {
   font-size: 18px;
   font-weight: 400;
   background-color: rgb(255, 255, 255);
+  color: rgb(0, 0, 0);
 }
-form .input-content-group .input-content input::-moz-placeholder {
+form .input-content-group .input-content input.status-placeholder, form .input-content-group .input-content select.status-placeholder {
   color: rgba(0, 0, 0, 0.3);
 }
-form .input-content-group .input-content input::placeholder {
+form .input-content-group .input-content input::-moz-placeholder, form .input-content-group .input-content select::-moz-placeholder {
+  color: rgba(0, 0, 0, 0.3);
+}
+form .input-content-group .input-content input::placeholder, form .input-content-group .input-content select::placeholder {
+  color: rgba(0, 0, 0, 0.3);
+}
+form .input-content-group .input-content input option, form .input-content-group .input-content select option {
+  margin: 30px;
+}
+form .input-content-group .input-content input option:disabled, form .input-content-group .input-content select option:disabled {
   color: rgba(0, 0, 0, 0.3);
 }
 form .input-content-group .input-content .file-input-wrapper {
@@ -520,9 +552,6 @@ form#item-edit .input-group {
 form#item-edit .input-group span {
   font-size: 21px;
 }
-form#status-edit .input-group {
-  border: 1px solid red;
-}
 
 .btn-group {
   display: flex;
@@ -535,7 +564,7 @@ form#status-edit .input-group {
   align-items: center;
   gap: 9px;
   box-sizing: border-box;
-  cursor: pointer;
+  cursor: pointer !important;
   -webkit-user-drag: none;
   text-decoration: none;
   height: 60px;
@@ -552,7 +581,6 @@ form#status-edit .input-group {
 }
 .btn-group .btn-1:disabled, .btn-group .btn-2:disabled, .btn-group .btn-3:disabled, .btn-group .btn-4:disabled {
   opacity: 0.4;
-  cursor: not-allowed;
 }
 .btn-group .btn-1 {
   border: 0;
@@ -619,6 +647,50 @@ form#status-edit .input-group {
   height: 24px;
 }
 
+.settings-btn-group {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 90px;
+}
+.settings-btn-group .btn-test {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 18px;
+  color: rgb(255, 255, 255);
+  background-color: rgba(153, 202, 59, 0.9);
+  box-sizing: border-box;
+  cursor: pointer;
+  -webkit-user-drag: none;
+  text-decoration: none;
+  height: 275px;
+  width: 275px;
+  border: 3px solid rgb(153, 202, 59);
+  border-radius: 30px;
+  font-size: 33px;
+  font-weight: 400;
+}
+.settings-btn-group .btn-test img {
+  height: 42px;
+  width: auto;
+}
+
+/* Status 색상 표시를 위한 클래스 */
+.status-cell.green {
+  background-color: #00b050;
+  color: transparent;
+}
+.status-cell.yellow {
+  background-color: #ffc000;
+  color: transparent;
+}
+.status-cell.red {
+  background-color: #ff0000;
+  color: transparent;
+}
+
 /* SortableJS */
 .sortable-ghost {
   opacity: 1 !important;
@@ -640,7 +712,6 @@ form#status-edit .input-group {
   -webkit-user-drag: none;
 }
 
-/* End of SortableJS */
 .hide {
   display: none;
 }/*# sourceMappingURL=basic.css.map */

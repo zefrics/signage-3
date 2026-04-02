@@ -2,9 +2,9 @@ const { Capacitor } = window;
 import { formatDate } from './date.js';
 import { storageManager } from './storage.js';
 import { sliderManager } from './slider.js';
-import { timerManager } from './edit-timer.js';
  
 document.addEventListener('DOMContentLoaded', () => {
+  // DOM 요소 참조는 DOMContentLoaded 시점에 한 번만 수행
   const orderEditContainer = document.querySelector('#slider-order-edit-container');
   const statusOrderEditContainer = document.querySelector('#status-order-edit-container');
 
@@ -12,82 +12,27 @@ document.addEventListener('DOMContentLoaded', () => {
   const updateListView = (dataArray) => {
     const listPagesContainer = document.querySelector('#list-pages-container');
     if (!listPagesContainer) return;
-    listPagesContainer.innerHTML = ''; // 기존 목록 페이지들 초기화
-
-    // order가 낮은 순서대로 (오래된 순) 정렬
-    const sortedData = dataArray.sort((a, b) => a.order - b.order);
-    const totalItems = sortedData.length;
-    let chunks = [];
-
-    if (totalItems <= 5) {
-      // 5개 이하일 경우, 한 페이지에 모두 표시
-      chunks.push(sortedData);
-    } else {
-      // 6개 이상일 경우, 두 페이지로 균등하게 분배
-      const firstPageCount = Math.ceil(totalItems / 2);
-      chunks.push(sortedData.slice(0, firstPageCount)); // 첫 번째 페이지 (오래된 데이터)
-      chunks.push(sortedData.slice(firstPageCount));    // 두 번째 페이지 (최신 데이터)
-    }
-
-    chunks.forEach((chunk, index) => {
-      const pageIndex = index + 1;
-      // 각 페이지(chunk) 내부에서는 order가 높은 순서(최신순)로 정렬
-      chunk.sort((a, b) => b.order - a.order);
-
-      const listPageElement = createListPage(pageIndex, 'item');
-
-      const listViewContainer = listPageElement.querySelector('.list-view-container');
-
-      chunk.forEach((data, itemIndex) => {
-        const { testMachine1, model, purpose, next, startDate, endDate } = data;
-
-        let scheduleText;
-        const formattedStartDate = formatDate(startDate);
-        const formattedEndDate = formatDate(endDate);
-
-        if (formattedStartDate && formattedEndDate) {
-          scheduleText = `${formattedStartDate}<br>~ ${formattedEndDate}`;
-        } else if (formattedStartDate) {
-          scheduleText = `${formattedStartDate} ~`;
-        } else if (formattedEndDate) {
-          scheduleText = `~ ${formattedEndDate}`;
-        } else {
-          scheduleText = '-';
-        }
-
-        const tableRow = document.createElement('ul');
-        tableRow.className = 'table-content';
-
-        // 하이라이트 로직을 짝수 번째 행을 확인하는 방식으로 단순화
-        if (itemIndex % 2 !== 0) {
-          tableRow.classList.add('highlight');
-        }
-
-        tableRow.innerHTML = `
-        <li><span>${testMachine1 || '-'}</span></li>
-        <li><span>${model || '-'}</span></li>
-        <li><span>${purpose || '-'}</span></li>
-        <li><span>${scheduleText}</span></li>
-        <li><span>${next || '-'}</span></li>
-      `;
-        listViewContainer.appendChild(tableRow);
-      });
-      
-      // prepend를 사용하여 페이지 순서를 뒤집어, 최신 데이터가 담긴 페이지가 먼저 오도록 함
-      listPagesContainer.prepend(listPageElement);
-    });
+    renderListPages(listPagesContainer, dataArray, 'item');
   };
 
   // status-view 섹션의 내용을 업데이트하는 함수
   const updateStatusView = (dataArray) => {
     const statusPagesContainer = document.querySelector('#status-pages-container');
     if (!statusPagesContainer) return;
-    statusPagesContainer.innerHTML = '';
+    renderListPages(statusPagesContainer, dataArray, 'status');
+  };
 
-    // statusOrder가 낮은 순서대로 정렬 (chunking을 위해)
-    const sortedData = dataArray.sort((a, b) => a.statusOrder - b.statusOrder);
+  // updateListView와 updateStatusView의 중복 로직을 통합한 범용 함수
+  const renderListPages = (container, dataArray, type) => {
+    container.innerHTML = ''; // 기존 목록 페이지들 초기화
+
+    if (dataArray.length === 0) return;
+
+    const sortKey = type === 'status' ? 'statusOrder' : 'order';
+    const sortedData = [...dataArray].sort((a, b) => a[sortKey] - b[sortKey]);
+
     const totalItems = sortedData.length;
-    let chunks = [];
+    const chunks = [];
 
     if (totalItems <= 5) {
       chunks.push(sortedData);
@@ -97,33 +42,60 @@ document.addEventListener('DOMContentLoaded', () => {
       chunks.push(sortedData.slice(firstPageCount));
     }
 
-    chunks.forEach((chunk, index) => {
-      const pageIndex = index + 1;
-      // 각 페이지 내부에서는 statusOrder가 높은 순서(최신순)로 정렬
-      chunk.sort((a, b) => b.statusOrder - a.statusOrder);
+    chunks.forEach((chunk, pageIndex) => {
+      // 각 페이지(chunk) 내부에서 order/statusOrder가 낮은 순서대로 정렬하여 1번이 상단에 오도록 함
+      chunk.sort((a, b) => a[sortKey] - b[sortKey]);
 
-      const listPageElement = createListPage(pageIndex, 'status');
+      const listPageElement = createListPage(pageIndex + 1, type);
       const listViewContainer = listPageElement.querySelector('.list-view-container');
 
       chunk.forEach((data, itemIndex) => {
-        const { testMachine2, status, remark } = data;
-
-        const tableRow = document.createElement('ul');
-        tableRow.className = 'table-content';
+        let rowContent = '';
+        let rowClasses = ['table-content'];
 
         if (itemIndex % 2 !== 0) {
-          tableRow.classList.add('highlight');
+          rowClasses.push('highlight');
         }
 
-        tableRow.innerHTML = `
-          <li><span>${testMachine2 || '-'}</span></li>
-          <li><span>${status || '-'}</span></li>
-          <li><span>${remark || '-'}</span></li>
-        `;
+        if (type === 'item') {
+          const { testMachine1, model, purpose, next, startDate, endDate } = data;
+          const formattedStartDate = formatDate(startDate);
+          const formattedEndDate = formatDate(endDate);
+          let scheduleText;
+
+          if (formattedStartDate && formattedEndDate) {
+            scheduleText = `${formattedStartDate}<br>~ ${formattedEndDate}`;
+          } else if (formattedStartDate) {
+            scheduleText = `${formattedStartDate} ~`;
+          } else if (formattedEndDate) {
+            scheduleText = `~ ${formattedEndDate}`;
+          } else {
+            scheduleText = '-';
+          }
+
+          rowContent = `
+            <li><span>${testMachine1 || '-'}</span></li>
+            <li><span>${model || '-'}</span></li>
+            <li><span>${purpose || '-'}</span></li>
+            <li><span>${scheduleText}</span></li>
+            <li><span>${next || '-'}</span></li>
+          `;
+        } else if (type === 'status') {
+          const { testMachine2, status, remark } = data;
+          rowContent = `
+            <li><span>${testMachine2 || '-'}</span></li>
+            <li class="status-cell ${status || ''}"><span>${status || '-'}</span></li>
+            <li><span>${remark || '-'}</span></li>
+          `;
+        }
+
+        const tableRow = document.createElement('ul');
+        tableRow.className = rowClasses.join(' ');
+        tableRow.innerHTML = rowContent;
         listViewContainer.appendChild(tableRow);
       });
       
-      statusPagesContainer.prepend(listPageElement);
+      container.appendChild(listPageElement);
     });
   };
 
@@ -243,9 +215,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 각 데이터의 order 키에 맞춰 정렬 (최신순)
     const sortedData = dataArray.sort((a, b) => {
-      const orderA = isStatusPage ? a.statusOrder : a.order;
-      const orderB = isStatusPage ? b.statusOrder : b.order;
-      return orderB - orderA;
+      const orderA = isStatusPage ? a.statusOrder : a.order; // 낮은 order가 위로 오도록
+      const orderB = isStatusPage ? b.statusOrder : b.order; // 낮은 order가 위로 오도록
+      return orderA - orderB; // 오름차순 정렬
     });
 
     sortedData.forEach((data, index) => {
@@ -256,17 +228,17 @@ document.addEventListener('DOMContentLoaded', () => {
       let columnsHtml = '';
       let editUrl = '';
 
-      if (isStatusPage) {
+      if (type === 'Status') { // isStatusPage 대신 type을 직접 사용
         editUrl = `edit-status.html?order=${currentOrder}`;
         columnsHtml = `
           <li><span>${data.testMachine2 || '-'}</span></li>
-          <li><span>${data.status || '-'}</span></li>
+          <li class="status-cell ${data.status || ''}"><span>${data.status || '-'}</span></li>
           <li><span>${data.remark || '-'}</span></li>
         `;
       } else {
         const name = type === 'Cover' ? data.testerName : data.testMachine1;
         editUrl = (type === 'Cover' ? 'edit-cover.html' : 'edit-item.html') + `?order=${currentOrder}`;
-        columnsHtml = `
+        columnsHtml = ` 
           <li><span>${type}</span></li>
           <li><span>${name || '-'}</span></li>
         `;
@@ -278,13 +250,13 @@ document.addEventListener('DOMContentLoaded', () => {
       tableRow.dataset.type = type; // 데이터셋에 type 저장
 
       // 짝수 번째 행에 하이라이트 클래스 추가 (index는 0부터 시작하므로 홀수 index가 짝수 번째)
-      if (index % 2 !== 0) {
+      if ((index + 1) % 2 === 0) { // 1부터 시작하는 순번 기준으로 짝수 번째
         tableRow.classList.add('highlight');
       }
 
       tableRow.innerHTML = `
         <li class="drag-handle"><img src="img/edit-order.svg"></li>
-        <li><span>${sortedData.length - index}</span></li>
+        <li><span>${index + 1}</span></li>
         ${columnsHtml}
         <li>
           <button class="btn-delete" data-order="${currentOrder}">
@@ -316,7 +288,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const orderedIds = Array.from(orderEditContainer.querySelectorAll('.table-content'))
           .map(row => row.dataset.order);
         // storageManager를 통해 순서 저장
-        storageManager.saveOrder(orderedIds);
+        storageManager.saveOrder(orderedIds, 'item'); // 'item' 타입 명시
         // 화면의 순번을 다시 매김
         // 순서 변경 후 전체 뷰를 다시 렌더링하여 data-order 속성과 표시 순번을 모두 업데이트
         updateOrderEditView(storageManager.load());
@@ -337,7 +309,7 @@ document.addEventListener('DOMContentLoaded', () => {
       onEnd: function (evt) {
         const orderedIds = Array.from(statusOrderEditContainer.querySelectorAll('.table-content'))
           .map(row => row.dataset.order);
-        storageManager.saveStatusOrder(orderedIds);
+        storageManager.saveOrder(orderedIds, 'status'); // 'status' 타입 명시
         updateOrderEditView(storageManager.loadStatus());
       }
     });
@@ -354,7 +326,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (deleteButton) {
         (async () => {
           try {
-            const order = deleteButton.dataset.order;
+            const order = parseInt(deleteButton.dataset.order, 10); // order를 숫자로 파싱
             const isStatusPage = path === 'settings-status.html';
             const dataArray = isStatusPage ? storageManager.loadStatus() : storageManager.load();
             const dataToDelete = dataArray.find(d => (isStatusPage ? d.statusOrder : d.order) == order);
@@ -379,9 +351,9 @@ document.addEventListener('DOMContentLoaded', () => {
               }
 
               if (isStatusPage) {
-                storageManager.deleteStatus(order);
+                storageManager.deleteData(order, 'status'); // 'status' 타입 명시
               } else {
-                storageManager.deleteData(order);
+                storageManager.deleteData(order, 'item'); // 'item' 타입 명시
               }
               alert(`'${name}' 항목이 삭제되었습니다.`);
               window.location.reload(); // 페이지를 새로고침하여 목록 갱신
@@ -402,66 +374,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 페이지 로드 시 localStorage에서 데이터 불러오기
   const loadData = () => {
-    const slideData = storageManager.load();
+    const slideData = storageManager.load('item'); // Cover 및 Item 데이터
+    const statusData = storageManager.loadStatus(); // Status 데이터
 
     // 목록 페이지(view-list.html) 또는 슬라이더 편집 목록(settings.html)을 먼저 생성합니다.
-    if (document.querySelector('#list-pages-container')) updateListView(slideData.filter(d => d.type !== 'Cover'));
+    if (document.querySelector('#list-pages-container')) updateListView(slideData.filter(d => d.type === 'Item')); // 'Item' 타입만 필터링
     // Status 표를 생성합니다.
-    if (document.querySelector('#status-pages-container')) updateStatusView(storageManager.loadStatus());
+    if (document.querySelector('#status-pages-container')) updateStatusView(statusData);
     
     if (path === 'settings-status.html') {
-      updateOrderEditView(storageManager.loadStatus());
+      updateOrderEditView(statusData);
     } else if (orderEditContainer) {
       updateOrderEditView(slideData);
     }
 
     // 현재 페이지에 맞는 슬라이더 컨테이너를 찾아 초기화
-    const sliderContainer = document.querySelector('#items') || document.querySelector('#lists');
-    if (sliderContainer) sliderManager.init(slideData, { updateCoverView, updateItemView });
+    const sliderContainer = document.querySelector('#items') || document.querySelector('#lists') || document.querySelector('#status');
+    if (sliderContainer) sliderManager.init(slideData, statusData, { updateCoverView, updateItemView }); // statusData 전달
 
   };
 
-  // settings.html 페이지의 타이머 초기화
   const path = window.location.pathname.split("/").pop();
-  if (path === 'settings.html') {
-    const elementToMonitor = document.querySelector('#settings-button-container');
-    const homeButton = document.querySelector('#btn-home');
-
-    const previousPath = localStorage.getItem(storageManager.KEY_PATH) || 'slide'; // 기본값 'slide'
-    let homeUrl = previousPath === 'list' ? 'view-list.html' : 'index.html';
-
-    if (homeButton) homeButton.href = homeUrl;
-
-    const timerSettings = storageManager.loadTimerSettings();
-    const timeoutSeconds = timerSettings.homeTimer || 90;
-    timerManager.init(() => {
-      window.location.href = homeUrl;
-    }, timeoutSeconds);
-    timerManager.start([elementToMonitor]);
-  }
-
-  // settings-cover-item.html 페이지의 타이머 초기화
-  if (path === 'settings-cover-item.html') {
-    const elementToMonitor = document.querySelector('#slider-order-edit');
-    const timerSettings = storageManager.loadTimerSettings();
-    const timeoutSeconds = timerSettings.backTimer || 90;
-    timerManager.init(() => {
-      window.location.href = 'settings.html';
-    }, timeoutSeconds);
-    timerManager.start([elementToMonitor]);
-  }
-
-  // settings-status.html 페이지의 타이머 초기화
-  if (path === 'settings-status.html') {
-    // 페이지의 주요 컨테이너를 모니터링 요소로 지정합니다.
-    const elementToMonitor = document.querySelector('#slider-order-edit');
-    const timerSettings = storageManager.loadTimerSettings();
-    const timeoutSeconds = timerSettings.backTimer || 90;
-    timerManager.init(() => {
-      window.location.href = 'settings.html';
-    }, timeoutSeconds);
-    timerManager.start([elementToMonitor]);
-  }
 
   // New Cover/Item 버튼 생성 제한 로직
   const newCoverButton = document.querySelector('a[href="edit-cover.html"]');

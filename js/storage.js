@@ -16,159 +16,115 @@ export const storageManager = {
     Status: 10
   },
 
-  /**
-   * 슬라이드 데이터 배열을 로컬 스토리지에 저장합니다.
-   * @param {Array<Object>} dataArray - 저장할 슬라이드 데이터 배열
-   */
-  save(dataArray) {
-    localStorage.setItem(this.KEY_SLIDES, JSON.stringify(dataArray));
+  // 내부 헬퍼: 타입에 따른 키값 반환
+  _getKeys(type) {
+    const isStatus = type === 'status';
+    const isTimer = type === 'timer';
+    return {
+      storageKey: isStatus ? this.KEY_STATUS : (isTimer ? this.KEY_TIMERS : this.KEY_SLIDES),
+      orderKey: isStatus ? 'statusOrder' : 'order'
+    };
   },
 
   /**
-   * 로컬 스토리지에서 슬라이드 데이터 배열을 불러옵니다.
-   * @returns {Array<Object>} 저장된 슬라이드 데이터 배열. 데이터가 없으면 빈 배열을 반환합니다.
+   * 데이터를 로컬 스토리지에 저장합니다.
+   * @param {Array<Object>} dataArray - 저장할 데이터 배열
+   * @param {string} type - 'item' (기본값) 또는 'status'
    */
-  load() {
-    const data = localStorage.getItem(this.KEY_SLIDES);
-    return data ? JSON.parse(data) : [];
+  save(dataToSave, type = 'item') {
+    const { storageKey } = this._getKeys(type);
+    localStorage.setItem(storageKey, JSON.stringify(dataToSave));
   },
 
   /**
-   * 새로운 슬라이드 데이터를 배열에 추가하고 저장합니다. 'order' 값은 자동으로 할당됩니다.
-   * @param {Object} newData - 추가할 새로운 슬라이드 데이터
+   * 로컬 스토리지에서 데이터를 불러옵니다.
+   * @param {string} type - 'item' (기본값) 또는 'status'
+   * @returns {Array<Object>} 저장된 데이터 배열
    */
-  addData(newData) {
-    const dataArray = this.load();
-    const type = newData.type;
-    const limit = this.LIMITS[type]; 
+  load(type = 'item') {
+    const { storageKey } = this._getKeys(type);
+    const data = localStorage.getItem(storageKey);
+    if (type === 'timer') {
+      return data ? JSON.parse(data) : {}; // For timers, return an object
+    }
+    return data ? JSON.parse(data) : []; // For items/status, return an array
+  },
 
-    const currentCount = dataArray.filter(d => d.type === type).length;
+  // 레거시 지원 및 명확성을 위한 별칭
+  loadStatus() { return this.load('status'); },
+
+  /**
+   * 새로운 데이터를 추가합니다.
+   * @param {Object} newData - 추가할 데이터
+   * @param {string} type - 'item' 또는 'status'
+   */
+  addData(newData, type) {
+    const { orderKey } = this._getKeys(type);
+    const dataArray = this.load(type);
+    
+    // 한도 체크 (Status는 'Status' 키 사용, Item/Cover는 데이터 내부의 type 사용)
+    const limitKey = type === 'status' ? 'Status' : newData.type;
+    const limit = this.LIMITS[limitKey];
+    const currentCount = type === 'status' ? dataArray.length : dataArray.filter(d => d.type === newData.type).length;
 
     if (currentCount >= limit) {
-      alert(`${type}는 최대 ${limit}개까지 생성할 수 있습니다.`);
-      // false를 반환하여 데이터 추가가 실패했음을 알릴 수 있습니다.
+      alert(`${limitKey}는 최대 ${limit}개까지 생성할 수 있습니다.`);
       return false;
     }
 
-    // order 값 계산: 기존 데이터가 있으면 가장 큰 order + 1, 없으면 1
-    const maxOrder = dataArray.length > 0 ? Math.max(...dataArray.map(d => d.order)) : 0;
-    newData.order = maxOrder + 1;
+    // 순번 할당
+    const maxOrder = dataArray.length > 0 ? Math.max(...dataArray.map(d => d[orderKey])) : 0;
+    newData[orderKey] = maxOrder + 1;
+    
     dataArray.push(newData);
-    this.save(dataArray);
-
-    // true를 반환하여 성공적으로 추가되었음을 알릴 수 있습니다.
+    this.save(dataArray, type);
     return true;
   },
 
   /**
-   * 지정된 'order'에 해당하는 슬라이드 데이터를 업데이트합니다.
-   * @param {string|number} order - 수정할 데이터의 order 값
-   * @param {Object} updatedData - 업데이트할 내용을 담은 객체
+   * 데이터를 업데이트합니다.
    */
-  updateData(order, updatedData) {
-    let dataArray = this.load();
-    const dataIndex = dataArray.findIndex(d => d.order == order);
+  updateData(order, updatedData, type = 'item') {
+    const { orderKey } = this._getKeys(type);
+    let dataArray = this.load(type);
+    const dataIndex = dataArray.findIndex(d => d[orderKey] == order);
+    
     if (dataIndex > -1) {
       dataArray[dataIndex] = { ...dataArray[dataIndex], ...updatedData };
-      this.save(dataArray);
+      this.save(dataArray, type);
     }
   },
 
   /**
-   * 지정된 'order'에 해당하는 슬라이드 데이터를 삭제합니다.
-   * @param {string|number} order - 삭제할 데이터의 order 값
+   * 데이터를 삭제하고 순번을 재정렬합니다.
    */
-  deleteData(order) {
-    const dataArray = this.load();
-    // 지정된 order의 항목을 제외한 새 배열 생성
-    const remainingData = dataArray.filter(d => d.order != order);
+  deleteData(order, type = 'item') {
+    const { orderKey } = this._getKeys(type);
+    const dataArray = this.load(type);
+    const remainingData = dataArray.filter(d => d[orderKey] != order);
+    
+    remainingData.sort((a, b) => a[orderKey] - b[orderKey]);
+    const reorderedData = remainingData.map((item, index) => ({ 
+      ...item, 
+      [orderKey]: index + 1 
+    }));
 
-    // 남아있는 데이터를 기존 order 순서대로 정렬
-    remainingData.sort((a, b) => a.order - b.order);
-
-    // order 값을 1부터 순차적으로 재할당
-    const reorderedData = remainingData.map((item, index) => ({ ...item, order: index + 1 }));
-
-    this.save(reorderedData);
+    this.save(reorderedData, type);
   },
 
   /**
-   * 모든 슬라이드 데이터를 로컬 스토리지에서 삭제합니다.
+   * 드래그 앤 드롭 후 순서를 저장합니다.
    */
-  clear() {
-    localStorage.removeItem(this.KEY_SLIDES);
-  },
+  saveOrder(orderedIds, type = 'item') {
+    const { orderKey } = this._getKeys(type);
+    let dataArray = this.load(type);
 
-  /**
-   * 변경된 순서 배열을 기반으로 모든 슬라이드 데이터의 'order' 값을 재정렬하고 저장합니다.
-   * @param {Array<string>} orderedIds - 새로운 순서대로 정렬된 order 값들의 배열
-   */
-  saveOrder(orderedIds) {
-    let dataArray = this.load();
-    const maxOrder = dataArray.length;
-
-    // 새로운 순서 배열(orderedIds)을 기반으로 각 항목의 order 값을 재할당
     const reorderedArray = dataArray.map(item => {
-      const newIndex = orderedIds.indexOf(String(item.order));
-      item.order = maxOrder - newIndex;
+      const newIndex = orderedIds.indexOf(String(item[orderKey]));
+      item[orderKey] = newIndex + 1;
       return item;
     });
-    this.save(reorderedArray);
-  },
-
-  /**
-   * 상태 데이터 관련 메서드
-   */
-  saveStatus(dataArray) {
-    localStorage.setItem(this.KEY_STATUS, JSON.stringify(dataArray));
-  },
-
-  loadStatus() {
-    const data = localStorage.getItem(this.KEY_STATUS);
-    return data ? JSON.parse(data) : [];
-  },
-
-  addStatus(newData) {
-    const dataArray = this.loadStatus();
-    if (dataArray.length >= this.LIMITS.Status) {
-      alert(`Status는 최대 ${this.LIMITS.Status}개까지 생성할 수 있습니다.`);
-      return false;
-    }
-
-    // statusOrder 값 계산
-    const maxOrder = dataArray.length > 0 ? Math.max(...dataArray.map(d => d.statusOrder)) : 0;
-    newData.statusOrder = maxOrder + 1;
-    dataArray.push(newData);
-    this.saveStatus(dataArray);
-    return true;
-  },
-
-  updateStatus(statusOrder, updatedData) {
-    let dataArray = this.loadStatus();
-    const dataIndex = dataArray.findIndex(d => d.statusOrder == statusOrder);
-    if (dataIndex > -1) {
-      dataArray[dataIndex] = { ...dataArray[dataIndex], ...updatedData };
-      this.saveStatus(dataArray);
-    }
-  },
-
-  deleteStatus(statusOrder) {
-    const dataArray = this.loadStatus();
-    const remainingData = dataArray.filter(d => d.statusOrder != statusOrder);
-    remainingData.sort((a, b) => a.statusOrder - b.statusOrder);
-    const reorderedData = remainingData.map((item, index) => ({ ...item, statusOrder: index + 1 }));
-    this.saveStatus(reorderedData);
-  },
-
-  saveStatusOrder(orderedIds) {
-    let dataArray = this.loadStatus();
-    const maxOrder = dataArray.length;
-    const reorderedArray = dataArray.map(item => {
-      const newIndex = orderedIds.indexOf(String(item.statusOrder));
-      item.statusOrder = maxOrder - newIndex;
-      return item;
-    });
-    this.saveStatus(reorderedArray);
+    this.save(reorderedArray, type);
   },
 
   /**
@@ -176,7 +132,7 @@ export const storageManager = {
    * @param {Object} timerSettings - 저장할 타이머 설정 객체
    */
   saveTimerSettings(timerSettings) {
-    localStorage.setItem(this.KEY_TIMERS, JSON.stringify(timerSettings));
+    this.save(timerSettings, 'timer');
   },
 
   /**
@@ -184,7 +140,6 @@ export const storageManager = {
    * @returns {Object} 저장된 타이머 설정 객체. 데이터가 없으면 빈 객체를 반환합니다.
    */
   loadTimerSettings() {
-    const data = localStorage.getItem(this.KEY_TIMERS);
-    return data ? JSON.parse(data) : {};
+    return this.load('timer');
   }
 };
