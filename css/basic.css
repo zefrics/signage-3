@@ -200,12 +200,8 @@ header .main-title#tester-name {
   border: 3px solid rgba(240, 78, 35, 0.3);
   border-radius: 15px;
 }
-.list-page.status-list .table-header, .list-page.status-list .list-view-container .table-content {
-  grid-template-columns: 1fr 300px 1fr;
-}
 .list-page .table-header {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 225px 1fr;
   border-bottom: 2px solid rgba(240, 78, 35, 0.15);
   border-top-left-radius: 12px;
   border-top-right-radius: 12px;
@@ -214,7 +210,7 @@ header .main-title#tester-name {
   background-color: rgba(240, 78, 35, 0.15);
 }
 .list-page .table-header li {
-  padding: 15px;
+  padding: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -230,11 +226,8 @@ header .main-title#tester-name {
 }
 .list-page .list-view-container .table-content {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 225px 1fr;
   height: 100%;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  font-size: 30px;
-  font-weight: 600;
 }
 .list-page .list-view-container .table-content.highlight {
   background-color: rgba(240, 78, 35, 0.05);
@@ -248,7 +241,7 @@ header .main-title#tester-name {
   justify-content: center;
   border-right: 1px solid rgba(0, 0, 0, 0.1);
   min-width: 0;
-  padding: 15px 30px;
+  padding: 15px 24px;
 }
 .list-page .list-view-container .table-content li span {
   display: -webkit-box;
@@ -262,22 +255,38 @@ header .main-title#tester-name {
 .list-page .list-view-container .table-content li:last-child {
   border-right: none;
 }
+.list-page.status-list .table-header, .list-page.status-list .table-content {
+  grid-template-columns: 1fr 210px 1fr;
+}
+.list-page.status-list .table-content {
+  font-size: 30px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.list-page.item-list .table-header, .list-page.item-list .table-content {
+  grid-template-columns: 1fr 1fr 1fr 195px 1fr;
+}
+.list-page.item-list .table-content {
+  font-size: 27px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
 
 .edit-table#slider-order-edit .table-header {
   display: grid;
-  grid-template-columns: 165px 165px 1fr 345px;
+  grid-template-columns: 165px 165px 1fr 320px;
 }
 .edit-table#slider-order-edit .table-container .table-content {
   display: grid;
-  grid-template-columns: 82.5px 82.5px 165px 1fr 345px;
+  grid-template-columns: 82.5px 82.5px 165px 1fr 320px;
 }
 .edit-table#status-order-edit .table-header {
   display: grid;
-  grid-template-columns: 165px 1fr 135px 1fr 345px;
+  grid-template-columns: 165px 1fr 105px 1fr 320px;
 }
 .edit-table#status-order-edit .table-container .table-content {
   display: grid;
-  grid-template-columns: 82.5px 82.5px 1fr 135px 1fr 345px;
+  grid-template-columns: 82.5px 82.5px 1fr 105px 1fr 320px;
 }
 .edit-table {
   display: flex;
