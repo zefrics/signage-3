@@ -219,7 +219,7 @@ header {
 
 #cover-view {
   .slide-content-container {
-    display: flex; flex-direction: column; gap: 60px;
+    display: flex; flex-direction: column; gap: 54px;
     .slide-content {
       .label {
         margin-bottom: 7.5px;
@@ -322,7 +322,7 @@ header {
   }
   &.status-list {
     .table-header, .table-content {
-      grid-template-columns: 1fr 210px 1fr;
+      grid-template-columns: 1fr 270px 1fr;
     }
     .table-content {
       font-size: $fs-list-status-content; font-weight: $fw-list-status-content;
